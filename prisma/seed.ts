@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const bcrypt = require('bcryptjs');
+const bcrypt = require("bcryptjs");
 
 function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
@@ -13,98 +13,87 @@ function getRandomElement(arr: any[]) {
 }
 
 function createRandomName() {
-  const firstNames = ['John', 'Jane', 'Max', 'Anna', 'Leo', 'Ella', 'Liam', 'Mia', 'Noah', 'Emma'];
-  const lastNames = ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor'];
+  const firstNames = ["John", "Jane", "Max", "Anna", "Leo", "Ella", "Liam", "Mia", "Noah", "Emma"];
+  const lastNames = ["Smith", "Johnson", "Williams", "Jones", "Brown", "Davis", "Miller", "Wilson", "Moore", "Taylor"];
+
   return `${getRandomElement(firstNames)} ${getRandomElement(lastNames)}`;
 }
 
 async function main() {
-  // Create a user
-  await prisma.user.create({
-    data: {
-      email: 'user@email.com',
-      password: await bcrypt.hash('password', 10),
-      role: 'USER',
-    },
-  });
-
-  // Create 5 callers
-  const callers = [];
-  for (let i = 0; i < 5; i++) {
-    const caller = await prisma.caller.create({
-      data: {
-        name: createRandomName(),
-        abbreviation: `C${i + 1}`,
-        languages: ['DE', 'EN'],
-      },
-    });
-    callers.push(caller);
-  }
-
   // Create 20 bidders
-  const bidders = [];
+  const bidders: any[] = [];
   for (let i = 0; i < 20; i++) {
+    let name: string;
+    do {
+      name = createRandomName();
+    } while (bidders.some((b) => b.name === name));
+
     const bidder = await prisma.bidder.create({
       data: {
-        name: createRandomName(),
-        languages: ['DE', 'EN'],
+        name,
+        languages: ["DE", "EN"],
         phoneNumber: `+41791${i}2${i}`,
       },
     });
+
     bidders.push(bidder);
   }
 
-  // Create 100 lots
+  // Create 5 callers
+  const callerNames = ["Jara", "Laura", "Isabelle", "Cyril", "Maxim"];
+  const callers = [];
+  let desiredBidderId = 0;
+  for (const callerName of callerNames) {
+    const caller = await prisma.caller.create({
+      data: {
+        name: callerName,
+        abbreviation: `${callerName.charAt(0)}K`,
+        languages: ["DE", "EN", "FR"],
+        desiredBidders: { connect: { id: bidders[desiredBidderId].id } },
+      },
+    });
+    callers.push(caller);
+    desiredBidderId += 2;
+  }
+
+  // Create an auction
   const auction = await prisma.auction.create({
     data: {
-      name: 'Test Auction',
+      name: "Test Auction",
       date: new Date(),
-      callers: {
-        create: callers.map(caller => ({
-          caller: {
-            connect: { id: caller.id },
-          },
-        })),
-      },
-      lots: {
-        create: Array.from({ length: 100 }).map((_, i) => ({
-          lotNumber: i + 1,
-        })),
-      },
-    },
-    include: {
-      lots: true,
     },
   });
 
-  const lots = auction.lots;
+  // Create 50 lots and assign 1-4 random bidders to each lot
+  for (let i = 0; i < 50; i++) {
+    const numAssignments = getRandomInt(0, 4);
+    const assignedBidders = new Set<string>();
+    const assignments = [];
 
-  // Assign priority bidders to callers
-  for (const caller of callers) {
-    const priorityBidder = getRandomElement(bidders);
-    await prisma.caller.update({
-      where: { id: caller.id },
+    while (assignedBidders.size < numAssignments) {
+      const bidder = getRandomElement(bidders);
+      if (!assignedBidders.has(bidder.id)) {
+        assignedBidders.add(bidder.id);
+        assignments.push({
+          bidderId: bidder.id,
+          isFinal: false,
+        });
+      }
+    }
+
+    await prisma.lot.create({
       data: {
-        desiredCustomers: {
-          connect: { id: priorityBidder.id },
+        number: i + 1,
+        auctionId: auction.id,
+        date: new Date(),
+        assignments: {
+          create: assignments,
         },
       },
     });
   }
 
-  // Assign lots to bidders
-  for (const bidder of bidders) {
-    const numberOfLots = getRandomInt(0, 4);
-    for (let i = 0; i < numberOfLots; i++) {
-      const lot = getRandomElement(lots);
-      await prisma.lotBidder.create({
-        data: {
-          lot: { connect: { id: lot.id } },
-          bidder: { connect: { id: bidder.id } },
-        },
-      });
-    }
-  }
+  console.log("Auction, lots, callers, and bidders created successfully");
 }
 
 main()

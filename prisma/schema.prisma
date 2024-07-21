@@ -7,83 +7,61 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// Represents an item in the auction.
-// It belongs to one auction and can have multiple allocations.
-model Lot {
-  id          String       @id @default(cuid())
-  auctionId   String
-  lotNumber   Int
-  auction     Auction      @relation(fields: [auctionId], references: [id])
-  allocations Allocation[]
-  lotBidders  LotBidder[]
+enum Languages {
+  EN
+  DE
+  FR
 }
 
-// Represents an auction event.
-// It has a name, date, and multiple lots.
-// It also has multiple callers (handled via the AuctionCaller join table).
 model Auction {
-  id      String          @id @default(cuid())
+  id      String      @id @default(cuid())
   name    String
   date    DateTime
-  callers AuctionCaller[]
   lots    Lot[]
+  callers Caller[]
 }
 
-// Represents an employee who calls bidders.
-// It has a name, abbreviation, languages, desired customers, and can participate in multiple auctions and allocations.
+model Lot {
+  id          String      @id @default(cuid())
+  number      Int
+  auctionId   String
+  date        DateTime
+  auction     Auction      @relation(fields: [auctionId], references: [id])
+  assignments Assignment[]
+}
+
 model Caller {
-  id               String          @id @default(cuid())
-  name             String
-  abbreviation     String
-  languages        String[]
-  desiredCustomers Bidder[]        @relation("DesiredCustomers")
-  auctions         AuctionCaller[]
-  allocations      Allocation[]
-}
-
-// Represents a potential bidder.
-// It has a name, languages, phone number, interested lots, and allocations.
-model Bidder {
-  id             String       @id @default(cuid())
+  id             String      @id @default(cuid())
   name           String
-  languages      String[]
-  phoneNumber    String
-  interestedLots LotBidder[]
-  allocations    Allocation[]
-  caller         Caller?      @relation("DesiredCustomers", fields: [callerId], references: [id])
-  callerId       String?
+  abbreviation   String
+  languages      Languages[]
+  auctions       Auction[]
+  desiredBidders Bidder[]
+  assignments    Assignment[]
 }
 
-// Represents the assignment of a caller to a bidder for a lot.
-// It includes foreign keys to the lot, bidder, and caller.
-model Allocation {
-  id       String @id @default(cuid())
+model Bidder {
+  id          String      @id @default(cuid())
+  name        String
+  languages   Languages[]
+  phoneNumber String
+  assignments Assignment[]
+  Caller      Caller?      @relation(fields: [callerId], references: [id])
+  callerId    String?
+}
+
+model Assignment {
+  id       String      @id @default(cuid())
+  isFinal  Boolean
   lotId    String
   bidderId String
-  callerId String
-  lot      Lot    @relation(fields: [lotId], references: [id])
-  bidder   Bidder @relation(fields: [bidderId], references: [id])
-  caller   Caller @relation(fields: [callerId], references: [id])
-}
+  callerId String?
+  lot      Lot     @relation(fields: [lotId], references: [id])
+  bidder   Bidder  @relation(fields: [bidderId], references: [id])
+  caller   Caller? @relation(fields: [callerId], references: [id])
 
-// A join table to handle the many-to-many relationship between auctions and callers.
-model AuctionCaller {
-  id        String  @id @default(cuid())
-  auctionId String
-  callerId  String
-  auction   Auction @relation(fields: [auctionId], references: [id])
-  caller    Caller  @relation(fields: [callerId], references: [id])
+  @@unique([lotId, bidderId])
 }
-
-// A join table to handle the many-to-many relationship between lots and bidders.
-model LotBidder {
-  id       String @id @default(cuid())
-  lotId    String
-  bidderId String
-  lot      Lot    @relation(fields: [lotId], references: [id])
-  bidder   Bidder @relation(fields: [bidderId], references: [id])
-}
-
 
 model User {
   id            String    @id @default(cuid())
