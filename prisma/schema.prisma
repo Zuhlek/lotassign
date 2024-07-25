@@ -8,9 +8,15 @@ generator client {
 }
 
 enum Languages {
-  EN
-  DE
-  FR
+  I
+  E
+  D
+  S
+  F
+  NL
+  CHIN
+  JAP
+  RU
 }
 
 model Auction {
@@ -23,6 +29,7 @@ model Auction {
 
 model Lot {
   id          String      @id @default(cuid())
+  description String?
   number      Int
   auctionId   String
   date        DateTime

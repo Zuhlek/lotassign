@@ -2,6 +2,7 @@
 import { Assignment, Caller } from "@prisma/client";
 import {
   AssignmentsWithCallersAndBidders,
+  getAuctionCallers,
   getLotsForAuction,
   getPriorityCallerForBidder,
   LotWithAssignmentsWithCallersAndBidders,
@@ -13,6 +14,7 @@ export async function removeAllCallerIdsFromAssignments() {
   await prisma.assignment.updateMany({
     data: {
       callerId: null,
+      isFinal: false,
     },
   });
 }
@@ -32,23 +34,14 @@ export async function assignCallersToDesiredBidders(auctionId: string) {
 
 export async function assignCallersToBidders(auctionId: string) {
   const lots = await getLotsForAuction(auctionId);
-  let callersSet: Set<Caller> = new Set();
-  for (const l of lots) {
-    for (const a of l.assignments) {
-      if (a.caller !== null) {
-        callersSet.add(a.caller);
-      }
-    }
-  }
-  const callers: Caller[] = Array.from(callersSet);
-  const processedAssignments: Assignment[] = [];
-  let lastNLots: LotWithAssignmentsWithCallersAndBidders[] = [];
+  const callers = await getAuctionCallers(auctionId);
+  let nextAndPrevNLots: LotWithAssignmentsWithCallersAndBidders[] = [];
 
   for (const l of lots) {
     console.log(`------------- ${l.number} -------------`);
-    const currentLotAssignments = l.assignments;
+    nextAndPrevNLots = await getNextAndPreviousNLots(l.number, 4);
 
-    for (let a of currentLotAssignments) {
+    for (let a of l.assignments) {
       const b = await prisma.bidder.findUnique({ where: { id: a.bidderId } });
       console.log(`🧍 ${b?.name}`);
 
@@ -56,17 +49,17 @@ export async function assignCallersToBidders(auctionId: string) {
         continue;
       }
       if (isAssignmentFinal(a) || hasAssignmentAlreadyACaller(a)) {
-        processedAssignments.push(a);
         continue;
       }
 
+      //TODO -tuat nöd :(
       const alreadyAssignedCaller = await getCallerWhoWasAlreadyAssignedToBidder(a.bidderId);
 
       if (alreadyAssignedCaller) {
         console.log(`${alreadyAssignedCaller.name}`);
-        if (isTheCallerEligibleForTheAssignment(alreadyAssignedCaller.id, lastNLots)) {
+        const isEligible = await isTheCallerEligibleForTheAssignment(alreadyAssignedCaller.id, nextAndPrevNLots, l);
+        if (isEligible) {
           a = await assignCallerToBidder(a, alreadyAssignedCaller);
-          processedAssignments.push(a);
           continue;
         } else {
           console.log(`🚫 (prev caller)`);
@@ -75,44 +68,41 @@ export async function assignCallersToBidders(auctionId: string) {
 
       for (const caller of callers) {
         console.log(`${caller.name}`);
-        if (isTheCallerEligibleForTheAssignment(caller.id, lastNLots)) {
+        const isEligible = await isTheCallerEligibleForTheAssignment(caller.id, nextAndPrevNLots, l);
+        if (isEligible) {
           a = await assignCallerToBidder(a, caller);
-          processedAssignments.push(a);
           break;
         } else {
           console.log(`🚫`);
         }
       }
+    }
+  }
+}
 
-      processedAssignments.push(a);
-      const updatedLot = await prisma.lot.findUnique({ where: { id: l.id }, include: { assignments: { include: { caller: true, bidder: true } } } });
-      if (updatedLot) {
-        lastNLots = addAndKeepLastNLot(lastNLots, updatedLot, 4);
-      } else {
-        lastNLots = addAndKeepLastNLot(lastNLots, l, 4);
+async function isTheCallerEligibleForTheAssignment(
+  callerId: string,
+  lastNLots: LotWithAssignmentsWithCallersAndBidders[],
+  currentLot: LotWithAssignmentsWithCallersAndBidders
+): Promise<boolean> {
+  const lotsToCheck = [...lastNLots, currentLot];
+  let lotsFromDb: LotWithAssignmentsWithCallersAndBidders[] = [];
+
+  for (const lot of lotsToCheck) {
+    const lotFromDb = await prisma.lot.findUnique({ where: { id: lot.id }, include: { assignments: { include: { caller: true, bidder: true } } } });
+    if (lotFromDb) {
+      lotsFromDb.push(lotFromDb);
+    }
+  }
+
+  for (const lot of lotsFromDb) {
+    for (const assignment of lot.assignments) {
+      if (assignment.callerId === callerId) {
+        return false;
       }
     }
   }
-}
 
-function addAndKeepLastNLot(
-  currentLots: LotWithAssignmentsWithCallersAndBidders[],
-  newLot: LotWithAssignmentsWithCallersAndBidders,
-  n: number
-): LotWithAssignmentsWithCallersAndBidders[] {
-  currentLots.push(newLot);
-  if (currentLots.length > n) {
-    currentLots.shift();
-  }
-  return currentLots;
-}
-
-function isTheCallerEligibleForTheAssignment(callerId: string, lastNLots: LotWithAssignmentsWithCallersAndBidders[]): boolean {
-  for (const lot of lastNLots) {
-    if (wasTheCallerAlreadyAssignedToTheLot(lot.assignments, callerId)) {
-      return false;
-    }
-  }
   return true;
 }
 
@@ -129,10 +119,6 @@ async function getCallerWhoWasAlreadyAssignedToBidder(bidderId: string): Promise
   });
 }
 
-function wasTheCallerAlreadyAssignedToTheLot(lotAssignments: Assignment[], callerId: string): boolean {
-  return lotAssignments.some((a) => a.callerId === callerId);
-}
-
 function hasAssignmentAlreadyACaller(assignment: Assignment): boolean {
   return assignment.callerId !== null;
 }
@@ -145,4 +131,21 @@ async function assignCallerToBidder(relevantAssignment: Assignment, caller: Call
   console.log(`-->> 📞 ${caller.name}`);
   const updatedAssignment = await updateAssignment(false, relevantAssignment.id, relevantAssignment.lotId, caller.id, relevantAssignment.bidderId);
   return updatedAssignment;
+}
+
+async function getNextAndPreviousNLots(lotNumber: number, n: number): Promise<LotWithAssignmentsWithCallersAndBidders[]> {
+  let lots: LotWithAssignmentsWithCallersAndBidders[] = [];
+
+  for (let i = -n; i <= n; i++) {
+    const lot = await prisma.lot.findFirst({
+      where: { number: (lotNumber + i) },
+      include: { assignments: { include: { caller: true, bidder: true } } },
+    });
+    if (lot) {
+      lots.push(lot);
+    }
+  }
+
+  return lots;
+
 }
