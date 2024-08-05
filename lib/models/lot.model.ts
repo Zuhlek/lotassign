@@ -1,6 +1,7 @@
-export interface Lot {
+export type Lot ={
   id?: number;
+  auctionId: number;
   description?: string;
   number: number;
-  assignments?: number[];
+  assignmentIds?: number[];
 }

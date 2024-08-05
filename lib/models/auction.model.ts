@@ -1,7 +1,7 @@
-export interface Auction {
+export type Auction = {
   id?: number;
   name: string;
   date: Date;
-  lots?: number[];
-  callers?: number[];
+  lotIds?: number[];
+  callerIds?: number[];
 }

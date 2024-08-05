@@ -3,10 +3,14 @@
 import { Button } from '@mui/material';
 import Link from 'next/link';
 
-const TopBarTitle = () => {
+interface TopBarTitleProps {
+  title: string;
+}
+
+const TopBarTitle = ({title}: TopBarTitleProps) => {
   return (
     <Link href="/" passHref>
-      <Button variant="contained" disableElevation size='large'>Baulog</Button>
+      <Button variant="contained" disableElevation size='large'>{title}</Button>
     </Link>
   );
 }

@@ -13,7 +13,7 @@ function TopBar() {
       */}
       <Toolbar>
         <Box sx={{flexGrow: 1}}>
-          <TopBarTitle />
+          <TopBarTitle title="LotAssign"/>
         </Box>
         <TopBarProfileIcon />
       </Toolbar>

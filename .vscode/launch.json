@@ -6,9 +6,7 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceFolder}/node_modules/next/dist/bin/next",
-      "args": [
-        "dev"
-      ],
+      "args": ["dev"],
       "cwd": "${workspaceFolder}",
       "sourceMaps": true,
       "restart": true,
@@ -16,7 +14,24 @@
       "internalConsoleOptions": "neverOpen",
       "env": {
         "NODE_ENV": "development"
+      },
+      "runtimeArgs": ["--inspect"]
+    },
+    {
+      "name": "Next.js: Chrome",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*"
       }
     },
+    {
+      "request": "attach",
+      "name": "Next.js: Full Stack + Chrome",
+      "type": "node"
+    }
   ]
 }

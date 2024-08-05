@@ -1,7 +1,7 @@
-export interface Assignment {
+export type Assignment = {
   id?: number;
   callerId?: number;
   lotId: number;
   bidderId: number;
-  isFinal: number;
+  isFinal: boolean;
 }
