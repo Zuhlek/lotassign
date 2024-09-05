@@ -20,13 +20,14 @@ export const LotService = {
   async getAllLotsByAuctionId(auctionId: number) {
     return db.lots.filter((l) => l.auctionId === auctionId).toArray();
   },
-  async getNextAndCurrentAndPreviousNLots(lotNumber: number, range: number) {
+  async getNextAndCurrentAndPreviousNLots(lotNumber: number, range: number, auctionId: number) {
     const minLotNumber = lotNumber - range;
     const maxLotNumber = lotNumber + range;
 
     const lots: Lot[] = await db.lots
       .where("number")
       .between(minLotNumber, maxLotNumber, true, true) // true, true bedeutet inklusiv der Grenzen
+      .and((lot) => lot.auctionId === auctionId)
       .toArray();
 
     return lots;},

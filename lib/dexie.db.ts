@@ -29,9 +29,12 @@ class MyDatabase extends Dexie {
 
 const db = new MyDatabase();
 
-async function initializeDB() {
-  await clearDB();
-  await db.open(); // Reopen the database after deletion
+async function clearDB() {
+  await db.delete();
+  await db.open(); 
+}
+
+async function loadAuctionAndCallerDummyData() {
 
   const auctionId = await db.auctions.add({ name: "Dummy Auction", date: new Date() });
 
@@ -47,6 +50,12 @@ async function initializeDB() {
     });
   }
 
+  return auctionId;
+}
+
+async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number) {
+  console.log("Loading lots, bidders, and assignments dummy data...");
+  console.log("Auction ID:", auctionId);
   const bidderMap = new Map();
   const lotMap = new Map();
 
@@ -72,7 +81,7 @@ async function initializeDB() {
       lotId = await db.lots.add({
         number: parseInt(bpl.LotNumber),
         description: bpl.LotName,
-        auctionId: auctionId ? auctionId : 1,
+        auctionId: auctionId,
         assignmentIds: [],
       });
       lotMap.set(bpl.LotNumber, lotId);
@@ -96,8 +105,7 @@ async function initializeDB() {
   }
 }
 
-async function clearDB() {
-  await db.delete(); // This will delete the entire database
-}
 
-export { db, initializeDB };
+
+
+export { db, clearDB, loadAuctionAndCallerDummyData, loadLotsBiddersAndAssignmentsDummyData };

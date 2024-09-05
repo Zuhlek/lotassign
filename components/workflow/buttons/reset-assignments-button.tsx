@@ -13,7 +13,7 @@ export default function ResetAssignmentsButton({auctionId}: ResetAssignmentsButt
 
   return (
     <Button onClick={runAssignment} variant="contained" sx={{ margin: 1 }}>
-      reset assignments
+      Reset Assignments
     </Button>
   );
 }

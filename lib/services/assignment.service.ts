@@ -1,5 +1,6 @@
 import { Assignment } from "@/lib/models/assignment.model";
 import { db } from "@/lib/dexie.db";
+import { LotService } from "./lot.service";
 
 export const AssignmentService = {
   async createAssignment(assignment: Assignment) {
@@ -32,4 +33,23 @@ export const AssignmentService = {
     }
     return await db.assignments.filter((a) => a.lotId === lotId).toArray();
   },
+  async getAssignmentsWithNoCallerByAuctionId(auctionId: number) {
+    const lots = await LotService.getAllLotsByAuctionId(auctionId);
+    const assignments: Assignment[] = [];
+    for (const l of lots) {
+      const a = await db.assignments.filter((a) => a.lotId === l.id && !a.callerId).toArray();
+      assignments.push(...a);
+    }
+    return assignments;
+  },
+  async getAssignmentsByAuctionId(auctionId: number) {
+    const lots = await LotService.getAllLotsByAuctionId(auctionId);
+    const assignments: Assignment[] = [];
+    for (const l of lots) {
+      const a = await db.assignments.filter((a) => a.lotId === l.id).toArray();
+      assignments.push(...a);
+    }
+    return assignments;
+  }
+  
 };

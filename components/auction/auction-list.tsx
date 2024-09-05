@@ -2,7 +2,7 @@
 import { Auction } from "@/lib/models/auction.model";
 import { AuctionService } from "@/lib/services/auction.service";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useState } from "react";
 import { db } from "@/lib/dexie.db";
 import AuctionListItem from "./auction-list-item";
@@ -69,7 +69,7 @@ export default function AuctionList() {
         handleOpen={handleOpenDialog}
       ></AuctionListToolbar>
       <Box display="flex">
-        {auctions.map((a) => (
+        {auctions && auctions.map((a) => (
           <AuctionListItem
             key={a.id}
             auction={a}

@@ -11,9 +11,7 @@ interface LotAssignmentListItemAssignmentProps {
   assignment: Assignment;
 }
 
-export default function LotAssignmentListItemAssignment({
-  assignment,
-}: LotAssignmentListItemAssignmentProps) {
+export default function LotAssignmentListItemAssignment({ assignment }: LotAssignmentListItemAssignmentProps) {
   const [bidder, setBidder] = useState<Bidder | undefined>(undefined);
   const [caller, setCaller] = useState<Caller | undefined>(undefined);
 

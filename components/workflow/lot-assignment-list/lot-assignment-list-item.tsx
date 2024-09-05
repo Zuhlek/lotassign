@@ -2,7 +2,7 @@
 import { Lot } from "@/lib/models/lot.model";
 import { db } from "@/lib/dexie.db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { Box, Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography } from "@mui/material";
 import LotAssignmentListItemAssignment from "./lot-assignment-list-item-assignment";
 
 interface LotAssignmentListItemProps {
@@ -10,9 +10,12 @@ interface LotAssignmentListItemProps {
 }
 
 export default function LotAssignmentListItem({ lot }: LotAssignmentListItemProps) {
-  const assignments = useLiveQuery(
-    () => db.assignments.where("id").anyOf(lot.assignmentIds || []).toArray()
-  );
+  const assignments = useLiveQuery(async () => {
+    return await db.assignments
+      .where("id")
+      .anyOf(lot.assignmentIds || [])
+      .toArray();
+  }, [lot.assignmentIds, db.assignments]);
 
   return (
     <Paper sx={{ padding: 2, marginBottom: 2, marginTop: 2 }}>
@@ -22,10 +25,7 @@ export default function LotAssignmentListItem({ lot }: LotAssignmentListItemProp
           <Typography variant="overline">{lot.description}</Typography>
         </Grid>
         <Grid item xs={8}>
-          {assignments &&
-            assignments.map((assignment) => (
-              <LotAssignmentListItemAssignment key={assignment.id} assignment={assignment} />
-            ))}
+          {assignments && assignments.map((assignment) => <LotAssignmentListItemAssignment key={assignment.id} assignment={assignment} />)}
         </Grid>
       </Grid>
     </Paper>
