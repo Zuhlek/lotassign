@@ -1,5 +1,5 @@
 "use client";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useParams } from "next/navigation";
 import LotAssignmentListItem from "./lot-assignment-list-item";

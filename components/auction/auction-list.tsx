@@ -4,7 +4,7 @@ import { AuctionService } from "@/lib/services/auction.service";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import AuctionListItem from "./auction-list-item";
 import AuctionCreateUpdateDialog from "./auction-create-update-dialog";
 import AuctionListToolbar from "./auction-list-toolbar";

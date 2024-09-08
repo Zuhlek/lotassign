@@ -4,7 +4,7 @@ import { AssignmentService } from "@/lib/services/assignment.service";
 import { LotService } from "@/lib/services/lot.service";
 import { AuctionService } from "@/lib/services/auction.service";
 import { Lot } from "@/lib/models/lot.model";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 
 export async function assignCallersToBidders(auctionId: number) {
   const callers = await AuctionService.getCallersForAuction(auctionId);

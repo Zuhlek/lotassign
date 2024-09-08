@@ -8,7 +8,7 @@ import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
 import { Language } from "@/lib/models/language.model";
 
-class MyDatabase extends Dexie {
+export class MyDatabase extends Dexie {
   auctions!: EntityTable<Auction, "id">;
   lots!: EntityTable<Lot, "id">;
   bidders!: EntityTable<Bidder, "id">;

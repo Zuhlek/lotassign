@@ -1,5 +1,5 @@
 "use client";
-import { loadLotsBiddersAndAssignmentsDummyData } from "@/lib/dexie.db";
+import { loadLotsBiddersAndAssignmentsDummyData } from "@/lib/db/dexie.db";
 import { Button } from "@mui/material";
 
 interface ResetDbButtonProps{

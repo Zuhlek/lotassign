@@ -1,5 +1,5 @@
 import { Assignment } from "@/lib/models/assignment.model";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import { LotService } from "./lot.service";
 
 export const AssignmentService = {

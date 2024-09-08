@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@mui/material";
 import ExcelJS from "exceljs";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import { Language } from "@/lib/models/language.model";
 
 interface UploadBidderDataButtonProps {

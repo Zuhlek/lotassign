@@ -1,5 +1,5 @@
 "use client";
-import { removeAllCallersFromAssignmentsByAuctionId } from "@/lib/assignmentLogic";
+import { removeAllCallersFromAssignmentsByAuctionId } from "@/lib/utils/assignmentLogic";
 import { Button } from "@mui/material";
 
 interface ResetAssignmentsButtonProps{

@@ -1,6 +1,6 @@
 "use client";
 import { Lot } from "@/lib/models/lot.model";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { Grid, Paper, Typography } from "@mui/material";
 import LotAssignmentListItemAssignment from "./lot-assignment-list-item-assignment";

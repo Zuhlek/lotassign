@@ -1,4 +1,4 @@
-import { db } from '@/lib/dexie.db';
+import { db } from '@/lib/db/dexie.db';
 import { Caller } from '@/lib/models/caller.model';
 
 export const CallerService = {

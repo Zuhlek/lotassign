@@ -1,4 +1,4 @@
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 import { Lot } from "@/lib/models/lot.model";
 
 export const LotService = {

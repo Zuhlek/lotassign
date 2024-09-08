@@ -1,5 +1,5 @@
 "use client";
-import { assignCallersToBidders } from "@/lib/assignmentLogic";
+import { assignCallersToBidders } from "@/lib/utils/assignmentLogic";
 import { Button } from "@mui/material";
 
 interface RunAssignmentButtonProps{

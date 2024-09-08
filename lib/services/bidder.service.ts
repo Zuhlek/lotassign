@@ -1,5 +1,5 @@
 import { Bidder } from "@/lib/models/bidder.model";
-import { db } from "@/lib/dexie.db";
+import { db } from "@/lib/db/dexie.db";
 
 export const BidderService = {
     async createBidder(bidder: Bidder) {
