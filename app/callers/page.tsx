@@ -7,6 +7,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { CallerService } from '@/lib/services/caller.service'; // Importiere den CallerService
 import { Caller } from '@/lib/models/caller.model';
 import UploadCallerDataButton from "@/components/workflow/buttons/upload-caller-data-button";
+import { Language } from "@/lib/models/language.model";
 
 export default function CallersPage() {
     // Live Query für Callers
@@ -124,9 +125,11 @@ export default function CallersPage() {
                         onChange={(e) =>
                             setCallerData({
                                 ...callerData!,
-                                languages: e.target.value.split(",").map((lang) => lang.trim())
-                            })
-                        }
+                                languages: e.target.value.split(",").map((lang: string) =>
+                                    Object.values(Language).find((val) => val === lang)
+                                      ? Object.values(Language).find((val) => val === lang)
+                                      : Language.Englisch)
+                        })}
                         fullWidth
                         margin="normal"
                     />

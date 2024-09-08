@@ -16,7 +16,10 @@ export default function HomePage() {
       <Link href="/callers" passHref>
         <Button variant="contained" disableElevation size='large'>Go To Callers</Button>
       </Link>
-
+      <p></p>
+      <Link href="/backups" passHref>
+        <Button variant="contained" disableElevation size='large'>Go To Backups</Button>
+      </Link>
     </Box>
   );
 }

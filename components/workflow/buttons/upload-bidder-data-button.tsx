@@ -92,7 +92,7 @@ export default function UploadBidderDataButton({ auctionId }: UploadBidderDataBu
       />
       <label htmlFor="upload-button-file">
         <Button variant="contained" component="span" sx={{ margin: 1 }}>
-          Upload Excel File
+         Import Bidder&Lot Data
         </Button>
       </label>
     </div>

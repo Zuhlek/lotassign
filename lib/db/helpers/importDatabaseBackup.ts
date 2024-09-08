@@ -1,16 +1,20 @@
-import { MyDatabase } from "../dexie.db";
+import { db } from "@/lib/db/dexie.db";
 
-async function importDatabase(db: MyDatabase, jsonData: string): Promise<void> {
-    const backup = JSON.parse(jsonData);
-  
-    await db.transaction('rw', [db.auctions, db.lots, db.bidders, db.callers, db.assignments], async () => {
-      await db.auctions.bulkPut(backup.auctions);
-      await db.lots.bulkPut(backup.lots);
-      await db.bidders.bulkPut(backup.bidders);
-      await db.callers.bulkPut(backup.callers);
-      await db.assignments.bulkPut(backup.assignments);
-    });
-  
-    console.log("Database restored successfully.");
-  }
-  
+export async function importToDatabase(jsonData: string): Promise<void> {
+  const backup = JSON.parse(jsonData);
+
+  // Lösche vorhandene Daten vor dem Wiederherstellen
+  await db.auctions.clear();
+  await db.lots.clear();
+  await db.bidders.clear();
+  await db.callers.clear();
+  await db.assignments.clear();
+
+  // Wiederherstellen der Daten
+  await db.auctions.bulkPut(backup.auctions);
+  await db.lots.bulkPut(backup.lots);
+  await db.bidders.bulkPut(backup.bidders);
+  await db.callers.bulkPut(backup.callers);
+  await db.assignments.bulkPut(backup.assignments);
+
+}

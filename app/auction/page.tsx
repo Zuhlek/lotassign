@@ -12,7 +12,6 @@ export default function AuctionPage() {
         justifyContent="center"
         bgcolor="lightsteelblue"
       >
-        <ResetDbButton></ResetDbButton>
         <LoadAuctionDummyDataButton></LoadAuctionDummyDataButton>
       </Box>
       <AuctionList></AuctionList>

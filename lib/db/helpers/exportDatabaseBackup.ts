@@ -1,6 +1,6 @@
-import { MyDatabase } from "../dexie.db";
+import { db } from "@/lib/db/dexie.db";
 
-async function exportDatabase(db: MyDatabase): Promise<string> {
+export async function exportDatabase(): Promise<any> {
     const auctions = await db.auctions.toArray();
     const lots = await db.lots.toArray();
     const bidders = await db.bidders.toArray();
@@ -17,6 +17,6 @@ async function exportDatabase(db: MyDatabase): Promise<string> {
     };
   
     // Konvertiere das Backup in JSON
-    return JSON.stringify(backup);
+    return backup;
   }
   
