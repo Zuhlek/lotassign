@@ -7,6 +7,7 @@ import { db } from "@/lib/db/dexie.db";
 import ResetDbButton from '@/components/workflow/buttons/reset-db-button';
 import { exportDatabase } from '@/lib/db/helpers/exportDatabaseBackup';
 import { importToDatabase } from '@/lib/db/helpers/importDatabaseBackup';
+import DataIntegrityChecker from '@/components/DataIntegrityChecker';
 
 export default function BackupsPage() {
     const [open, setOpen] = useState(false);
@@ -84,6 +85,9 @@ export default function BackupsPage() {
             </label>
 
             <ResetDbButton></ResetDbButton>
+            <p></p>
+
+            <DataIntegrityChecker />
 
             {/* Dialog zur Bestätigung des Imports */}
             <Dialog
