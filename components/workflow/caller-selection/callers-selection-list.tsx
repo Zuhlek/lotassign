@@ -3,6 +3,7 @@ import Grid from "@mui/material/Grid";
 import { Caller } from "@/lib/models/caller.model";
 import { CallerService } from "@/lib/services/caller.service";
 import { AuctionService } from "@/lib/services/auction.service";
+import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service"; // Importiere den Service
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CallersSearchBarProps from "./callers-searchbar";
@@ -57,6 +58,17 @@ export default function CallersSelectionList() {
     setChecked(newChecked);
   };
 
+  // Hilfsfunktion: Entferne die PrioCallerAssignments, wenn ein Caller aus der rechten Liste entfernt wird
+  const removePrioAssignmentsForRemovedCallers = async (removedCallerIds: number[]) => {
+    for (const callerId of removedCallerIds) {
+      // Finde alle PrioCallerAssignments für diesen Caller und Auction und lösche sie
+      const assignments = await PrioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auctionId);
+      for (const assignment of assignments) {
+        await PrioCallerAssignmentService.deletePrioAssignment(assignment.bidderId, auctionId);
+      }
+    }
+  };
+
   const handleAllRight = () => {
     setRight(right.concat(left));
     setLeft([]);
@@ -70,14 +82,18 @@ export default function CallersSelectionList() {
     updateAuctionCallers(right.concat(leftChecked));
   };
 
-  const handleCheckedLeft = () => {
+  const handleCheckedLeft = async () => {
+    // Bevor wir Callers nach links verschieben, prüfen wir, ob PrioCallerAssignments existieren
+    await removePrioAssignmentsForRemovedCallers(rightChecked);
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
     setChecked(not(checked, rightChecked));
     updateAuctionCallers(not(right, rightChecked));
   };
 
-  const handleAllLeft = () => {
+  const handleAllLeft = async () => {
+    // Bevor wir alle Callers nach links verschieben, prüfen wir, ob PrioCallerAssignments existieren
+    await removePrioAssignmentsForRemovedCallers([...right]);
     setLeft(left.concat(right));
     setRight([]);
     updateAuctionCallers([]);

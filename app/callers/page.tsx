@@ -6,8 +6,8 @@ import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from "@mui/ico
 import { useLiveQuery } from "dexie-react-hooks";
 import { CallerService } from '@/lib/services/caller.service'; // Importiere den CallerService
 import { Caller } from '@/lib/models/caller.model';
-import UploadCallerDataButton from "@/components/workflow/buttons/upload-caller-data-button";
 import { Language } from "@/lib/models/language.model";
+import UploadExcelDataButton from "@/components/workflow/buttons/upload-excel-data-button";
 
 export default function CallersPage() {
     // Live Query für Callers
@@ -64,7 +64,7 @@ export default function CallersPage() {
             <h1>Callers</h1>
             <TableContainer sx={{ maxWidth: 1000 }}>
                 <Box display="flex" justifyContent="flex-end" marginBottom={2}>
-                    <UploadCallerDataButton></UploadCallerDataButton>
+                    <UploadExcelDataButton uploadModel="Caller"></UploadExcelDataButton>
                     <Button variant="contained"  onClick={() => handleOpen()}><AddIcon /></Button>
                 </Box>
                 <Table size="small" stickyHeader >

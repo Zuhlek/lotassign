@@ -7,6 +7,7 @@ import { Auction } from "@/lib/models/auction.model";
 import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
 import { Language } from "@/lib/models/language.model";
+import { PrioCallerAssignment } from "../models/prioCallerAssignment";
 
 export class MyDatabase extends Dexie {
   auctions!: EntityTable<Auction, "id">;
@@ -14,15 +15,17 @@ export class MyDatabase extends Dexie {
   bidders!: EntityTable<Bidder, "id">;
   callers!: EntityTable<Caller, "id">;
   assignments!: EntityTable<Assignment, "id">;
+  prioCallerAssignments!: EntityTable<PrioCallerAssignment, "id">;
 
   constructor() {
     super("LotAssignDB");
     this.version(1).stores({
       auctions: "++id,name,date,*lotIds,*callerIds",
-      lots: "++id,number,description,auctionId,*assignmentIds",
+      lots: "++id,number,description,auctionId,[number+auctionId],*assignmentIds",
       bidders: "++id,name,*languages,phoneNumber",
       callers: "++id,name,abbreviation,*languages",
       assignments: "++id,lotId,bidderId,callerId,isFinal",
+      prioCallerAssignments: "++id, auctionId, bidderId, callerId"
     });
   }
 }
