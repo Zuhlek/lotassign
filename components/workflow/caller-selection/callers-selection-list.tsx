@@ -64,7 +64,7 @@ export default function CallersSelectionList() {
       // Finde alle PrioCallerAssignments für diesen Caller und Auction und lösche sie
       const assignments = await PrioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auctionId);
       for (const assignment of assignments) {
-        await PrioCallerAssignmentService.deletePrioAssignment(assignment.bidderId, auctionId);
+        await PrioCallerAssignmentService.deletePrioAssignmentByBidderAndAuctionId(assignment.bidderId, auctionId);
       }
     }
   };

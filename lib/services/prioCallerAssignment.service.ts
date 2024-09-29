@@ -13,8 +13,7 @@ export const PrioCallerAssignmentService = {
   async updatePrioAssignment(id: number, assignment: PrioCallerAssignment) {
     return await db.prioCallerAssignments.update(id, assignment);
   },
-  async deletePrioAssignment(bidderId: number, auctionId: number) {
-    // Finde das PrioCallerAssignment mit der passenden bidderId und auctionId und lösche es
+  async deletePrioAssignmentByBidderAndAuctionId(bidderId: number, auctionId: number) {
     const assignmentToDelete = await db.prioCallerAssignments
       .where({ bidderId, auctionId })
       .first();
@@ -22,6 +21,9 @@ export const PrioCallerAssignmentService = {
     if (assignmentToDelete) {
       await db.prioCallerAssignments.delete(assignmentToDelete.id);
     }
+  },
+  async deletePrioAssignment(id: number) {
+    return await db.prioCallerAssignments.delete(id);
   },
   async getPrioAssignmentsByCallerIdAndAuctionId(callerId: number, auctionId: number) {
     // Finde alle PrioCallerAssignments für den gegebenen Caller und die Auction
