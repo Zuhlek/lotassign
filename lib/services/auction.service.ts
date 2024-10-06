@@ -10,13 +10,22 @@ export const AuctionService = {
         return await db.auctions.toArray();
       },
 
-      async getAuctionById(id: number) {
+      async getAuctionById(id: number | undefined) {
+        if (!id) {
+          throw new Error("id is required");
+        }
         return await db.auctions.get(id);
       },
-      async updateAuction(id: number, auction: Auction) {
+      async updateAuction(id: number | undefined, auction: Auction) {
+        if (!id) {
+          throw new Error("id is required");
+        }
         return await db.auctions.update(id, auction);
       },
-      async deleteAuction(id: number) {
+      async deleteAuction(id: number | undefined) {
+        if (!id) {
+          throw new Error("id is required");
+        }
         return await db.auctions.delete(id);
       },
       async getCallersForAuction(id: number){

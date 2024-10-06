@@ -1,9 +1,21 @@
+"use client";
+
 import { Box } from "@mui/material";
 import AuctionList from "@/components/auction/auction-list";
-import ResetDbButton from "@/components/workflow/buttons/reset-db-button";
 import LoadAuctionDummyDataButton from "@/components/workflow/buttons/load-auction-dummy-data-button";
+import { useAuctions } from "@/hooks/useAuctions"; // Importiere den Custom Hook
 
 export default function AuctionPage() {
+  const { auctions, searchText, setSearchText, isLoading, error } = useAuctions();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <Box>
       <Box
@@ -14,7 +26,7 @@ export default function AuctionPage() {
       >
         <LoadAuctionDummyDataButton></LoadAuctionDummyDataButton>
       </Box>
-      <AuctionList></AuctionList>
+      <AuctionList auctions={auctions} searchText={searchText} setSearchText={setSearchText} />
     </Box>
   );
 }

@@ -1,39 +1,30 @@
 "use client";
 import { Auction } from "@/lib/models/auction.model";
-import { AuctionService } from "@/lib/services/auction.service";
-import { useLiveQuery } from "dexie-react-hooks";
 import { Box } from "@mui/material";
 import { useState } from "react";
-import { db } from "@/lib/db/dexie.db";
 import AuctionListItem from "./auction-list-item";
 import AuctionCreateUpdateDialog from "./auction-create-update-dialog";
 import AuctionListToolbar from "./auction-list-toolbar";
+import { AuctionService } from "@/lib/services/auction.service";
 
-export default function AuctionList() {
-  const [searchText, setSearchText] = useState<string>("");
-  const auctions = useLiveQuery(
-    () =>
-      db.auctions
-        .filter((auction) => auction.name.toLowerCase().includes(searchText.toLowerCase()))
-        .toArray(),
-    [searchText]
-  );
+interface AuctionListProps {
+  auctions: Auction[] | undefined;
+  searchText: string;
+  setSearchText: React.Dispatch<React.SetStateAction<string>>;
+}
+
+export default function AuctionList({ auctions, searchText, setSearchText }: AuctionListProps) {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
   const [selectedAuction, setSelectedAuction] = useState<Auction>({ name: "", date: new Date() });
+
 
   const handleCreateAuction = async (auction: Auction): Promise<number | undefined> => {
     return await AuctionService.createAuction(auction);
   };
 
   const handleUpdateAuction = async (auction: Auction): Promise<number | undefined> => {
-    if (auction.id !== null && auction.id !== undefined) {
       return await AuctionService.updateAuction(auction.id, auction);
-    } else {
-      console.error(
-        "Auction object does not contain auctionId which is required for an update operation"
-      );
-    }
   };
 
   const handleOpenDialog = (createMode: boolean) => {
@@ -46,20 +37,12 @@ export default function AuctionList() {
   };
 
   const handleDeleteClick = async (auctionId: number | undefined) => {
-    if (auctionId) {
-      await AuctionService.deleteAuction(auctionId);
-    } else {
-      console.error("Failed to delete auction: ", auctionId);
-    }
+    await AuctionService.deleteAuction(auctionId);
   };
 
   const handleSelection = (auction: Auction) => {
     setSelectedAuction(auction);
   };
-
-  if (!auctions) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div>
@@ -78,7 +61,7 @@ export default function AuctionList() {
             handleSelection={handleSelection}
           ></AuctionListItem>
         ))}
-      </Box>{" "}
+      </Box>
       <AuctionCreateUpdateDialog
         selectedAuction={selectedAuction}
         isVisible={isDialogVisible}

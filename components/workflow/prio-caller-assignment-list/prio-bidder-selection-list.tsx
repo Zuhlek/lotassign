@@ -1,80 +1,49 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Grid } from "@mui/material";
-import { BidderService } from "@/lib/services/bidder.service";
-import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service";
-import { AuctionService } from "@/lib/services/auction.service";
-import { useLiveQuery } from "dexie-react-hooks";
 import PrioCallerAssignmentForm from "./prio-caller-assignment-form";
 import PrioCallerAssignmentList from "./prio-caller-assignment-list";
-import { Bidder } from "@/lib/models/bidder.model";
-import { Caller } from "@/lib/models/caller.model";
-import { LotService } from "@/lib/services/lot.service";
-import { Assignment } from "@/lib/models/assignment.model";
-import { AssignmentService } from "@/lib/services/assignment.service";
+import { useBiddersByAuctionId } from "@/hooks/useBiddersByAuctionId"; // Hook für Bidders
+import { useCallers } from "@/hooks/useCallers"; // Hook für Callers
+import { usePrioAssignments } from "@/hooks/usePrioAssignments"; // Hook für PrioAssignments
+import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service";
 
 interface PrioBidderSelectionListProps {
   auctionId: number;
 }
 
 export default function PrioBidderSelectionList({ auctionId }: PrioBidderSelectionListProps) {
-  const [bidders, setBidders] = useState<Bidder[]>([]);
-  const [prioAssignments, setPrioAssignments] = useState<Map<number, number>>(new Map());
 
-  const allCallers = useLiveQuery(() => AuctionService.getCallersForAuction(auctionId), [auctionId], []);
-  const livePrioAssignments = useLiveQuery(() => PrioCallerAssignmentService.getPrioAssignmentsByAuctionId(auctionId), [auctionId], []);
+  const { bidders, isLoading: biddersLoading, error: biddersError } = useBiddersByAuctionId(auctionId);
+  const { prioAssignments } = usePrioAssignments(auctionId);
+  const { callers, isLoading: callersLoading, error: callersError } = useCallers();
+
+  const [prioAssignmentsMap, setPrioAssignmentsMap] = useState<Map<number, number>>(new Map());
 
   useEffect(() => {
-    const fetchData = async () => {
-      const lots = await LotService.getAllLotsByAuctionId(auctionId);
-
-      const lotIds = lots.map((lot) => lot.id);
-      let assignments: Assignment[] = [];
-      for (const lotId of lotIds) {
-        const lotAssignments = await AssignmentService.getAssignmentsByLotId(lotId);
-        assignments = assignments.concat(lotAssignments);
-      }
-
-      const uniqueBidderIds = Array.from(new Set(assignments.map((a) => a.bidderId)));
-
-      let bidders: Bidder[] = [];
-      for (const id of uniqueBidderIds) {
-        const bidder = await BidderService.getBidderById(id);
-        if (bidder) {
-          bidders.push(bidder);
-        }
-      }
-      setBidders(bidders);
-
-      if (livePrioAssignments) {
-        const assignmentsMap = new Map<number, number>();
-        livePrioAssignments.forEach((assignment) => {
-          assignmentsMap.set(assignment.bidderId, assignment.callerId);
-        });
-        setPrioAssignments(assignmentsMap);
-      }
-    };
-
-    fetchData();
-  }, [auctionId, livePrioAssignments]);
+    if (prioAssignments) {
+      const assignmentsMap = new Map<number, number>();
+      prioAssignments.forEach((assignment) => {
+        assignmentsMap.set(assignment.bidderId, assignment.callerId);
+      });
+      setPrioAssignmentsMap(assignmentsMap);
+    }
+  }, [prioAssignments]);
 
   const handleCallerChange = (bidderId: number, callerId: number) => {
-    const newPrioAssignments = new Map(prioAssignments);
+    const newPrioAssignments = new Map(prioAssignmentsMap);
     newPrioAssignments.set(bidderId, callerId);
-    setPrioAssignments(newPrioAssignments);
+    setPrioAssignmentsMap(newPrioAssignments);
   };
 
-  // Verbesserte saveAssignments-Funktion
   const saveAssignments = async () => {
-    if (prioAssignments) {
-      // Überprüfen, ob es neue oder aktualisierte Zuordnungen gibt
-      for (const [bidderId, callerId] of prioAssignments.entries()) {
-        const existingAssignment = livePrioAssignments?.find(
+    if (prioAssignmentsMap) {
+      for (const [bidderId, callerId] of prioAssignmentsMap.entries()) {
+        const existingAssignment = prioAssignments?.find(
           (assignment) => assignment.bidderId === bidderId && assignment.callerId === callerId
         );
 
-        // Speichere nur, wenn es eine neue oder geänderte Zuordnung ist
         if (!existingAssignment) {
           await PrioCallerAssignmentService.createPrioAssignment({
             auctionId,
@@ -87,23 +56,31 @@ export default function PrioBidderSelectionList({ auctionId }: PrioBidderSelecti
     alert("Zuordnungen erfolgreich gespeichert.");
   };
 
+  if (biddersLoading || callersLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (biddersError || callersError) {
+    return <div>Error: {biddersError || callersError}</div>;
+  }
+
   return (
     <Box sx={{ padding: 2 }}>
       <Grid container spacing={2}>
         <Grid item xs={7}>
           <PrioCallerAssignmentForm
             bidders={bidders}
-            allCallers={allCallers || []}
-            prioAssignments={prioAssignments}
+            allCallers={callers || []}
+            prioAssignments={prioAssignmentsMap}
             handleCallerChange={handleCallerChange}
             saveAssignments={saveAssignments}
           />
         </Grid>
         <Grid item xs={5}>
           <PrioCallerAssignmentList
-            prioAssignments={livePrioAssignments || []}
+            prioAssignments={prioAssignments || []}
             bidders={bidders}
-            callers={allCallers || []}
+            callers={callers || []}
           />
         </Grid>
       </Grid>

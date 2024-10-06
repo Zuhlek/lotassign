@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import CallersSearchBarProps from "./callers-searchbar";
 import CallerList from "./callers-list";
 import ButtonSection from "./button-section";
+import { Auction } from "@/lib/models/auction.model";
 
 function not(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -18,29 +19,27 @@ function intersection(a: readonly number[], b: readonly number[]) {
   return a.filter((value) => b.indexOf(value) !== -1);
 }
 
-export default function CallersSelectionList() {
+interface CallersSelectionListProps {
+  auction: Auction;
+  callers: Caller[];
+}
+
+export default function CallersSelectionList({ auction, callers }: CallersSelectionListProps) {
   const [checked, setChecked] = useState<readonly number[]>([]);
-  const [callers, setCallers] = useState<Caller[]>([]);
   const [left, setLeft] = useState<readonly number[]>([]);
   const [right, setRight] = useState<readonly number[]>([]);
   const [leftFilter, setLeftFilter] = useState<string>("");
   const [rightFilter, setRightFilter] = useState<string>("");
-  const auctionId = Number(useParams().auctionId);
 
   useEffect(() => {
-    async function fetchData() {
-      const allCallers = await CallerService.getAllCallers();
-      setCallers(allCallers);
-
-      const auction = await AuctionService.getAuctionById(Number(auctionId));
-      if (auction) {
-        setRight(auction.callerIds || []);
-        setLeft(not(allCallers.map((caller) => caller.id!), auction.callerIds || []));
-      }
-    }
-
-    fetchData();
-  }, [auctionId]);
+    setRight(auction.callerIds || []);
+    setLeft(
+      not(
+        callers.map((caller) => caller.id!),
+        auction.callerIds || []
+      )
+    );
+  }, [auction, callers]);
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -58,13 +57,11 @@ export default function CallersSelectionList() {
     setChecked(newChecked);
   };
 
-  // Hilfsfunktion: Entferne die PrioCallerAssignments, wenn ein Caller aus der rechten Liste entfernt wird
   const removePrioAssignmentsForRemovedCallers = async (removedCallerIds: number[]) => {
     for (const callerId of removedCallerIds) {
-      // Finde alle PrioCallerAssignments für diesen Caller und Auction und lösche sie
-      const assignments = await PrioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auctionId);
+      const assignments = await PrioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auction.id!);
       for (const assignment of assignments) {
-        await PrioCallerAssignmentService.deletePrioAssignmentByBidderAndAuctionId(assignment.bidderId, auctionId);
+        await PrioCallerAssignmentService.deletePrioAssignmentByBidderAndAuctionId(assignment.bidderId, auction.id!);
       }
     }
   };
@@ -83,7 +80,6 @@ export default function CallersSelectionList() {
   };
 
   const handleCheckedLeft = async () => {
-    // Bevor wir Callers nach links verschieben, prüfen wir, ob PrioCallerAssignments existieren
     await removePrioAssignmentsForRemovedCallers(rightChecked);
     setLeft(left.concat(rightChecked));
     setRight(not(right, rightChecked));
@@ -92,7 +88,6 @@ export default function CallersSelectionList() {
   };
 
   const handleAllLeft = async () => {
-    // Bevor wir alle Callers nach links verschieben, prüfen wir, ob PrioCallerAssignments existieren
     await removePrioAssignmentsForRemovedCallers([...right]);
     setLeft(left.concat(right));
     setRight([]);
@@ -100,18 +95,21 @@ export default function CallersSelectionList() {
   };
 
   const updateAuctionCallers = async (callerIds: number[]) => {
-    const auction = await AuctionService.getAuctionById(auctionId);
-    if (auction) {
-      await AuctionService.updateAuction(auctionId, { ...auction, callerIds });
-    }
+    await AuctionService.updateAuction(auction.id!, { ...auction, callerIds });
   };
 
   const filteredLeft = left.filter((id) =>
-    callers.find((caller) => caller.id === id)?.name.toLowerCase().includes(leftFilter.toLowerCase())
+    callers
+      .find((caller) => caller.id === id)
+      ?.name.toLowerCase()
+      .includes(leftFilter.toLowerCase())
   );
 
   const filteredRight = right.filter((id) =>
-    callers.find((caller) => caller.id === id)?.name.toLowerCase().includes(rightFilter.toLowerCase())
+    callers
+      .find((caller) => caller.id === id)
+      ?.name.toLowerCase()
+      .includes(rightFilter.toLowerCase())
   );
 
   return (
