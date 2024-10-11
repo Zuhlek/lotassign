@@ -12,6 +12,7 @@ export function useBiddersByAuctionId(auctionId: number) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    console.log("useBiddersByAuctionId", auctionId);
     const fetchBidders = async () => {
       try {
         setIsLoading(true);

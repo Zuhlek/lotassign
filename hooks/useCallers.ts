@@ -8,6 +8,7 @@ export function useCallers() {
   const [error, setError] = useState<string | null>(null);
   
   const callers = useLiveQuery(async () => {
+    console.log("useCallers");
     try {
       const data = await CallerService.getAllCallers();
       setIsLoading(false);

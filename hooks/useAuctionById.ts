@@ -9,6 +9,7 @@ export function useAuctionById(auctionId: number) {
 
   const auction = useLiveQuery(
     async () => {
+      console.log("useAuctionById", auctionId);
       try {
         setIsLoading(true);
         const auction = await db.auctions.get(auctionId);

@@ -3,6 +3,7 @@ import { PrioCallerAssignment } from "../models/prioCallerAssignment";
 
 export const PrioCallerAssignmentService = {
   async createPrioAssignment(assignment: PrioCallerAssignment) {
+    console.log("PrioCallerAssignmentService.createPrioAssignment", assignment);
     return await db.prioCallerAssignments.add(assignment);
   },
   async getPrioAssignmentsByAuctionId(auctionId: number) {
@@ -26,7 +27,7 @@ export const PrioCallerAssignmentService = {
     return await db.prioCallerAssignments.delete(id);
   },
   async getPrioAssignmentsByCallerIdAndAuctionId(callerId: number, auctionId: number) {
-    // Finde alle PrioCallerAssignments für den gegebenen Caller und die Auction
+
     return db.prioCallerAssignments
       .where({ callerId, auctionId })
       .toArray();

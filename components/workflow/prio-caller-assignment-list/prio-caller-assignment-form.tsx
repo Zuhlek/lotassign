@@ -1,33 +1,30 @@
 import React, { useState } from "react";
-import { FormControl, InputLabel, MenuItem, Select, Button, Box, Typography, Grid } from "@mui/material";
+import { FormControl, InputLabel, MenuItem, Select, Button, Box, Grid } from "@mui/material";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Caller } from "@/lib/models/caller.model";
 
 interface PrioCallerAssignmentFormProps {
-  bidders: Bidder[];
-  allCallers: Caller[];
+  availableBidders: Bidder[];
+  availableCallers: Caller[];
   prioAssignments: Map<number, number>;
-  handleCallerChange: (bidderId: number, callerId: number) => void;
-  saveAssignments: () => void;
+  onSaveAssignment: (bidderId: number, callerId: number) => void;  // Übergibt die IDs an die Elternkomponente
 }
 
 export default function PrioCallerAssignmentForm({
-  bidders,
-  allCallers,
+  availableBidders,
+  availableCallers,
   prioAssignments,
-  handleCallerChange,
-  saveAssignments,
+  onSaveAssignment,
 }: PrioCallerAssignmentFormProps) {
   const [selectedBidder, setSelectedBidder] = useState<number | "">("");
   const [selectedCaller, setSelectedCaller] = useState<number | "">("");
 
+  // Filtere Callers, die bereits zugewiesen wurden, außer sie gehören zum aktuell ausgewählten Bidder
   const getAvailableCallers = (bidderId: number) => {
     const assignedCallers = Array.from(prioAssignments.values());
-
-    return allCallers.filter((caller) => {
-      if (!caller.id) return false;
-      return !assignedCallers.includes(caller.id) || prioAssignments.get(bidderId) === caller.id;
-    });
+    return availableCallers.filter(
+      (caller) => !assignedCallers.includes(caller.id!) || prioAssignments.get(bidderId) === caller.id
+    );
   };
 
   return (
@@ -44,7 +41,7 @@ export default function PrioCallerAssignmentForm({
                 label="Bidder"
                 onChange={(e) => setSelectedBidder(e.target.value as number)}
               >
-                {bidders.map((bidder) => (
+                {availableBidders.map((bidder) => (
                   <MenuItem key={bidder.id} value={bidder.id}>
                     {bidder.name}
                   </MenuItem>
@@ -70,15 +67,14 @@ export default function PrioCallerAssignmentForm({
             </FormControl>
           </Box>
         </Grid>
-        <Grid item xs={3} >
+        <Grid item xs={3}>
           <Button
-          sx={{marginLeft:1}}
+            sx={{ marginLeft: 1 }}
             variant="outlined"
             size="small"
             onClick={() => {
               if (selectedBidder && selectedCaller) {
-                handleCallerChange(selectedBidder, selectedCaller);
-                saveAssignments();
+                onSaveAssignment(selectedBidder as number, selectedCaller as number);
                 setSelectedBidder("");
                 setSelectedCaller("");
               }
