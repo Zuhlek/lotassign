@@ -3,6 +3,7 @@ import { Button } from "@mui/material";
 import ExcelJS from "exceljs";
 import { db } from "@/lib/db/dexie.db";
 import { Language } from "@/lib/models/language.model";
+import { callerService } from "@/lib/services/caller.service";
 
 interface UploadDataButtonProps {
   auctionId?: number; // auctionId wird nur für Bidders benötigt
@@ -114,11 +115,7 @@ export default function UploadExcelDataButton({ auctionId, uploadModel }: Upload
     });
 
     for (const row of rows) {
-      await db.callers.add({
-        name: row.CallerName,
-        abbreviation: row.CallerAbbreviation,
-        languages: row.CallerLanguages,
-      });
+      await callerService.createCaller(row.CallerName, row.CallerAbbreviation, row.CallerLanguages);
     }
 
     alert("Caller data successfully uploaded.");

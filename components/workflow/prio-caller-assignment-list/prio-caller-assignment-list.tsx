@@ -28,7 +28,7 @@ export default function PrioCallerAssignmentList({ prioAssignments, bidders, cal
   }
 
   return (
-    <Box>
+    <Box display="flex" justifyContent="start" alignContent="center">
       <List sx={{ padding:0, margin:0}}>
         {prioAssignments.map((assignment) => (
           <ListItem key={`${assignment.bidderId}-${assignment.callerId}`} dense sx={{ padding:0, margin:0}}>

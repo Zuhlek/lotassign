@@ -1,6 +1,6 @@
 "use client";
 import { useLiveQuery } from "dexie-react-hooks";
-import { CallerService } from "@/lib/services/caller.service";
+import { callerService } from "@/lib/services/caller.service";
 import { useState } from "react";
 
 export function useCallers() {
@@ -10,7 +10,7 @@ export function useCallers() {
   const callers = useLiveQuery(async () => {
     console.log("useCallers");
     try {
-      const data = await CallerService.getAllCallers();
+      const data = await callerService.getAllCallers();
       setIsLoading(false);
       return data;
     } catch (err) {

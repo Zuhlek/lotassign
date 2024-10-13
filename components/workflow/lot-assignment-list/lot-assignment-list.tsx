@@ -5,25 +5,27 @@ import { useParams } from "next/navigation";
 import LotAssignmentListItem from "./lot-assignment-list-item";
 import { Box, Grid, Typography } from "@mui/material";
 import LotAnalysisDashboard from "./lot-analysis-dashboard";
+import { useLotsByAuctionId } from "@/hooks/useLotsByAuctionId";
 
 export default function LotAssignmentList() {
   const auctionId = Number(useParams().auctionId);
 
-  // Use live query to get lots
-  const lots = useLiveQuery(async () => {
-    return await db.lots.filter((lot) => lot.auctionId === auctionId).toArray();
-  }, [auctionId]);
+  const { lots, isLoading, error} = useLotsByAuctionId(auctionId);
 
 
-  if (!lots) {
+  if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   return (
     <Box>
       <Grid container spacing={2}>
-        {lots.map((lot) => (
-          <Grid item xs={12} key={lot.id}>
+        {lots && lots.map((lot) => (
+          <Grid item xs={4} key={lot.id} >
             <LotAssignmentListItem lot={lot}></LotAssignmentListItem>
           </Grid>
         ))}

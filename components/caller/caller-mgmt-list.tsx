@@ -3,10 +3,10 @@
 import React, { useState } from "react";
 import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
-import { CallerService } from '@/lib/services/caller.service';
+import { callerService } from '@/lib/services/caller.service';
 import { Caller } from '@/lib/models/caller.model';
 import { Language } from "@/lib/models/language.model";
-import UploadExcelDataButton from "@/components/workflow/buttons/upload-excel-data-button";
+import UploadExcelDataButton from "@/components/buttons/upload-excel-data-button";
 
 interface CallerMgmtListProps {
   callers: Caller[] | undefined;
@@ -40,17 +40,17 @@ export default function CallerMgmtList({ callers }: CallerMgmtListProps) {
     const handleSave = async () => {
         if (callerData) {
             const updatedCaller = { ...callerData, languages: selectedLanguages };
-            if (isEdit) {
-                await CallerService.updateCaller(callerData.id!, updatedCaller);
+            if (isEdit && callerData.id) {
+                await callerService.updateCaller(callerData.id, callerData.name, callerData.abbreviation, updatedCaller.languages);
             } else {
-                await CallerService.createCaller(updatedCaller);
+                await callerService.createCaller(updatedCaller.name, updatedCaller.abbreviation, updatedCaller.languages);
             }
             handleClose();
         }
     };
 
     const handleDelete = async (id: number) => {
-        await CallerService.deleteCaller(id);
+        await callerService.deleteCaller(id);
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

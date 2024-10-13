@@ -1,8 +1,15 @@
-import { Language } from "./language.model";
+import { Language } from "@/lib/models/language.model";
 
-export type Caller = {
+export class Caller {
   id?: number;
   name: string;
   abbreviation: string;
-  languages: (Language | undefined)[];
-};
+  languages: Language[];
+
+  constructor(id: number | undefined, name: string, abbreviation: string, languages: Language[]) {
+    this.id = id;
+    this.name = name;
+    this.abbreviation = abbreviation;
+    this.languages = languages;
+  }
+}

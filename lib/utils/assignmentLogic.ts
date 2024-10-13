@@ -6,95 +6,133 @@ import { AuctionService } from "@/lib/services/auction.service";
 import { Lot } from "@/lib/models/lot.model";
 import { db } from "@/lib/db/dexie.db";
 
-export async function assignCallersToBidders(auctionId: number) {
-  const callers = await AuctionService.getCallersForAuction(auctionId);
-  const lots = await LotService.getAllLotsByAuctionId(auctionId);
-  debugger;
-  let nextAndCurrAndPrevLots = [];
+export class AssignmentLogic {
+  private assignmentService: typeof AssignmentService;
+  private lotService: typeof LotService;
+  private auctionService: typeof AuctionService;
 
-  for (const l of lots) {
-    const assignments = await AssignmentService.getAssignmentsByLotId(l.id);
-    nextAndCurrAndPrevLots = await LotService.getNextAndCurrentAndPreviousNLots(l.number, 4, auctionId);
-    for (const a of assignments) {
-      if (a.isFinal || a.callerId) continue;
+  constructor(
+    assignmentService: typeof AssignmentService,
+    lotService: typeof LotService,
+    auctionService: typeof AuctionService
+  ) {
+    this.assignmentService = assignmentService;
+    this.lotService = lotService;
+    this.auctionService = auctionService;
+  }
 
-      for (const caller of callers) {
-        if (!caller.id) continue;
+  /**
+   * Assign callers to bidders for a given auction.
+   */
+  async assignCallersToBidders(auctionId: number): Promise<void> {
+    const callers = await this.auctionService.getCallersForAuction(auctionId);
+    const lots = await this.lotService.getAllLotsByAuctionId(auctionId);
 
-        const isEligible = await isTheCallerEligible(caller.id, nextAndCurrAndPrevLots);
-        if (isEligible) {
-          await assignCallerToBidder(a, caller, auctionId);
-          break;
+    if (!callers || !lots) {
+      alert("No callers or lots found for this auction");
+      return;
+    }
+
+    for (const lot of lots) {
+      const assignments = await this.assignmentService.getAssignmentsByLotId(lot.id);
+      const nextAndCurrAndPrevLots = await this.lotService.getNextAndCurrentAndPreviousNLots(
+        lot.number, 4, auctionId
+      );
+
+      for (const assignment of assignments) {
+        if (assignment.isFinal || assignment.callerId) continue;
+
+        for (const caller of callers) {
+          if (!caller.id) continue;
+
+          const isEligible = await this.isTheCallerEligible(caller.id, nextAndCurrAndPrevLots);
+          if (isEligible) {
+            await this.assignCallerToBidder(assignment, caller, auctionId);
+            break;
+          }
         }
       }
     }
   }
-}
 
-async function isTheCallerEligible(callerId: number, lots: Lot[]) {
-  const relevantAssignments: Assignment[] = [];
-  for (const l of lots) {
-    const lotAssignments = await AssignmentService.getAssignmentsByLotId(l.id);
-    if (lotAssignments) {
-      for (const a of lotAssignments) {
-        relevantAssignments.push(a);
+  /**
+   * Check if a caller is eligible to be assigned to a bidder for certain lots.
+   */
+  private async isTheCallerEligible(callerId: number, lots: Lot[]): Promise<boolean> {
+    const relevantAssignments: Assignment[] = [];
+
+    for (const lot of lots) {
+      const lotAssignments = await this.assignmentService.getAssignmentsByLotId(lot.id);
+      if (lotAssignments) {
+        relevantAssignments.push(...lotAssignments);
       }
     }
-  }
 
-  for (const assignment of relevantAssignments) {
-    if (assignment.callerId === callerId) {
-      return false;
-    }
-  }
-debugger;
-  return true;
-}
-
-async function assignCallerToBidder(relevantAssignment: Assignment, caller: Caller, auctionId: number) {
-  if (!relevantAssignment.id) return;
-
-  const lots = await LotService.getAllLotsByAuctionId(auctionId);
-  const assignmentsToUpdate: Assignment[] = [];
-
-  assignmentsToUpdate.push(relevantAssignment);
-
-  for (const l of lots) {
-    const assignments = await AssignmentService.getAssignmentsByLotId(l.id);
-    for (const a of assignments) {
-      if (a.bidderId === relevantAssignment.bidderId && !a.isFinal && (!a.callerId || a.id === relevantAssignment.id)) {
-        assignmentsToUpdate.push(a);
+    for (const assignment of relevantAssignments) {
+      if (assignment.callerId === callerId) {
+        return false;
       }
     }
+    return true;
   }
 
-  for (const assignment of assignmentsToUpdate) {
-    if(!assignment.id) continue;
-    await AssignmentService.updateAssignment(assignment.id, {
-      lotId: assignment.lotId,
-      bidderId: assignment.bidderId,
-      isFinal: assignment.isFinal,
-      callerId: caller.id,
-    });
-    console.log(`Assigned ${caller.name} to ${assignment.bidderId} for lot ${assignment.lotId}`);
-  }
-}
+  /**
+   * Assign a caller to a bidder for the relevant assignment and update other associated assignments.
+   */
+  private async assignCallerToBidder(
+    relevantAssignment: Assignment,
+    caller: Caller,
+    auctionId: number
+  ): Promise<void> {
+    if (!relevantAssignment.id) return;
 
+    const lots = await this.lotService.getAllLotsByAuctionId(auctionId);
+    const assignmentsToUpdate: Assignment[] = [relevantAssignment];
 
-export async function removeAllCallersFromAssignmentsByAuctionId(auctionId: number) {
-  const lots = await LotService.getAllLotsByAuctionId(auctionId);
-  for (const l of lots) {
-    const assignments = await AssignmentService.getAssignmentsByLotId(l.id);
-    for (const a of assignments) {
-      if (a.callerId && a.id) {
-        await AssignmentService.updateAssignment(a.id, {
-          lotId: a.lotId,
-          bidderId: a.bidderId,
-          isFinal: a.isFinal,
-          callerId: undefined,
-        });
+    for (const lot of lots) {
+      const assignments = await this.assignmentService.getAssignmentsByLotId(lot.id);
+      for (const assignment of assignments) {
+        if (
+          assignment.bidderId === relevantAssignment.bidderId &&
+          !assignment.isFinal &&
+          (!assignment.callerId || assignment.id === relevantAssignment.id)
+        ) {
+          assignmentsToUpdate.push(assignment);
+        }
       }
     }
+
+    for (const assignment of assignmentsToUpdate) {
+      if (!assignment.id) continue;
+      await this.assignmentService.updateAssignment(assignment.id, {
+        lotId: assignment.lotId,
+        bidderId: assignment.bidderId,
+        isFinal: assignment.isFinal,
+        callerId: caller.id,
+      });
+      console.log(`Assigned ${caller.name} to ${assignment.bidderId} for lot ${assignment.lotId}`);
+    }
   }
-  await db.assignments.toArray(); 
+
+  /**
+   * Remove all callers from assignments for a specific auction.
+   */
+  async removeAllCallersFromAssignmentsByAuctionId(auctionId: number): Promise<void> {
+    const lots = await this.lotService.getAllLotsByAuctionId(auctionId);
+
+    for (const lot of lots) {
+      const assignments = await this.assignmentService.getAssignmentsByLotId(lot.id);
+      for (const assignment of assignments) {
+        if (assignment.callerId && assignment.id) {
+          await this.assignmentService.updateAssignment(assignment.id, {
+            lotId: assignment.lotId,
+            bidderId: assignment.bidderId,
+            isFinal: assignment.isFinal,
+            callerId: undefined,
+          });
+        }
+      }
+    }
+    await db.assignments.toArray();
+  }
 }

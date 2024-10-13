@@ -1,33 +1,47 @@
 "use client";
 import { Lot } from "@/lib/models/lot.model";
-import { db } from "@/lib/db/dexie.db";
-import { useLiveQuery } from "dexie-react-hooks";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Card, CardContent, CardHeader, Grid, Paper, Typography } from "@mui/material";
 import LotAssignmentListItemAssignment from "./lot-assignment-list-item-assignment";
+import { useAssignmentsByLot } from "@/hooks/useAssignmentsByLot";
+import { use, useEffect, useState } from "react";
 
 interface LotAssignmentListItemProps {
   lot: Lot;
 }
 
 export default function LotAssignmentListItem({ lot }: LotAssignmentListItemProps) {
-  const assignments = useLiveQuery(async () => {
-    return await db.assignments
-      .where("id")
-      .anyOf(lot.assignmentIds || [])
-      .toArray();
-  }, [lot.assignmentIds, db.assignments]);
+  const { assignmentsForLot, isLoading: biddersLoading, error: biddersError } = useAssignmentsByLot(lot);
+  const [allBiddersAreAssigned, setAllBiddersAreAssigned] = useState(false);
+
+  let bgcolor = allBiddersAreAssigned ? "#fad1d1" : "#cefdce";
+
+  useEffect(() => {
+    if (assignmentsForLot) {
+      const assignedBidders = assignmentsForLot.some((a) => !a.callerId);
+      setAllBiddersAreAssigned(assignedBidders);
+    }
+  }, [assignmentsForLot]);
+
+  if (biddersLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (biddersError) {
+    return <div>Error: {biddersError}</div>;
+  }
 
   return (
-    <Paper sx={{ padding: 2, marginBottom: 2, marginTop: 2 }}>
+    <Card sx={{ padding: 2, height: "100%", bgcolor: bgcolor }}>
+      <CardContent>
+        <Typography variant="h6" align="center">🖼️ {lot.number}</Typography>
+        <Typography variant="body2" align="center">{lot.description}</Typography>
+      </CardContent>
+
       <Grid container>
-        <Grid item xs={4}>
-          <Typography variant="h6">{lot.number}</Typography>
-          <Typography variant="overline">{lot.description}</Typography>
-        </Grid>
-        <Grid item xs={8}>
-          {assignments && assignments.map((assignment) => <LotAssignmentListItemAssignment key={assignment.id} assignment={assignment} />)}
+        <Grid item xs={12}>
+          {assignmentsForLot && assignmentsForLot.map((a) => <LotAssignmentListItemAssignment key={a.id} assignment={a} />)}
         </Grid>
       </Grid>
-    </Paper>
+    </Card>
   );
 }

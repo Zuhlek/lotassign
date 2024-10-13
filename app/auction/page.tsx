@@ -2,7 +2,7 @@
 
 import { Box } from "@mui/material";
 import AuctionList from "@/components/auction/auction-list";
-import LoadAuctionDummyDataButton from "@/components/workflow/buttons/load-auction-dummy-data-button";
+import LoadAuctionDummyDataButton from "@/components/buttons/load-auction-dummy-data-button";
 import { useAuctions } from "@/hooks/useAuctions"; // Importiere den Custom Hook
 
 export default function AuctionPage() {

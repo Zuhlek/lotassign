@@ -38,15 +38,16 @@ export default function LotAssignmentListItemAssignment({ assignment }: LotAssig
 
   return (
     <Grid container>
-      <Grid item xs={6}>
-        <Typography align="right">🧍 {bidder ? bidder.name : "no bidder found"}</Typography>
+      <Grid item xs={5}>
+        <Typography align="right">{bidder ? bidder.name : "no bidder found"} 🧍</Typography>
       </Grid>
-      <Grid item xs={1}>
+      <Grid item xs={2}>
         <Typography align="center"> ― </Typography>
       </Grid>
       <Grid item xs={5}>
         <Typography align="left"> 📞 {caller ? caller.name : "no caller found"}</Typography>
       </Grid>
+
     </Grid>
   );
 }
