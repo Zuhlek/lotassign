@@ -1,20 +1,22 @@
 import { Bidder } from "@/lib/models/bidder.model";
-import { db } from "@/lib/db/dexie.db";
+import { bidderRepo } from "../repositories/bidder.repo";
 
-export const BidderService = {
-    async createBidder(bidder: Bidder) {
-        return await db.bidders.add(bidder);
-      },
-      async getAllBidders() {
-        return await db.bidders.toArray();
-      },
-      async getBidderById(id: number) {
-        return await db.bidders.get(id);
-      },
-      async updateBidder(id: number, bidder: Bidder) {
-        return await db.bidders.update(id, bidder);
-      },
-      async deleteBidder(id: number) {
-        return await db.bidders.delete(id);
-      }
-}
+class BidderService {
+  async createBidder(bidder: Bidder) {
+    return bidderRepo.createBidder(bidder);
+  }
+  async getAllBidders() {
+    return bidderRepo.getBidders();
+  }
+  async getBidderById(id: number) {
+    return bidderRepo.getBidderById(id);
+  }
+  async updateBidder(id: number, bidder: Bidder) {
+    return bidderRepo.updateBidder(id, bidder);
+  }
+  async deleteBidder(id: number) {
+    return bidderRepo.deleteBidder(id);
+  }
+};
+
+export const bidderService = new  BidderService();

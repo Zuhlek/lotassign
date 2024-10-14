@@ -8,6 +8,8 @@ import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
 import { Language } from "@/lib/models/language.model";
 import { PrioCallerAssignment } from "../models/prioCallerAssignment";
+import { bidderService } from "../services/bidder.service";
+import { callerService } from "../services/caller.service";
 
 export class MyDatabase extends Dexie {
   auctions!: EntityTable<Auction, "id">;
@@ -42,38 +44,32 @@ async function loadAuctionAndCallerDummyData() {
   const auctionId = await db.auctions.add({ name: "Dummy Auction", date: new Date() });
 
   for (const c of callersData) {
-    await db.callers.add({
-      name: c.Name,
-      abbreviation: c.Kürzel,
-      languages: c.Sprache.map((lang) =>
-        Object.values(Language).find((val) => val === lang)
-          ? Object.values(Language).find((val) => val === lang)
-          : Language.Englisch
-      ),
-    });
+    const languages = c.Sprache
+      .map((lang) => Object.values(Language).find((val) => val === lang))  
+      .filter((lang): lang is Language => lang !== undefined); 
+
+    callerService.createCaller(c.Name, c.Kürzel, languages);
   }
 
   return auctionId;
 }
 
 async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number) {
-  console.log("Loading lots, bidders, and assignments dummy data...");
-  console.log("Auction ID:", auctionId);
+
+  const biddersToAdd: Bidder[] = [];
+
   const bidderMap = new Map();
   const lotMap = new Map();
 
   for (const bpl of bidderPerLotData) {
     let bidderId;
     if (!bidderMap.has(bpl.BidderName)) {
-      bidderId = await db.bidders.add({
-        name: bpl.BidderName,
-        phoneNumber: bpl.BidderPhoneNumber,
-        languages: bpl.BidderLanguages.map((lang) =>
-          Object.values(Language).find((val) => val === lang)
-            ? Object.values(Language).find((val) => val === lang)
-            : Language.Englisch
-        ),
-      });
+
+      const languages = bpl.BidderLanguages
+      .map((lang) => Object.values(Language).find((val) => val === lang))  
+      .filter((lang): lang is Language => lang !== undefined); 
+
+      bidderService.createBidder(new Bidder(undefined, bpl.BidderName, languages, bpl.BidderPhoneNumber));
       bidderMap.set(bpl.BidderName, bidderId);
     } else {
       bidderId = bidderMap.get(bpl.BidderName);

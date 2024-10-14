@@ -1,7 +1,7 @@
 import { db } from '@/lib/db/dexie.db';
 import { Caller } from '@/lib/models/caller.model';
 
-export class CallerRepository {
+class CallerRepository {
   async createCaller(caller: Caller): Promise<number> {
     const createdCallerId = await db.callers.add({
       name: caller.name,
@@ -11,7 +11,7 @@ export class CallerRepository {
     return createdCallerId ? createdCallerId : -1;
   }
 
-  async getAllCallers(): Promise<Caller[]> {
+  async getCallers(): Promise<Caller[]> {
     const callers = await db.callers.toArray();
     return callers.map(c => new Caller(c.id, c.name, c.abbreviation, c.languages));
   }
@@ -38,3 +38,5 @@ export class CallerRepository {
     await db.callers.clear();
   }
 }
+
+export const callerRepo = new CallerRepository();
