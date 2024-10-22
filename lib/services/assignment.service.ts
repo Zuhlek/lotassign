@@ -1,55 +1,108 @@
 import { Assignment } from "@/lib/models/assignment.model";
-import { db } from "@/lib/db/dexie.db";
-import { LotService } from "./lot.service";
+import { assignmentRepo } from "@/lib/repositories/assignment.repo";
+import { callerRepo } from "@/lib/repositories/caller.repo";
+import { lotRepo } from "@/lib/repositories/lot.repo";
+import { bidderRepo } from "@/lib/repositories/bidder.repo";
 
-export const AssignmentService = {
-  async createAssignment(assignment: Assignment) {
-    return await db.assignments.add(assignment);
-  },
-  async getAllAssignments() {
-    return await db.assignments.toArray();
-  },
-  async getAssignmentById(id: number) {
-    return await db.assignments.get(id);
-  },
-  async updateAssignment(id: number, assignment: Assignment) {
-    return await db.assignments.update(id, assignment);
-  },
-  async deleteAssignment(id: number) {
-    return await db.assignments.delete(id);
-  },
-  async removeAllCallerIdsFromAssignments(auctionId: number) {
-    const relevantLots = await db.lots.filter((l) => l.auctionId === auctionId).toArray();
-    for (const l of relevantLots) {
-      if (!l.assignmentIds) continue;
-      for (const aId of l.assignmentIds) {
-        await db.assignments.update(aId, { callerId: undefined });
-      }
-    }
-  },
-  async getAssignmentsByLotId(lotId: number | undefined) {
-    if (!lotId) {
-      throw Error("lotId is required");
-    }
-    return await db.assignments.filter((a) => a.lotId === lotId).toArray();
-  },
-  async getAssignmentsWithNoCallerByAuctionId(auctionId: number) {
-    const lots = await LotService.getAllLotsByAuctionId(auctionId);
-    const assignments: Assignment[] = [];
-    for (const l of lots) {
-      const a = await db.assignments.filter((a) => a.lotId === l.id && !a.callerId).toArray();
-      assignments.push(...a);
-    }
-    return assignments;
-  },
-  async getAssignmentsByAuctionId(auctionId: number) {
-    const lots = await LotService.getAllLotsByAuctionId(auctionId);
-    const assignments: Assignment[] = [];
-    for (const l of lots) {
-      const a = await db.assignments.filter((a) => a.lotId === l.id).toArray();
-      assignments.push(...a);
-    }
-    return assignments;
+
+class AssignmentService {
+  async createAssignment(assignment: Assignment): Promise<number> {
+    return await assignmentRepo.createAssignment(assignment);
   }
-  
-};
+
+  async getAllAssignments(): Promise<Assignment[]> {
+    const assignmentDTOs = await assignmentRepo.getAllAssignments();
+    return await Promise.all(
+      assignmentDTOs.map(async (dto) => {
+        let assignment;
+        const lot = await lotRepo.getLotById(dto.lotId);
+        const bidder = await bidderRepo.getBidderById(dto.bidderId);
+        assignment = dto.toModel(bidder!, lot!);
+
+        if (dto.callerId) {
+          assignment.caller = await callerRepo.getCallerById(dto.callerId);
+        }
+        return assignment;
+      })
+    );
+  }
+
+  async getAssignmentById(id: number): Promise<Assignment | undefined> {
+    const dto = await assignmentRepo.getAssignmentById(id);
+    if (!dto) return undefined;
+    let assignment;
+    const lot = await lotRepo.getLotById(dto.lotId);
+    const bidder = await bidderRepo.getBidderById(dto.bidderId);
+    assignment = dto.toModel(bidder!, lot!);
+
+    if (dto.callerId) {
+      assignment.caller = await callerRepo.getCallerById(dto.callerId);
+    }
+    return assignment;
+  }
+
+  async updateAssignment(assignment: Assignment): Promise<number | undefined> {
+    return await assignmentRepo.updateAssignment(assignment);
+  }
+
+  async deleteAssignment(id: number): Promise<void> {
+    await assignmentRepo.deleteAssignment(id);
+  }
+
+  async removeAllCallerIdsFromAssignments(auctionId: number): Promise<void> {
+    await assignmentRepo.removeAllCallerIdsFromAssignments(auctionId);
+  }
+
+  async getAssignmentsByLotId(lotId: number): Promise<Assignment[]> {
+    const assignmentDTOs = await assignmentRepo.getAssignmentsByLotId(lotId);
+    return await Promise.all(
+      assignmentDTOs.map(async (dto) => {
+        let assignment;
+        const lot = await lotRepo.getLotById(dto.lotId);
+        const bidder = await bidderRepo.getBidderById(dto.bidderId);
+        assignment = dto.toModel(bidder!, lot!);
+
+        if (dto.callerId) {
+          assignment.caller = await callerRepo.getCallerById(dto.callerId);
+        }
+        return assignment;
+      })
+    );
+  }
+
+  async getAssignmentsWithNoCallerByAuctionId(auctionId: number): Promise<Assignment[]> {
+    const assignmentDTOs = await assignmentRepo.getAssignmentsWithNoCallerByAuctionId(auctionId);
+    return await Promise.all(
+      assignmentDTOs.map(async (dto) => {
+        let assignment;
+        const lot = await lotRepo.getLotById(dto.lotId);
+        const bidder = await bidderRepo.getBidderById(dto.bidderId);
+        assignment = dto.toModel(bidder!, lot!);
+
+        if (dto.callerId) {
+          assignment.caller = await callerRepo.getCallerById(dto.callerId);
+        }
+        return assignment;
+      })
+    );
+  }
+
+  async getAssignmentsByAuctionId(auctionId: number): Promise<Assignment[]> {
+    const assignmentDTOs = await assignmentRepo.getAssignmentsByAuctionId(auctionId);
+    return await Promise.all(
+      assignmentDTOs.map(async (dto) => {
+        let assignment;
+        const lot = await lotRepo.getLotById(dto.lotId);
+        const bidder = await bidderRepo.getBidderById(dto.bidderId);
+        assignment = dto.toModel(bidder!, lot!);
+
+        if (dto.callerId) {
+          assignment.caller = await callerRepo.getCallerById(dto.callerId);
+        }
+        return assignment;
+      })
+    );
+  }
+}
+
+export const assignmentService = new AssignmentService();

@@ -1,3 +1,5 @@
+// src/lib/repositories/lot.repo.ts
+
 import { db } from "@/lib/db/dexie.db";
 import { LotDTO } from "@/lib/dto/lot.dto";
 import { Lot } from "@/lib/models/lot.model";

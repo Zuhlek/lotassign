@@ -3,8 +3,8 @@ import { Caller } from "@/lib/models/caller.model";
 import { Lot } from "@/lib/models/lot.model";
 
 export class Assignment {
-  public id?: number | undefined;
-  public caller?: Caller | undefined;
+  public id?: number;
+  public caller?: Caller;
   public lot: Lot;
   public bidder: Bidder;
   public isFinal: boolean;
