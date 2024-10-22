@@ -70,15 +70,15 @@ export default function UploadExcelDataButton({ auctionId, uploadModel }: Upload
           number: parseInt(bpl.LotNumber),
           description: bpl.LotName,
           auctionId: auctionId,
-          assignmentIds: [],
+          assignments: [],
         });
       }
 
       if (!lotId) continue;
       const assignmentId = await db.assignments.add({
-        lotId: lotId,
-        bidderId: bidderId,
-        callerId: undefined, // Assuming no caller initially
+        lot: lotId,
+        bidder: bidderId,
+        caller: undefined, // Assuming no caller initially
         isFinal: false,
       });
 

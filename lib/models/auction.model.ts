@@ -1,7 +1,24 @@
-export type Auction = {
-  id?: number;
-  name: string;
-  date: Date;
-  lotIds?: number[];
-  callerIds?: number[];
+import { Caller } from "@/lib/models/caller.model";
+import { Lot } from "@/lib/models/lot.model";
+
+export class Auction {
+  public id?: number | undefined;
+  public name: string;
+  public date: Date;
+  public lots?: Lot[];
+  public callers?: Caller[];
+
+  constructor(
+    id: number | undefined,
+    name: string,
+    date: Date,
+    lots?: Lot[],
+    callers?: Caller[]
+  ) {
+    this.id = id;
+    this.name = name;
+    this.date = date;
+    this.lots = lots;
+    this.callers = callers;
+  }
 }

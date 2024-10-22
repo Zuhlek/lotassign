@@ -2,8 +2,10 @@ import { Bidder } from "@/lib/models/bidder.model";
 import { bidderRepo } from "../repositories/bidder.repo";
 
 class BidderService {
-  async createBidder(bidder: Bidder) {
-    return bidderRepo.createBidder(bidder);
+  async createBidder(bidder: Bidder): Promise<Bidder> {
+    const assignedId = await bidderRepo.createBidder(bidder);
+    bidder.id = assignedId;
+    return bidder;
   }
   async getAllBidders() {
     return bidderRepo.getBidders();

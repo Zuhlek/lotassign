@@ -1,8 +1,8 @@
-import { Language } from "./language.model";
+import { Language } from "@/lib/models/language.model";
 
 export class Bidder {
 
-  public id?: number;
+  public id?: number | undefined;
   public name: string;
   public languages: Language[];
   public phoneNumber: string;
