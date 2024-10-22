@@ -1,10 +1,11 @@
 import { Assignment } from "@/lib/models/assignment.model";
 
 export class Lot {
-  public id?: number | undefined;
-  public auctionId: number; 
+  public id?: number;
+  public auctionId: number;
   public number: number;
   public description: string;
+  public assignmentIds: number[];
   public assignments?: Assignment[];
 
   constructor(
@@ -12,12 +13,14 @@ export class Lot {
     auctionId: number,
     number: number,
     description: string,
+    assignmentIds: number[] = [],
     assignments?: Assignment[]
   ) {
     this.id = id;
     this.auctionId = auctionId;
     this.number = number;
     this.description = description;
+    this.assignmentIds = assignmentIds;
     this.assignments = assignments;
   }
 }

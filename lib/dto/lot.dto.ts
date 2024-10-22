@@ -4,13 +4,13 @@ export class LotDTO {
   id?: number;
   auctionId: number;
   number: number;
-  description?: string;
+  description: string;
   assignmentIds: number[];
 
   constructor(
     auctionId: number,
     number: number,
-    description?: string,
+    description: string,
     assignmentIds: number[] = [],
     id?: number
   ) {
@@ -26,7 +26,7 @@ export class LotDTO {
       lot.auctionId,
       lot.number,
       lot.description,
-      lot.assignments?.map(assignment => assignment.id!) || [],
+      lot.assignmentIds,
       lot.id
     );
   }
@@ -38,6 +38,17 @@ export class LotDTO {
       data.description,
       data.assignmentIds || [],
       data.id
+    );
+  }
+
+  toModel(): Lot {
+    return new Lot(
+      this.id,
+      this.auctionId,
+      this.number,
+      this.description,
+      this.assignmentIds,
+      undefined
     );
   }
 }
