@@ -1,6 +1,6 @@
 "use client";
 import { useLiveQuery } from "dexie-react-hooks";
-import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service";
+import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 import { useState } from "react";
 
 export function usePrioAssignments(auctionId: number) {

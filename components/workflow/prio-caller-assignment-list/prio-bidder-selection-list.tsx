@@ -4,7 +4,7 @@ import PrioCallerAssignmentForm from "./prio-caller-assignment-form";
 import PrioCallerAssignmentList from "./prio-caller-assignment-list";
 import { useBiddersByAuctionId } from "@/hooks/useBiddersByAuctionId";
 import { usePrioAssignments } from "@/hooks/usePrioAssignments";
-import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service";
+import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 import { useCallersForAuction } from "@/hooks/useCallersForAuction";
 
 interface PrioBidderSelectionListProps {

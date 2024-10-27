@@ -1,12 +1,12 @@
 import { Lot } from "@/lib/models/lot.model";
 import { lotRepo } from "@/lib/repositories/lot.repo";
 import { assignmentRepo } from "@/lib/repositories/assignment.repo";
-
+import { bidderRepo } from "@/lib/repositories/bidder.repo"; 
+import { callerRepo } from "@/lib/repositories/caller.repo"; 
 class LotService {
   async createLot(lot: Lot): Promise<Lot> {
     const createdId = await lotRepo.createLot(lot);
     lot.id = createdId;
-    //TODO - bulk update assignments
     for (const assignment of lot.assignments || []) {
       await assignmentRepo.updateAssignment(assignment);
     }
@@ -18,8 +18,16 @@ class LotService {
     const lotsWithAssignments = await Promise.all(
       lots.map(async (lot) => {
         if (lot.id) {
-          const assignments = await assignmentRepo.getAssignmentsByLotId(lot.id);
-          lot.assignments = await Promise.all(assignments.map(a => a.toModel()));
+          const assignmentDTOs = await assignmentRepo.getAssignmentsByLotId(lot.id);
+          const assignments = await Promise.all(
+            assignmentDTOs.map(async (dto) => {
+              const bidder = await bidderRepo.getBidderById(dto.bidderId);
+              const caller = dto.callerId ? await callerRepo.getCallerById(dto.callerId) : undefined;
+              if (!bidder) throw new Error(`Bidder with ID ${dto.bidderId} not found`);
+              return dto.toModel(bidder, lot, caller);
+            })
+          );
+          lot.assignments = assignments;
         }
         return lot;
       })
@@ -30,15 +38,22 @@ class LotService {
   async getLotById(id: number): Promise<Lot | undefined> {
     const lot = await lotRepo.getLotById(id);
     if (lot && lot.id) {
-      const assignments = await assignmentRepo.getAssignmentsByLotId(lot.id);
-      lot.assignments = await Promise.all(assignments.map(a => a.toModel()));
+      const assignmentDTOs = await assignmentRepo.getAssignmentsByLotId(lot.id);
+      const assignments = await Promise.all(
+        assignmentDTOs.map(async (dto) => {
+          const bidder = await bidderRepo.getBidderById(dto.bidderId);
+          const caller = dto.callerId ? await callerRepo.getCallerById(dto.callerId) : undefined;
+          if (!bidder) throw new Error(`Bidder with ID ${dto.bidderId} not found`);
+          return dto.toModel(bidder, lot, caller);
+        })
+      );
+      lot.assignments = assignments;
     }
     return lot;
   }
 
   async updateLot(lot: Lot): Promise<number | undefined> {
     const updatedCount = await lotRepo.updateLot(lot);
-    //TODO - bulk update assignments
     for (const assignment of lot.assignments || []) {
       await assignmentRepo.updateAssignment(assignment);
     }
@@ -56,8 +71,16 @@ class LotService {
     const updatedLots = await Promise.all(
       lots.map(async (lot) => {
         if (lot.id) {
-          const assignments = await assignmentRepo.getAssignmentsByLotId(lot.id);
-          lot.assignments =await Promise.all(assignments.map(a => a.toModel()));
+          const assignmentDTOs = await assignmentRepo.getAssignmentsByLotId(lot.id);
+          const assignments = await Promise.all(
+            assignmentDTOs.map(async (dto) => {
+              const bidder = await bidderRepo.getBidderById(dto.bidderId);
+              const caller = dto.callerId ? await callerRepo.getCallerById(dto.callerId) : undefined;
+              if (!bidder) throw new Error(`Bidder with ID ${dto.bidderId} not found`);
+              return dto.toModel(bidder, lot, caller);
+            })
+          );
+          lot.assignments = assignments;
         }
         return lot;
       })
@@ -74,8 +97,16 @@ class LotService {
     const updatedLots = await Promise.all(
       lots.map(async (lot) => {
         if (lot.id) {
-          const assignments = await assignmentRepo.getAssignmentsByLotId(lot.id);
-          lot.assignments =await Promise.all(assignments.map(a => a.toModel()));
+          const assignmentDTOs = await assignmentRepo.getAssignmentsByLotId(lot.id);
+          const assignments = await Promise.all(
+            assignmentDTOs.map(async (dto) => {
+              const bidder = await bidderRepo.getBidderById(dto.bidderId);
+              const caller = dto.callerId ? await callerRepo.getCallerById(dto.callerId) : undefined;
+              if (!bidder) throw new Error(`Bidder with ID ${dto.bidderId} not found`);
+              return dto.toModel(bidder, lot, caller);
+            })
+          );
+          lot.assignments = assignments;
         }
         return lot;
       })

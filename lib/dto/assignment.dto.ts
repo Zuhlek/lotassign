@@ -1,7 +1,7 @@
 import { Assignment } from '@/lib/models/assignment.model';
 import { Bidder } from '../models/bidder.model';
-import { Caller } from '../models/caller.model';
 import { Lot } from '../models/lot.model';
+import { Caller } from '../models/caller.model';
 
 export class AssignmentDTO {
   id?: number;
@@ -44,10 +44,10 @@ export class AssignmentDTO {
     );
   }
 
-  toModel(bidder: Bidder, lot: Lot): Assignment {
+  toModel(bidder: Bidder, lot: Lot, caller?: Caller): Assignment {
     return new Assignment(
       this.id,
-      undefined,
+      caller,
       lot,
       bidder,
       this.isFinal

@@ -1,8 +1,7 @@
 import { Language } from "@/lib/models/language.model";
 
 export class Bidder {
-
-  public id?: number | undefined;
+  public id?: number;
   public name: string;
   public languages: Language[];
   public phoneNumber: string;
@@ -13,5 +12,4 @@ export class Bidder {
     this.languages = languages;
     this.phoneNumber = phoneNumber;
   }
-
 }

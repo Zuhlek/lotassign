@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Button, Card, List, ListItem, Typography } from "@mui/material";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Caller } from "@/lib/models/caller.model";
-import { PrioCallerAssignment } from "@/lib/models/prioCallerAssignment";
-import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service";
+import { PrioCallerAssignment } from "@/lib/models/prioCallerAssignment.model";
+import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 
 interface PrioCallerAssignmentListProps {
   prioAssignments: PrioCallerAssignment[];

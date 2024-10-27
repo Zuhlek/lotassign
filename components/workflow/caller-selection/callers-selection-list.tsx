@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 import { Caller } from "@/lib/models/caller.model";
 import { CallerService } from "@/lib/services/caller.service";
 import { AuctionService } from "@/lib/services/auction.service";
-import { PrioCallerAssignmentService } from "@/lib/services/prioCallerAssignment.service"; // Importiere den Service
+import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service"; // Importiere den Service
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CallersSearchBarProps from "./callers-searchbar";

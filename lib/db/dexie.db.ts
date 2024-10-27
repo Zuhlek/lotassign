@@ -1,26 +1,24 @@
 import Dexie, { Table, type EntityTable } from "dexie";
-import { Lot } from "@/lib/models/lot.model";
 import { Bidder } from "@/lib/models/bidder.model";
-import { Assignment } from "@/lib/models/assignment.model";
-import { Auction } from "@/lib/models/auction.model";
 import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
 import { Language } from "@/lib/models/language.model";
-import { PrioCallerAssignment } from "@/lib/models/prioCallerAssignment";
 import { bidderService } from "@/lib/services/bidder.service";
 import { callerService } from "@/lib/services/caller.service";
-import { CallerDTO } from "@/lib/repositories/caller.repo";
-import { AssignmentDTO } from "../repositories/assignment.repo";
-import { AuctionDTO } from "../repositories/auction.repo";
-import { LotDTO } from "../dto/lot.dto";
+import { LotDTO } from "@/lib/dto/lot.dto";
+import { BidderDTO } from "@/lib/dto/bidder.dto";
+import { CallerDTO } from "@/lib/dto/caller.dto";
+import { AssignmentDTO } from "@/lib/dto/assignment.dto";
+import { PrioCallerAssignmentDTO } from "@/lib/dto/prio-caller-assignment.dto";
+import { AuctionDTO } from "@/lib/dto/auction.dto";
 
 export class MyDatabase extends Dexie {
   auctions!: Table<AuctionDTO, number>;
   lots!: Table<LotDTO, number>;
-  bidders!: Table<Bidder, number>;
+  bidders!: Table<BidderDTO, number>;
   callers!: Table<CallerDTO, number>;
   assignments!: Table<AssignmentDTO, number>;
-  prioCallerAssignments!: Table<PrioCallerAssignment, number>;
+  prioCallerAssignments!: Table<PrioCallerAssignmentDTO, number>;
 
   constructor() {
     super("LotAssignDB");

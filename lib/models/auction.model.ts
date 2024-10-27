@@ -2,7 +2,7 @@ import { Caller } from "@/lib/models/caller.model";
 import { Lot } from "@/lib/models/lot.model";
 
 export class Auction {
-  public id?: number | undefined;
+  public id?: number;
   public name: string;
   public date: Date;
   public lots?: Lot[];

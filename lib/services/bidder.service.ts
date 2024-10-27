@@ -1,24 +1,26 @@
 import { Bidder } from "@/lib/models/bidder.model";
-import { bidderRepo } from "../repositories/bidder.repo";
+import { bidderRepo } from "@/lib/repositories/bidder.repo";
 
-class BidderService {
-  async createBidder(bidder: Bidder): Promise<Bidder> {
-    const assignedId = await bidderRepo.createBidder(bidder);
-    bidder.id = assignedId;
-    return bidder;
+export class BidderService {
+  async createBidder(bidder: Bidder): Promise<number> {
+    return await bidderRepo.createBidder(bidder);
   }
-  async getAllBidders() {
-    return bidderRepo.getBidders();
-  }
-  async getBidderById(id: number) {
-    return bidderRepo.getBidderById(id);
-  }
-  async updateBidder(id: number, bidder: Bidder) {
-    return bidderRepo.updateBidder(id, bidder);
-  }
-  async deleteBidder(id: number) {
-    return bidderRepo.deleteBidder(id);
-  }
-};
 
-export const bidderService = new  BidderService();
+  async getAllBidders(): Promise<Bidder[]> {
+    return await bidderRepo.getAllBidders();
+  }
+
+  async getBidderById(id: number): Promise<Bidder | undefined> {
+    return await bidderRepo.getBidderById(id);
+  }
+
+  async updateBidder(bidder: Bidder): Promise<number | undefined> {
+    return await bidderRepo.updateBidder(bidder);
+  }
+
+  async deleteBidder(id: number): Promise<void> {
+    await bidderRepo.deleteBidder(id);
+  }
+}
+
+export const bidderService = new BidderService();

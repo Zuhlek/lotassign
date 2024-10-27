@@ -1,7 +1,7 @@
 import { Language } from "@/lib/models/language.model";
 
 export class Caller {
-  id?: number | undefined;
+  id?: number;
   name: string;
   abbreviation: string;
   languages: Language[];

@@ -1,51 +1,32 @@
-import { db } from "../db/dexie.db";
-import { Auction } from "../models/auction.model";
-import { lotRepo } from "./lot.repo";
-import { callerRepo } from "./caller.repo";
+import { db } from "@/lib/db/dexie.db";
+import { AuctionDTO } from "@/lib/dto/auction.dto";
+import { Auction } from "@/lib/models/auction.model";
 
-class AuctionRepo {
-
+export class AuctionRepository {
   async createAuction(auction: Auction): Promise<number> {
-    return await db.auctions.add(auction);
+    const auctionDTO = AuctionDTO.fromModel(auction);
+    const createdId = await db.auctions.add(auctionDTO);
+    return createdId ? createdId : -1;
   }
 
-  async getAllAuctions(): Promise<Auction[]> {
-    const auctions = await db.auctions.toArray();
-    if (!auctions) return [];
-    return Promise.all(auctions.map((a) => new AuctionDTO(a).toModel()));
-  }
-  
-
-}
-
-export const auctionRepo = new AuctionRepo();
-
-export class AuctionDTO {
-
-  public id?: number;
-  public name: string;
-  public date: Date;
-  public lotIds: number[];
-  public callerIds: number[];
-
-  constructor(
-    id: number | undefined,
-    name: string,
-    date: Date,
-    lotIds: number[],
-    callerIds: number[]
-  ) {
-    this.id = id;
-    this.name = name;
-    this.date = date;
-    this.lotIds = lotIds;
-    this.callerIds = callerIds;
+  async getAllAuctions(): Promise<AuctionDTO[]> {
+    return await db.auctions.toArray();
   }
 
-  async toModel(): Promise<Auction> {
-    const lots = await lotRepo.ge(this.lotIds);
-    const callers = await callerRepo.getCallersByIds(this.callerIds);
+  async getAuctionById(id: number): Promise<AuctionDTO | undefined> {
+    return await db.auctions.get(id);
+  }
 
-    return new Auction(this.id, this.name, this.date, lots, callers);
+  async updateAuction(auction: Auction): Promise<number | undefined> {
+    if (!auction.id) return undefined;
+    const auctionDTO = AuctionDTO.fromModel(auction);
+    const { id, ...updateData } = auctionDTO;
+    return await db.auctions.update(auction.id, updateData);
+  }
+
+  async deleteAuction(id: number): Promise<void> {
+    await db.auctions.delete(id);
   }
 }
+
+export const auctionRepo = new AuctionRepository();

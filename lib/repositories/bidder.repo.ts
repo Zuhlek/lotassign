@@ -1,36 +1,35 @@
-import {db} from '@/lib/db/dexie.db';
-import { Bidder } from '@/lib/models/bidder.model';
+import { db } from "@/lib/db/dexie.db";
+import { BidderDTO } from "@/lib/dto/bidder.dto";
+import { Bidder } from "@/lib/models/bidder.model";
 
-class BidderRepo {
+export class BidderRepository {
+  async createBidder(bidder: Bidder): Promise<number> {
+    const bidderDTO = BidderDTO.fromModel(bidder);
+    const createdId = await db.bidders.add(bidderDTO);
+    return createdId ? createdId : -1;
+  }
 
-    async createBidder(bidder: Bidder): Promise<number> {
-        const newBidderId = await db.bidders.add(bidder);
-        return newBidderId ? newBidderId : -1;
-    }
+  async getAllBidders(): Promise<Bidder[]> {
+    const bidderDTOs = await db.bidders.toArray();
+    return bidderDTOs.map(dto => dto.toModel());
+  }
 
-    async getBidderById(id: number): Promise<Bidder | null> {
-        const bidder = await db.bidders.get(id);
-        if (!bidder) return null;
-        return new Bidder(bidder.id, bidder.name, bidder.languages, bidder.phoneNumber);
-    }
+  async getBidderById(id: number): Promise<Bidder | undefined> {
+    const bidderDTO = await db.bidders.get(id);
+    if (!bidderDTO) return undefined;
+    return bidderDTO.toModel();
+  }
 
-    async getBidders(): Promise<Bidder[]> {
-        const bidders = await db.bidders.toArray();
-        return bidders.map(b => new Bidder(b.id, b.name, b.languages, b.phoneNumber));
-    }
+  async updateBidder(bidder: Bidder): Promise<number | undefined> {
+    if (!bidder.id) return undefined;
+    const bidderDTO = BidderDTO.fromModel(bidder);
+    const { id, ...updateData } = bidderDTO;
+    return await db.bidders.update(bidder.id, updateData);
+  }
 
-    async updateBidder(id: number, bidder: Bidder): Promise<number> {
-        return await db.bidders.update(id, {
-            name: bidder.name,
-            languages: bidder.languages,
-            phoneNumber: bidder.phoneNumber
-        });
-    }
-
-    async deleteBidder(id: number): Promise<void> {
-        await db.bidders.delete(id);
-    }
-
+  async deleteBidder(id: number): Promise<void> {
+    await db.bidders.delete(id);
+  }
 }
 
-export const bidderRepo = new BidderRepo();
+export const bidderRepo = new BidderRepository();
