@@ -3,7 +3,7 @@
 import { Box } from "@mui/material";
 import AuctionList from "@/components/auction/auction-list";
 import LoadAuctionDummyDataButton from "@/components/buttons/load-auction-dummy-data-button";
-import { useAuctions } from "@/hooks/useAuctions"; // Importiere den Custom Hook
+import { useAuctions } from "@/hooks/useAuctions";
 
 export default function AuctionPage() {
   const { auctions, searchText, setSearchText, isLoading, error } = useAuctions();

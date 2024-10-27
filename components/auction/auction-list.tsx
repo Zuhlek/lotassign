@@ -5,7 +5,7 @@ import { useState } from "react";
 import AuctionListItem from "./auction-list-item";
 import AuctionCreateUpdateDialog from "./auction-create-update-dialog";
 import AuctionListToolbar from "./auction-list-toolbar";
-import { AuctionService } from "@/lib/services/auction.service";
+import { auctionService } from "@/lib/services/auction.service";
 
 interface AuctionListProps {
   auctions: Auction[] | undefined;
@@ -20,11 +20,11 @@ export default function AuctionList({ auctions, searchText, setSearchText }: Auc
 
 
   const handleCreateAuction = async (auction: Auction): Promise<number | undefined> => {
-    return await AuctionService.createAuction(auction);
+    return await auctionService.createAuction(auction);
   };
 
   const handleUpdateAuction = async (auction: Auction): Promise<number | undefined> => {
-      return await AuctionService.updateAuction(auction.id, auction);
+      return await auctionService.updateAuction(auction);
   };
 
   const handleOpenDialog = (createMode: boolean) => {
@@ -37,7 +37,8 @@ export default function AuctionList({ auctions, searchText, setSearchText }: Auc
   };
 
   const handleDeleteClick = async (auctionId: number | undefined) => {
-    await AuctionService.deleteAuction(auctionId);
+    if (!auctionId) return;
+    await auctionService.deleteAuction(auctionId);
   };
 
   const handleSelection = (auction: Auction) => {

@@ -3,6 +3,7 @@ import { lotRepo } from "@/lib/repositories/lot.repo";
 import { assignmentRepo } from "@/lib/repositories/assignment.repo";
 import { bidderRepo } from "@/lib/repositories/bidder.repo"; 
 import { callerRepo } from "@/lib/repositories/caller.repo"; 
+import { assignmentService } from "./assignment.service";
 class LotService {
   async createLot(lot: Lot): Promise<Lot> {
     const createdId = await lotRepo.createLot(lot);
@@ -112,6 +113,17 @@ class LotService {
       })
     );
     return updatedLots;
+  }
+
+  async getLotByAuctionIdAndNumber(auctionId: number, lotNumber: number): Promise<Lot | undefined> {
+    const lotDTO = await lotRepo.getLotByAuctionIdAndNumber(auctionId, lotNumber);
+    if (!lotDTO) return undefined;
+
+    // Fetch associated Assignments
+    const assignments = await assignmentService.getAssignmentsByLotId(lotDTO.id!);
+    const lot = lotDTO.toModel();
+    lot.assignments = assignments;
+    return lot;
   }
 }
 

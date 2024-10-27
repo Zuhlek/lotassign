@@ -41,9 +41,9 @@ export default function CallerMgmtList({ callers }: CallerMgmtListProps) {
         if (callerData) {
             const updatedCaller = { ...callerData, languages: selectedLanguages };
             if (isEdit && callerData.id) {
-                await callerService.updateCaller(callerData.id, callerData.name, callerData.abbreviation, updatedCaller.languages);
+                await callerService.updateCaller(new Caller(callerData.id, updatedCaller.name, updatedCaller.abbreviation, updatedCaller.languages));
             } else {
-                await callerService.createCaller(updatedCaller.name, updatedCaller.abbreviation, updatedCaller.languages);
+                await callerService.createCaller(new Caller(undefined, updatedCaller.name, updatedCaller.abbreviation, updatedCaller.languages));
             }
             handleClose();
         }

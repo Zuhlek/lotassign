@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import { Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { saveAs } from 'file-saver';
-import { db } from "@/lib/db/dexie.db";
 import ResetDbButton from '@/components/buttons/reset-db-button';
 import { exportDatabase } from '@/lib/db/helpers/exportDatabaseBackup';
 import { importToDatabase } from '@/lib/db/helpers/importDatabaseBackup';

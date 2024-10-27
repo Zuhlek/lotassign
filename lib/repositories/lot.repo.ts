@@ -50,6 +50,13 @@ class LotRepository {
       .toArray();
     return lotDTOs.map(dto => dto.toModel());
   }
+
+  async getLotByAuctionIdAndNumber(auctionId: number, lotNumber: number): Promise<LotDTO | undefined> {
+    return await db.lots
+      .where("[number+auctionId]")
+      .equals([lotNumber, auctionId])
+      .first();
+  }
 }
 
 export const lotRepo = new LotRepository();
