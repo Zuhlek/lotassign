@@ -1,28 +1,37 @@
 "use client";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useState } from "react";
-import { db } from "@/lib/db/dexie.db";
+import { useState, useEffect } from "react";
+import { auctionService } from "@/lib/services/auction.service";
+import { Auction } from "@/lib/models/auction.model";
 
 export function useAuctionById(auctionId: number) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [auction, setAuction] = useState<Auction | undefined>(undefined);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const auction = useLiveQuery(
-    async () => {
-      console.log("useAuctionById", auctionId);
+  useEffect(() => {
+    console.log("useAuctionById", auctionId);
+    const fetchAuction = async () => {
       try {
         setIsLoading(true);
-        const auction = await db.auctions.get(auctionId);
+        setError(null);
+
+        const fetchedAuction = await auctionService.getAuctionById(auctionId);
+        setAuction(fetchedAuction);
         setIsLoading(false);
-        return auction;
       } catch (err) {
-        setIsLoading(false);
-        setError("Failed to fetch auction");
         console.error(err);
+        setError("Failed to fetch auction");
+        setIsLoading(false);
       }
-    },
-    [auctionId]
-  );
+    };
+
+    if (auctionId) {
+      fetchAuction();
+    } else {
+      setAuction(undefined);
+      setIsLoading(false);
+    }
+  }, [auctionId]);
 
   return { auction, isLoading, error };
 }

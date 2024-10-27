@@ -1,4 +1,4 @@
-import Dexie, { Table, type EntityTable } from "dexie";
+import Dexie, { Table } from "dexie";
 import { Bidder } from "@/lib/models/bidder.model";
 import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
@@ -11,6 +11,13 @@ import { CallerDTO } from "@/lib/dto/caller.dto";
 import { AssignmentDTO } from "@/lib/dto/assignment.dto";
 import { PrioCallerAssignmentDTO } from "@/lib/dto/prio-caller-assignment.dto";
 import { AuctionDTO } from "@/lib/dto/auction.dto";
+import { auctionService } from "@/lib/services/auction.service";
+import { Caller } from "@/lib/models/caller.model";
+import { Auction } from "@/lib/models/auction.model";
+import { Assignment } from "@/lib/models/assignment.model";
+import { Lot } from "@/lib/models/lot.model";
+import { assignmentService } from "@/lib/services/assignment.service";
+import { lotService } from "@/lib/services/lot.service";
 
 export class MyDatabase extends Dexie {
   auctions!: Table<AuctionDTO, number>;
@@ -40,68 +47,106 @@ async function clearDB() {
   await db.open(); 
 }
 
-async function loadAuctionAndCallerDummyData() {
+async function loadAuctionAndCallerDummyData(): Promise<number> {
+  // Step 1: Create a new Auction without Callers initially
+  const newAuction = new Auction(undefined, "Dummy Auction", new Date(), [], []);
+  const auctionId = await auctionService.createAuction(newAuction);
+  
+  // Assign the generated ID to the Auction object
+  newAuction.id = auctionId;
 
-  const auctionId = await db.auctions.add({ name: "Dummy Auction", date: new Date() });
+  // Step 2: Create Callers and collect their instances
+  const createdCallers: Caller[] = [];
 
   for (const c of callersData) {
+    // Convert language names to Language enums
     const languages = c.Sprache
-      .map((lang) => Object.values(Language).find((val) => val === lang))  
-      .filter((lang): lang is Language => lang !== undefined); 
+      .map((lang) => Object.values(Language).find((val) => val === lang))
+      .filter((lang): lang is Language => lang !== undefined);
 
-    callerService.createCaller(c.Name, c.Kürzel, languages);
+    // Instantiate Caller model
+    const newCaller = new Caller(undefined, c.Name, c.Kürzel, languages);
+
+    // Create Caller via Service
+    const callerId = await callerService.createCaller(newCaller);
+
+    // Retrieve the created Caller
+    const createdCaller = await callerService.getCallerById(callerId);
+    if (createdCaller) {
+      createdCallers.push(createdCaller);
+    } else {
+      throw new Error(`Failed to create caller: ${c.Name}`);
+    }
   }
+
+  // Step 3: Update the Auction with the created Callers
+  newAuction.callers = createdCallers;
+  await auctionService.updateAuction(newAuction);
 
   return auctionId;
 }
 
-async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number) {
-
-  const biddersToAdd: Bidder[] = [];
-
-  const bidderMap = new Map();
-  const lotMap = new Map();
+async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number): Promise<void> {
+  const bidderMap = new Map<string, Bidder>();
+  const lotMap = new Map<string, Lot>();
 
   for (const bpl of bidderPerLotData) {
-    let bidderId;
+    // Step 1: Create or Retrieve Bidder
+    let bidder: Bidder | undefined;
     if (!bidderMap.has(bpl.BidderName)) {
-
       const languages = bpl.BidderLanguages
-      .map((lang) => Object.values(Language).find((val) => val === lang))  
-      .filter((lang): lang is Language => lang !== undefined); 
+        .map((lang) => Object.values(Language).find((val) => val === lang))
+        .filter((lang): lang is Language => lang !== undefined);
 
-      bidderService.createBidder(new Bidder(undefined, bpl.BidderName, languages, bpl.BidderPhoneNumber));
-      bidderMap.set(bpl.BidderName, bidderId);
+      // Instantiate Bidder model
+      const newBidder = new Bidder(undefined, bpl.BidderName, languages, bpl.BidderPhoneNumber);
+
+      // Create Bidder via Service
+      const bidderId = await bidderService.createBidder(newBidder);
+
+      // Retrieve the created Bidder
+      bidder = await bidderService.getBidderById(bidderId);
+      if (!bidder) throw new Error(`Failed to create bidder: ${bpl.BidderName}`);
+
+      // Store in map for reuse
+      bidderMap.set(bpl.BidderName, bidder);
     } else {
-      bidderId = bidderMap.get(bpl.BidderName);
+      bidder = bidderMap.get(bpl.BidderName)!;
     }
 
-    let lotId;
+    // Step 2: Create or Retrieve Lot
+    let lot: Lot;
     if (!lotMap.has(bpl.LotNumber)) {
-      lotId = await db.lots.add({
-        number: parseInt(bpl.LotNumber),
-        description: bpl.LotName,
-        auctionId: auctionId,
-        assignmentIds: [],
-      });
-      lotMap.set(bpl.LotNumber, lotId);
+      // Instantiate Lot model
+      const newLot = new Lot(undefined, parseInt(bpl.LotNumber), parseInt(bpl.LotName), auctionId.toString(), []);
+
+      // Create Lot via Service
+      lot = await lotService.createLot(newLot);
+      lotMap.set(bpl.LotNumber, lot);
     } else {
-      lotId = lotMap.get(bpl.LotNumber);
+      lot = lotMap.get(bpl.LotNumber)!;
     }
 
-    const assignmentId = await db.assignments.add({
-      lotId: lotId,
-      bidderId: bidderId,
-      callerId: undefined, // Assuming no caller initially
-      isFinal: false,
-    });
+    // Step 3: Create Assignment
+    const newAssignment = new Assignment(
+      undefined,      // ID will be assigned by the database
+      undefined,      // Caller is undefined initially
+      lot,            // Associated Lot
+      bidder,         // Associated Bidder
+      false           // isFinal flag
+    );
 
-    if (assignmentId !== undefined) {
-      const lot = await db.lots.get(lotId);
-      if (lot && lot.assignmentIds) {
-        await db.lots.update(lotId, { assignmentIds: [...lot.assignmentIds, assignmentId] });
-      }
+    // Create Assignment via Service
+    const assignmentId = await assignmentService.createAssignment(newAssignment);
+
+    // Optionally, retrieve the created Assignment to confirm
+    const createdAssignment = await assignmentService.getAssignmentById(assignmentId);
+    if (!createdAssignment) {
+      throw new Error(`Failed to create assignment for Lot ${bpl.LotNumber} and Bidder ${bpl.BidderName}`);
     }
+
+    // Note: The `createAssignment` method should handle associating the Assignment with the Lot
+    // via the `assignmentIds` array in the Lot. Ensure that this logic is implemented within the service.
   }
 }
 

@@ -1,32 +1,45 @@
 "use client";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useState } from "react";
-import { db } from "@/lib/db/dexie.db";
+import { useState, useEffect } from "react";
+import { assignmentService } from "@/lib/services/assignment.service";
+import { Assignment } from "@/lib/models/assignment.model";
 import { Lot } from "@/lib/models/lot.model";
 
 export function useAssignmentsByLot(lot: Lot) {
-  const [isLoading, setIsLoading] = useState(true);
+  const [assignmentsForLot, setAssignmentsForLot] = useState<Assignment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const assignmentsForLot = useLiveQuery(
-    async () => {
-      console.log("useAssignmentsByLot", lot);
+  useEffect(() => {
+    console.log("useAssignmentsByLot", lot);
+    const fetchAssignments = async () => {
       try {
         setIsLoading(true);
-        const assignmentsForLot = await db.assignments
-        .where("id")
-        .anyOf(lot.assignmentIds || [])
-        .toArray();
+        setError(null);
+
+        if (!lot.id) {
+          setAssignmentsForLot([]);
+          setIsLoading(false);
+          return;
+        }
+
+        // Fetch Assignments using the Assignment Service
+        const assignments = await assignmentService.getAssignmentsByLotId(lot.id);
+        setAssignmentsForLot(assignments);
         setIsLoading(false);
-        return assignmentsForLot;
       } catch (err) {
-        setIsLoading(false);
-        setError("Failed to fetch auction");
         console.error(err);
+        setError("Failed to fetch assignments");
+        setIsLoading(false);
       }
-    },
-    [lot]
-  );
+    };
+
+    if (lot) {
+      fetchAssignments();
+    } else {
+      setAssignmentsForLot([]);
+      setIsLoading(false);
+    }
+  }, [lot]);
 
   return { assignmentsForLot, isLoading, error };
 }

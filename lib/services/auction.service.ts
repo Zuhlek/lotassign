@@ -5,7 +5,7 @@ import { callerRepo } from "@/lib/repositories/caller.repo";
 import { Lot } from "@/lib/models/lot.model";
 import { Caller } from "@/lib/models/caller.model";
 
-export class AuctionService {
+class AuctionService {
   async createAuction(auction: Auction): Promise<number> {
     return await auctionRepo.createAuction(auction);
   }

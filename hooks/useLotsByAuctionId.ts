@@ -1,18 +1,19 @@
 import { db } from "@/lib/db/dexie.db";
 import { Lot } from "@/lib/models/lot.model";
+import { lotService } from "@/lib/services/lot.service";
 import { useEffect, useState } from "react";
 
 
 export function useLotsByAuctionId(auctionId: number) {
-  const [lots, setLots] = useState<Lot[] | null>(null);
+  const [lots, setLots] = useState<Lot[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const fetchLots = async () => {
       setIsLoading(true);
       try {
-        const auctionLots = await db.lots.filter((lot) => lot.auctionId === auctionId).toArray();
+        const auctionLots = await lotService.getAllLotsByAuctionId(auctionId);
         setLots(auctionLots);
         setIsLoading(false);
       } catch (err) {

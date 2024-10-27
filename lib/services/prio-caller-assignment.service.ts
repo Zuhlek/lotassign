@@ -41,6 +41,23 @@ export class PrioCallerAssignmentService {
     return dto.toModel(auction, bidder, caller);
   }
 
+  async getPrioCallerAssignmentsByAuctionId(auctionId: number): Promise<PrioCallerAssignment[]> {
+    const prioAssignmentDTOs = await prioCallerAssignmentRepo.getPrioCallerAssignmentsByAuctionId(auctionId);
+    return await Promise.all(
+      prioAssignmentDTOs.map(async (dto) => {
+        const auction = await auctionRepo.getAuctionById(dto.auctionId);
+        const bidder = await bidderRepo.getBidderById(dto.bidderId);
+        const caller = await callerRepo.getCallerById(dto.callerId);
+
+        if (!auction) throw new Error(`Auction with ID ${dto.auctionId} not found`);
+        if (!bidder) throw new Error(`Bidder with ID ${dto.bidderId} not found`);
+        if (!caller) throw new Error(`Caller with ID ${dto.callerId} not found`);
+
+        return dto.toModel(auction, bidder, caller);
+      })
+    );
+  }
+
   async updatePrioCallerAssignment(prioAssignment: PrioCallerAssignment): Promise<number | undefined> {
     return await prioCallerAssignmentRepo.updatePrioCallerAssignment(prioAssignment);
   }

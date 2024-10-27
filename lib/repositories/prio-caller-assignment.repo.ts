@@ -2,7 +2,7 @@ import { db } from "@/lib/db/dexie.db";
 import { PrioCallerAssignmentDTO } from "@/lib/dto/prio-caller-assignment.dto";
 import { PrioCallerAssignment } from "@/lib/models/prioCallerAssignment.model";
 
-export class PrioCallerAssignmentRepository {
+class PrioCallerAssignmentRepository {
   async createPrioCallerAssignment(prioAssignment: PrioCallerAssignment): Promise<number> {
     const prioAssignmentDTO = PrioCallerAssignmentDTO.fromModel(prioAssignment);
     const createdId = await db.prioCallerAssignments.add(prioAssignmentDTO);
@@ -17,6 +17,10 @@ export class PrioCallerAssignmentRepository {
     return await db.prioCallerAssignments.get(id);
   }
 
+  async getPrioCallerAssignmentsByAuctionId(auctionId: number): Promise<PrioCallerAssignmentDTO[]> {
+    return await db.prioCallerAssignments.where('auctionId').equals(auctionId).toArray();
+  }
+
   async updatePrioCallerAssignment(prioAssignment: PrioCallerAssignment): Promise<number | undefined> {
     if (!prioAssignment.id) return undefined;
     const prioAssignmentDTO = PrioCallerAssignmentDTO.fromModel(prioAssignment);
@@ -27,6 +31,7 @@ export class PrioCallerAssignmentRepository {
   async deletePrioCallerAssignment(id: number): Promise<void> {
     await db.prioCallerAssignments.delete(id);
   }
+  
 }
 
 export const prioCallerAssignmentRepo = new PrioCallerAssignmentRepository();

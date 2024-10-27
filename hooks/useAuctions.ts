@@ -1,31 +1,40 @@
 "use client";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useState } from "react";
-import { db } from "@/lib/db/dexie.db";
+import { useState, useEffect } from "react";
+import { auctionService } from "@/lib/services/auction.service";
+import { Auction } from "@/lib/models/auction.model";
 
 export function useAuctions() {
   const [searchText, setSearchText] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [auctions, setAuctions] = useState<Auction[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const auctions = useLiveQuery(
-    async () => {
-      console.log("useAuctions", searchText);
+  useEffect(() => {
+    console.log("useAuctions", searchText);
+    const fetchAuctions = async () => {
       try {
         setIsLoading(true);
-        const filteredAuctions = await db.auctions
-          .filter((auction) => auction.name.toLowerCase().includes(searchText.toLowerCase()))
-          .toArray();
+        setError(null);
+
+        // Step 1: Fetch all Auctions
+        const allAuctions = await auctionService.getAllAuctions();
+
+        // Step 2: Filter Auctions based on searchText
+        const filteredAuctions = allAuctions.filter((auction) =>
+          auction.name.toLowerCase().includes(searchText.toLowerCase())
+        );
+
+        setAuctions(filteredAuctions);
         setIsLoading(false);
-        return filteredAuctions;
       } catch (err) {
-        setIsLoading(false);
-        setError("Failed to fetch auctions");
         console.error(err);
+        setError("Failed to fetch auctions");
+        setIsLoading(false);
       }
-    },
-    [searchText]
-  );
+    };
+
+    fetchAuctions();
+  }, [searchText]);
 
   return { auctions, searchText, setSearchText, isLoading, error };
 }

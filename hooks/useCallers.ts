@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export function useCallers() {
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | undefined>(undefined);
   
   const callers = useLiveQuery(async () => {
     console.log("useCallers");
