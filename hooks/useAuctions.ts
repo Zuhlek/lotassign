@@ -1,40 +1,33 @@
 "use client";
-import { useState, useEffect } from "react";
-import { auctionService } from "@/lib/services/auction.service";
-import { Auction } from "@/lib/models/auction.model";
+import { useState } from "react";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db/dexie.db";
 
 export function useAuctions() {
   const [searchText, setSearchText] = useState<string>("");
-  const [auctions, setAuctions] = useState<Auction[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // Loading initially
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("useAuctions", searchText);
-    const fetchAuctions = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-
-        // Step 1: Fetch all Auctions
-        const allAuctions = await auctionService.getAllAuctions();
-
-        // Step 2: Filter Auctions based on searchText
-        const filteredAuctions = allAuctions.filter((auction) =>
-          auction.name.toLowerCase().includes(searchText.toLowerCase())
-        );
-
-        setAuctions(filteredAuctions);
-        setIsLoading(false);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to fetch auctions");
-        setIsLoading(false);
-      }
-    };
-
-    fetchAuctions();
-  }, [searchText]);
+  const auctions = useLiveQuery(async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const allAuctions = await db.auctions.toArray();
+      
+      // Apply search filtering on fetched data
+      const filteredAuctions = allAuctions.filter((auction) =>
+        auction.name.toLowerCase().includes(searchText.toLowerCase())
+      );
+      
+      setIsLoading(false); // Loading done
+      return filteredAuctions;
+    } catch (err) {
+      console.error("Failed to fetch auctions:", err);
+      setError("Failed to fetch auctions");
+      setIsLoading(false);
+      return [];
+    }
+  }, [searchText]); // Re-run the query if searchText changes
 
   return { auctions, searchText, setSearchText, isLoading, error };
 }

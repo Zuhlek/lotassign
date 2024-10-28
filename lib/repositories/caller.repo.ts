@@ -10,14 +10,15 @@ export class CallerRepository {
   }
 
   async getAllCallers(): Promise<Caller[]> {
-    const callerDTOs = await db.callers.toArray();
+    const callerObjects = await db.callers.toArray();
+    const callerDTOs = callerObjects.map(obj => CallerDTO.fromData(obj));
     return callerDTOs.map(dto => dto.toModel());
   }
 
   async getCallerById(id: number): Promise<Caller | undefined> {
-    const callerDTO = await db.callers.get(id);
+    const callerDTO: CallerDTO | undefined = await db.callers.get(id);
     if (!callerDTO) return undefined;
-    return callerDTO.toModel();
+    return CallerDTO.fromData(callerDTO).toModel();
   }
 
   async updateCaller(caller: Caller): Promise<number | undefined> {

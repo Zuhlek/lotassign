@@ -48,39 +48,11 @@ async function clearDB() {
 }
 
 async function loadAuctionAndCallerDummyData(): Promise<number> {
-  // Step 1: Create a new Auction without Callers initially
+
   const newAuction = new Auction(undefined, "Dummy Auction", new Date(), [], []);
   const auctionId = await auctionService.createAuction(newAuction);
   
-  // Assign the generated ID to the Auction object
   newAuction.id = auctionId;
-
-  // Step 2: Create Callers and collect their instances
-  const createdCallers: Caller[] = [];
-
-  for (const c of callersData) {
-    // Convert language names to Language enums
-    const languages = c.Sprache
-      .map((lang) => Object.values(Language).find((val) => val === lang))
-      .filter((lang): lang is Language => lang !== undefined);
-
-    // Instantiate Caller model
-    const newCaller = new Caller(undefined, c.Name, c.Kürzel, languages);
-
-    // Create Caller via Service
-    const callerId = await callerService.createCaller(newCaller);
-
-    // Retrieve the created Caller
-    const createdCaller = await callerService.getCallerById(callerId);
-    if (createdCaller) {
-      createdCallers.push(createdCaller);
-    } else {
-      throw new Error(`Failed to create caller: ${c.Name}`);
-    }
-  }
-
-  // Step 3: Update the Auction with the created Callers
-  newAuction.callers = createdCallers;
   await auctionService.updateAuction(newAuction);
 
   return auctionId;

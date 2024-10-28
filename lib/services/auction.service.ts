@@ -4,6 +4,7 @@ import { lotRepo } from "@/lib/repositories/lot.repo";
 import { callerRepo } from "@/lib/repositories/caller.repo";
 import { Lot } from "@/lib/models/lot.model";
 import { Caller } from "@/lib/models/caller.model";
+import { AuctionDTO } from "../dto/auction.dto";
 
 class AuctionService {
   async createAuction(auction: Auction): Promise<number> {
@@ -35,7 +36,7 @@ class AuctionService {
           }
         }
 
-        return dto.toModel(lots, callers);
+        return AuctionDTO.fromData(dto).toModel(lots, callers);
       })
     );
   }
@@ -65,7 +66,7 @@ class AuctionService {
       }
     }
 
-    return dto.toModel(lots, callers);
+    return AuctionDTO.fromData(dto).toModel(lots, callers);
   }
 
   async updateAuction(auction: Auction): Promise<number | undefined> {
