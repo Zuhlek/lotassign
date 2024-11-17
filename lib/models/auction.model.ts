@@ -21,4 +21,11 @@ export class Auction {
     this.lots = lots;
     this.callers = callers;
   }
+
+  toDDMMYYYY(): string {
+    const day = this.date.getDate();
+    const month = this.date.getMonth() + 1;
+    const year = this.date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 }

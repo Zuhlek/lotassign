@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/dexie.db";
+import { auctionService } from "@/lib/services/auction.service";
 
 export function useAuctions() {
   const [searchText, setSearchText] = useState<string>("");
@@ -12,7 +13,7 @@ export function useAuctions() {
     try {
       setIsLoading(true);
       setError(null);
-      const allAuctions = await db.auctions.toArray();
+      const allAuctions = await auctionService.getAllAuctions();
       
       // Apply search filtering on fetched data
       const filteredAuctions = allAuctions.filter((auction) =>

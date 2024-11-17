@@ -2,10 +2,10 @@ import { db } from "@/lib/db/dexie.db";
 import { Lot } from "@/lib/models/lot.model";
 import { Assignment } from "@/lib/models/assignment.model";
 import { assignmentService } from "./assignment.service";
-import { Bidder } from "@/lib/models/bidder.model";
-import { Caller } from "@/lib/models/caller.model";
 import { bidderService } from "./bidder.service";
 import { callerService } from "./caller.service";
+import { Bidder } from "../models/bidder.model";
+import { Caller } from "../models/caller.model";
 
 export class LotService {
   /**
@@ -17,12 +17,14 @@ export class LotService {
     const lotData = this.modelToDto(lot);
     const createdId = await db.lots.add(lotData);
     lot.id = createdId;
+
     if (lot.assignments) {
       for (const assignment of lot.assignments) {
         assignment.lot.id = lot.id;
         await assignmentService.createAssignment(assignment);
       }
     }
+
     return lot;
   }
 
@@ -45,7 +47,7 @@ export class LotService {
       if (!assignmentsByLotId.has(assignment.lot.id!) && assignment.lot.id) {
         assignmentsByLotId.set(assignment.lot.id, []);
       }
-      if (assignment.lot.id) {
+      if (assignment.lot.id){
         assignmentsByLotId.get(assignment.lot.id)!.push(assignment);
       }
     }
@@ -72,7 +74,7 @@ export class LotService {
     const lot = this.dtoToModel(lotData);
 
     const assignmentsData = await db.assignments.where('lotId').equals(id).toArray();
-    const assignments = assignmentsData.map(a => assignmentService.dtoToModel(a));
+    const assignments = assignmentsData.map(assignmentService.dtoToModel);
     lot.assignments = assignments;
 
     // Populate assignments with bidders and callers
@@ -137,7 +139,7 @@ export class LotService {
       if (!assignmentsByLotId.has(assignment.lot.id!) && assignment.lot.id) {
         assignmentsByLotId.set(assignment.lot.id, []);
       }
-      if (assignment.lot.id) {
+      if (assignment.lot.id){
         assignmentsByLotId.get(assignment.lot.id)!.push(assignment);
       }
     }
@@ -154,6 +156,76 @@ export class LotService {
   }
 
   /**
+   * Retrieves lots around a specific lot number within a range for a given auction.
+   * @param lotNumber The current lot number.
+   * @param range The range of lots before and after the current lot.
+   * @param auctionId The auction ID.
+   * @returns An array of Lot models.
+   */
+  async getNextAndCurrentAndPreviousNLots(
+    lotNumber: number,
+    range: number,
+    auctionId: number
+  ): Promise<Lot[]> {
+    const minLotNumber = lotNumber - range;
+    const maxLotNumber = lotNumber + range;
+    const lotObjects = await db.lots
+      .where('number')
+      .between(minLotNumber, maxLotNumber, true, true)
+      .and(lot => lot.auctionId === auctionId)
+      .toArray();
+    const lots = lotObjects.map(obj => this.dtoToModel(obj));
+
+    // Fetch and attach assignments
+    const lotIds = lots.map(lot => lot.id!).filter(id => id !== undefined);
+    const assignmentsData = await db.assignments.where('lotId').anyOf(lotIds).toArray();
+
+    // Build a map of lotId to assignments
+    const assignmentsByLotId = new Map<number, Assignment[]>();
+    for (const assignmentData of assignmentsData) {
+      const assignment = assignmentService.dtoToModel(assignmentData);
+      if (!assignmentsByLotId.has(assignment.lot.id!) && assignment.lot.id) {
+        assignmentsByLotId.set(assignment.lot.id, []);
+      }
+      if(assignment.lot.id){
+        assignmentsByLotId.get(assignment.lot.id)!.push(assignment);
+      }
+    }
+
+    // Attach assignments to lots
+    for (const lot of lots) {
+      lot.assignments = assignmentsByLotId.get(lot.id!) || [];
+    }
+
+    // Populate assignments with bidders and callers
+    await this.populateAssignmentsWithBiddersAndCallers(lots);
+
+    return lots;
+  }
+
+  /**
+   * Retrieves a lot by auction ID and lot number.
+   * @param auctionId The auction ID.
+   * @param lotNumber The lot number.
+   * @returns The Lot model with assignments, or undefined if not found.
+   */
+  async getLotByAuctionIdAndNumber(auctionId: number, lotNumber: number): Promise<Lot | undefined> {
+    const lotData = await db.lots
+      .where('[number+auctionId]')
+      .equals([lotNumber, auctionId])
+      .first();
+    if (!lotData) return undefined;
+
+    const lot = this.dtoToModel(lotData);
+
+    // Fetch associated Assignments
+    const assignments = await assignmentService.getAssignmentsByLotId(lot.id!);
+    lot.assignments = assignments;
+
+    return lot;
+  }
+
+  /**
    * Populates assignments with their respective bidders and callers.
    * @param lots Array of lots whose assignments need to be populated.
    */
@@ -165,23 +237,23 @@ export class LotService {
     for (const lot of lots) {
       for (const assignment of lot.assignments || []) {
         bidderIds.add(assignment.bidder.id!);
-        if (assignment.caller?.id) callerIds.add(assignment.caller?.id);
+        if (assignment.caller?.id) callerIds.add(assignment.caller.id);
       }
     }
 
     // Batch fetch bidders and callers
-    const bidders = await db.bidders.where('id').anyOf([...bidderIds]).toArray();
-    const callers = await db.callers.where('id').anyOf([...callerIds]).toArray();
+    const biddersData = await db.bidders.where('id').anyOf([...bidderIds]).toArray();
+    const callersData = await db.callers.where('id').anyOf([...callerIds]).toArray();
 
     const bidderMap = new Map<number, Bidder>();
     const callerMap = new Map<number, Caller>();
 
-    for (const bidderData of bidders) {
+    for (const bidderData of biddersData) {
       const bidder = bidderService.dtoToModel(bidderData);
       bidderMap.set(bidder.id!, bidder);
     }
 
-    for (const callerData of callers) {
+    for (const callerData of callersData) {
       const caller = callerService.dtoToModel(callerData);
       callerMap.set(caller.id!, caller);
     }
@@ -217,7 +289,7 @@ export class LotService {
    * @param data The data retrieved from the database.
    * @returns A Lot model.
    */
-  public dtoToModel(data: LotDTO): Lot {
+  private dtoToModel(data: LotDTO): Lot {
     return new Lot(
       data.id,
       data.auctionId,
