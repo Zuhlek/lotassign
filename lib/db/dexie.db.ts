@@ -1,23 +1,26 @@
 import Dexie, { Table } from "dexie";
-import { Bidder } from "@/lib/models/bidder.model";
 import callersData from "@/dummy-data/callers.json";
 import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
-import { Language } from "@/lib/models/language.model";
+
 import { bidderService } from "@/lib/services/bidder.service";
 import { callerService } from "@/lib/services/caller.service";
-import { LotDTO } from "@/lib/dto/lot.dto";
-import { BidderDTO } from "@/lib/dto/bidder.dto";
-import { CallerDTO } from "@/lib/dto/caller.dto";
-import { AssignmentDTO } from "@/lib/dto/assignment.dto";
-import { PrioCallerAssignmentDTO } from "@/lib/dto/prio-caller-assignment.dto";
-import { AuctionDTO } from "@/lib/dto/auction.dto";
 import { auctionService } from "@/lib/services/auction.service";
-import { Caller } from "@/lib/models/caller.model";
-import { Auction } from "@/lib/models/auction.model";
-import { Assignment } from "@/lib/models/assignment.model";
-import { Lot } from "@/lib/models/lot.model";
 import { assignmentService } from "@/lib/services/assignment.service";
 import { lotService } from "@/lib/services/lot.service";
+
+import { Auction } from "@/lib/models/auction.model";
+import { Lot } from "@/lib/models/lot.model";
+import { Bidder } from "@/lib/models/bidder.model";
+import { Assignment } from "@/lib/models/assignment.model";
+import { Language } from "@/lib/models/language.model";
+
+
+import { AuctionDTO } from "@/lib/services/auction.service";
+import { LotDTO } from "@/lib/services/lot.service";
+import { BidderDTO } from "@/lib/services/bidder.service";
+import { CallerDTO } from "@/lib/services/caller.service";
+import { AssignmentDTO } from "@/lib/services/assignment.service";
+import { PrioCallerAssignmentDTO } from "@/lib/services/prio-caller-assignment.service";
 
 export class MyDatabase extends Dexie {
   auctions!: Table<AuctionDTO, number>;

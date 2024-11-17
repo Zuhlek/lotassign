@@ -2,8 +2,8 @@
 import Grid from "@mui/material/Grid";
 import { Caller } from "@/lib/models/caller.model";
 import { CallerService } from "@/lib/services/caller.service";
-import { AuctionService } from "@/lib/services/auction.service";
-import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service"; // Importiere den Service
+import { auctionService } from "@/lib/services/auction.service";
+import { prioCallerAssignmentService, PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import CallersSearchBarProps from "./callers-searchbar";
@@ -32,11 +32,12 @@ export default function CallersSelectionList({ auction, callers }: CallersSelect
   const [rightFilter, setRightFilter] = useState<string>("");
 
   useEffect(() => {
-    setRight(auction.callerIds || []);
+    const auctionCallerIds = auction.callers?.map((caller) => caller.id!) || [];
+    setRight(auctionCallerIds);
     setLeft(
       not(
         callers.map((caller) => caller.id!),
-        auction.callerIds || []
+        auctionCallerIds
       )
     );
   }, [auction, callers]);
@@ -59,10 +60,10 @@ export default function CallersSelectionList({ auction, callers }: CallersSelect
 
   const removePrioAssignmentsForRemovedCallers = async (removedCallerIds: number[]) => {
     for (const callerId of removedCallerIds) {
-      const assignments = await PrioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auction.id!);
-      for (const assignment of assignments) {
-        await PrioCallerAssignmentService.deletePrioAssignmentByBidderAndAuctionId(assignment.bidderId, auction.id!);
-      }
+      //const assignments = await prioCallerAssignmentService.getPrioAssignmentsByCallerIdAndAuctionId(callerId, auction.id!);
+      //for (const assignment of assignments) {
+        //await prioCallerAssignmentService.deletePrioAssignmentByBidderAndAuctionId(assignment.bidderId, auction.id!);
+      //}
     }
   };
 
@@ -95,7 +96,8 @@ export default function CallersSelectionList({ auction, callers }: CallersSelect
   };
 
   const updateAuctionCallers = async (callerIds: number[]) => {
-    await AuctionService.updateAuction(auction.id!, { ...auction, callerIds });
+    const updatedCallers = callerIds.map((id) => callers.find((caller) => caller.id === id)!);
+    await auctionService.updateAuction({ ...auction, callers: updatedCallers });
   };
 
   const filteredLeft = left.filter((id) =>
