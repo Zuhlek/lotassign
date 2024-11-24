@@ -7,13 +7,18 @@ import { auctionService } from "./auction.service";
 import { bidderService } from "./bidder.service";
 import { callerService } from "./caller.service";
 
-export class PrioCallerAssignmentService {
+class PrioCallerAssignmentService {
   /**
    * Creates a new priority caller assignment in the database.
    * @param prioAssignment The PrioCallerAssignment model to create.
    * @returns The ID of the created assignment.
    */
-  async createPrioCallerAssignment(prioAssignment: PrioCallerAssignment): Promise<number> {
+  async createPrioCallerAssignment(auctionId: number, bidderId: number, callerId: number): Promise<number> {
+    const auction = await auctionService.getAuctionById(auctionId);
+    const bidder = await bidderService.getBidderById(bidderId);
+    const caller = await callerService.getCallerById(callerId);
+
+    const prioAssignment = new PrioCallerAssignment(undefined, auction!, bidder!, caller!);
     const prioAssignmentData = this.prioAssignmentToDBData(prioAssignment);
     const createdId = await db.prioCallerAssignments.add(prioAssignmentData);
     return createdId ?? -1;

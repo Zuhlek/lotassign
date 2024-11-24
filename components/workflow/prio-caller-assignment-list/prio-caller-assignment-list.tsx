@@ -3,7 +3,7 @@ import { Box, Button, Card, List, ListItem, Typography } from "@mui/material";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Caller } from "@/lib/models/caller.model";
 import { PrioCallerAssignment } from "@/lib/models/prioCallerAssignment.model";
-import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
+import { prioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 
 interface PrioCallerAssignmentListProps {
   prioAssignments: PrioCallerAssignment[];
@@ -24,15 +24,15 @@ export default function PrioCallerAssignmentList({ prioAssignments, bidders, cal
 
   const handleDelete =  (prioAssignmentId: number | undefined) =>  async () => {
     if(!prioAssignmentId) return;
-    await PrioCallerAssignmentService.deletePrioAssignment(prioAssignmentId);
+    await prioCallerAssignmentService.deletePrioCallerAssignment(prioAssignmentId);
   }
 
   return (
     <Box display="flex" justifyContent="start" alignContent="center">
       <List sx={{ padding:0, margin:0}}>
         {prioAssignments.map((assignment) => (
-          <ListItem key={`${assignment.bidderId}-${assignment.callerId}`} dense sx={{ padding:0, margin:0}}>
-            <Card sx={{ paddingLeft:1, paddingRight:1}}>{`${getBidderName(assignment.bidderId)} → ${getCallerName(assignment.callerId)}`}</Card>
+          <ListItem key={`${assignment.bidder.id}-${assignment.caller.id}`} dense sx={{ padding:0, margin:0}}>
+            <Card sx={{ paddingLeft:1, paddingRight:1}}>{`${getBidderName(assignment.bidder.id!)} → ${getCallerName(assignment.caller.id!)}`}</Card>
           <Button color="error" onClick={handleDelete(assignment.id)}>X</Button>
           </ListItem>
         ))}

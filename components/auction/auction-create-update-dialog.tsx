@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 
 interface AuctionCreateUpdateDialogProps {
-  selectedAuction: Auction;
+  selectedAuction: Auction | undefined;
   isVisible: boolean;
   isCreateMode: boolean;
   handleCloseDialog: () => void;
@@ -40,8 +40,9 @@ export default function AuctionCreateUpdateDialog({
   }, [selectedAuction, isCreateMode]);
 
   const handleCreateClick = async () => {
-    const createAuctionId = await handleCreate({ name: name, date: new Date() });
-    if (createAuctionId) {
+    const auction = new Auction(undefined, name, new Date());
+    const createdAuctionId = await handleCreate(auction);
+    if (createdAuctionId) {
       handleCloseDialog();
       setName("");
     } else {
@@ -50,7 +51,9 @@ export default function AuctionCreateUpdateDialog({
   };
 
   const handleUpdateClick = async () => {
-    const updateAuctionId = await handleUpdate({id: selectedAuction.id, name: name, date: date});
+    if (!selectedAuction) return;
+    const auction = new Auction(selectedAuction.id, name, date);
+    const updateAuctionId = await handleUpdate(auction);
     if (updateAuctionId) {
       handleCloseDialog();
       setName("");

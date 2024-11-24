@@ -16,7 +16,7 @@ interface AuctionListProps {
 export default function AuctionList({ auctions, searchText, setSearchText }: AuctionListProps) {
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [isCreateMode, setIsCreateMode] = useState(false);
-  const [selectedAuction, setSelectedAuction] = useState<Auction>({ name: "", date: new Date() });
+  const [selectedAuction, setSelectedAuction] = useState<Auction>();
 
 
   const handleCreateAuction = async (auction: Auction): Promise<number | undefined> => {

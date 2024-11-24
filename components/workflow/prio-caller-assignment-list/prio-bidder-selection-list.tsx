@@ -4,7 +4,7 @@ import PrioCallerAssignmentForm from "./prio-caller-assignment-form";
 import PrioCallerAssignmentList from "./prio-caller-assignment-list";
 import { useBiddersByAuctionId } from "@/hooks/useBiddersByAuctionId";
 import { usePrioAssignments } from "@/hooks/usePrioAssignments";
-import { PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
+import { prioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 import { useCallersForAuction } from "@/hooks/useCallersForAuction";
 
 interface PrioBidderSelectionListProps {
@@ -25,7 +25,9 @@ export default function PrioBidderSelectionList({ auctionId }: PrioBidderSelecti
     if (prioAssignments) {
       const assignmentsMap = new Map<number, number>();
       prioAssignments.forEach((assignment) => {
-        assignmentsMap.set(assignment.bidderId, assignment.callerId);
+        if (assignment.bidder.id && assignment.caller.id) {
+          assignmentsMap.set(assignment.bidder.id, assignment.caller.id);
+        }
       });
       setPrioAssignmentsMap(assignmentsMap);
     }
@@ -36,11 +38,7 @@ export default function PrioBidderSelectionList({ auctionId }: PrioBidderSelecti
     newPrioAssignments.set(bidderId, callerId);
     setPrioAssignmentsMap(newPrioAssignments);
 
-    await PrioCallerAssignmentService.createPrioAssignment({
-      auctionId,
-      bidderId,
-      callerId,
-    });
+    await prioCallerAssignmentService.createPrioCallerAssignment(auctionId, bidderId, callerId);
 
     setSelectedBidder("");
     setSelectedCaller("");
@@ -48,7 +46,9 @@ export default function PrioBidderSelectionList({ auctionId }: PrioBidderSelecti
 
   const getAvailableBidders = () => {
     const assignedBidders = Array.from(prioAssignmentsMap.keys());
-    return bidders.filter((bidder) => !assignedBidders.includes(bidder.id!));
+    const availableBidders = bidders.filter((bidder) => !assignedBidders.includes(bidder.id!));
+    console.log(availableBidders);
+    return availableBidders;
   };
 
   if (biddersLoading || callersLoading) {
