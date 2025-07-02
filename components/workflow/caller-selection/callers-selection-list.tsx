@@ -1,8 +1,8 @@
 "use client";
 import Grid from "@mui/material/Grid";
 import { Caller } from "@/lib/models/caller.model";
-import { CallerService } from "@/lib/services/caller.service";
-import { auctionService } from "@/lib/services/auction.service";
+import { CallerService } from "@/lib/actions/caller.actions";
+import { auctionService } from "@/lib/actions/auction.actions";
 import { prioCallerAssignmentService, PrioCallerAssignmentService } from "@/lib/services/prio-caller-assignment.service";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";

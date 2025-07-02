@@ -1,9 +1,6 @@
 "use client";
 import { Button } from "@mui/material";
 import { AssignmentLogic } from "@/lib/utils/assignmentLogic";
-import { assignmentService } from "@/lib/services/assignment.service"; // import services
-import { lotService } from "@/lib/services/lot.service";
-import { auctionService } from "@/lib/services/auction.service";
 
 interface ResetAssignmentsButtonProps {
   auctionId: number;
@@ -12,9 +9,7 @@ interface ResetAssignmentsButtonProps {
 export default function ResetAssignmentsButton({ auctionId }: ResetAssignmentsButtonProps) {
 
   const resetAssignments = async () => {
-
     const assignmentLogic = new AssignmentLogic(assignmentService, lotService, auctionService);
-    
     await assignmentLogic.removeAllCallersFromAssignmentsByAuctionId(auctionId);
   };
 

@@ -4,9 +4,8 @@ import React, { useState } from 'react';
 import { Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import { saveAs } from 'file-saver';
 import ResetDbButton from '@/components/buttons/reset-db-button';
-import { exportDatabase } from '@/lib/db/helpers/exportDatabaseBackup';
-import { importToDatabase } from '@/lib/db/helpers/importDatabaseBackup';
 import DataIntegrityChecker from '@/components/DataIntegrityChecker';
+import { exportDatabase, importToDatabase } from '@/lib/db/helpers';
 
 export default function BackupsPage() {
     const [open, setOpen] = useState(false);

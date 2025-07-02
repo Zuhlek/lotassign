@@ -5,7 +5,7 @@ import { useState } from "react";
 import AuctionListItem from "./auction-list-item";
 import AuctionCreateUpdateDialog from "./auction-create-update-dialog";
 import AuctionListToolbar from "./auction-list-toolbar";
-import { auctionService } from "@/lib/services/auction.service";
+import { auctionService } from "@/lib/actions/auction.actions";
 
 interface AuctionListProps {
   auctions: Auction[] | undefined;

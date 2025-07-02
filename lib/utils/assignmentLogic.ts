@@ -2,9 +2,9 @@ import { Assignment } from "@/lib/models/assignment.model";
 import { Caller } from "@/lib/models/caller.model";
 import { Lot } from "@/lib/models/lot.model";
 import { db } from "@/lib/db/dexie.db";
-import { assignmentService } from "../services/assignment.service";
-import { auctionService } from "../services/auction.service";
-import { lotService } from "../services/lot.service";
+import { assignmentService } from "../actions/assignment.service";
+import { auctionService } from "../actions/auction.actions";
+import { lotService } from "../actions/lot.actions";
 
 export class AssignmentLogic {
 

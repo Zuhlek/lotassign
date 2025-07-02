@@ -1,131 +1,34 @@
 import Dexie, { Table } from "dexie";
-import callersData from "@/dummy-data/callers.json";
-import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
 
-import { bidderService } from "@/lib/services/bidder.service";
-import { callerService } from "@/lib/services/caller.service";
-import { auctionService } from "@/lib/services/auction.service";
-import { assignmentService } from "@/lib/services/assignment.service";
-import { lotService } from "@/lib/services/lot.service";
-
-import { Auction } from "@/lib/models/auction.model";
-import { Lot } from "@/lib/models/lot.model";
-import { Bidder } from "@/lib/models/bidder.model";
-import { Assignment } from "@/lib/models/assignment.model";
-import { Language } from "@/lib/models/language.model";
-
-
-import { AuctionDTO } from "@/lib/services/auction.service";
-import { LotDTO } from "@/lib/services/lot.service";
-import { BidderDTO } from "@/lib/services/bidder.service";
-import { CallerDTO } from "@/lib/services/caller.service";
-import { AssignmentDTO } from "@/lib/services/assignment.service";
-import { PrioCallerAssignmentDTO } from "@/lib/services/prio-caller-assignment.service";
+import { AuctionJSON }        from "@/lib/models/auction.model";
+import { LotJSON }            from "@/lib/models/lot.model";
+import { BidderJSON }         from "@/lib/models/bidder.model";
+import { CallerJSON }         from "@/lib/models/caller.model";
+import { AuctionCallerJSON }  from "@/lib/models/auction-caller.model";
+import { LotBidderJSON }      from "@/lib/models/lot-bidder.model";
 
 export class MyDatabase extends Dexie {
-  auctions!: Table<AuctionDTO, number>;
-  lots!: Table<LotDTO, number>;
-  bidders!: Table<BidderDTO, number>;
-  callers!: Table<CallerDTO, number>;
-  assignments!: Table<AssignmentDTO, number>;
-  prioCallerAssignments!: Table<PrioCallerAssignmentDTO, number>;
+  auctions!:        Table<AuctionJSON,       number>;
+  lots!:            Table<LotJSON,           number>;
+  bidders!:         Table<BidderJSON,        number>;
+  callers!:         Table<CallerJSON,        number>;
+  auctionCallers!:  Table<AuctionCallerJSON, number>;
+  lotBidders!:      Table<LotBidderJSON,     number>;
 
   constructor() {
     super("LotAssignDB");
+
     this.version(1).stores({
-      auctions: "++id,name,date,*lotIds,*callerIds",
-      lots: "++id,number,description,auctionId,[number+auctionId],*assignmentIds",
-      bidders: "++id,name,*languages,phoneNumber",
-      callers: "++id,name,abbreviation,*languages",
-      assignments: "++id,lotId,bidderId,callerId,isFinal",
-      prioCallerAssignments: "++id, auctionId, bidderId, callerId"
+      auctions:       "++id, name, date",
+      lots:           "++id, auctionId, number, [auctionId+number]",
+      bidders:        "++id, name, phone, *languages",
+      callers:        "++id, abbreviation, name, *languages",
+      auctionCallers: "++id, auctionId, callerId, [auctionId+callerId]",
+      lotBidders:     "++id, auctionId, lotId, bidderId,"
+                    + "preferredCallerId, callerId, status,"
+                    + "[lotId+bidderId], [auctionId+status], [callerId+lotId]",
     });
   }
 }
 
-const db = new MyDatabase();
-
-async function clearDB() {
-  await db.delete();
-  await db.open(); 
-}
-
-async function loadAuctionAndCallerDummyData(): Promise<number> {
-
-  const newAuction = new Auction(undefined, "Dummy Auction", new Date(), [], []);
-  const auctionId = await auctionService.createAuction(newAuction);
-  
-  newAuction.id = auctionId;
-  await auctionService.updateAuction(newAuction);
-
-  return auctionId;
-}
-
-async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number): Promise<void> {
-  const bidderMap = new Map<string, Bidder>();
-  const lotMap = new Map<string, Lot>();
-
-  for (const bpl of bidderPerLotData) {
-    // Step 1: Create or Retrieve Bidder
-    let bidder: Bidder | undefined;
-    if (!bidderMap.has(bpl.BidderName)) {
-      const languages = bpl.BidderLanguages
-        .map((lang) => Object.values(Language).find((val) => val === lang))
-        .filter((lang): lang is Language => lang !== undefined);
-
-      // Instantiate Bidder model
-      const newBidder = new Bidder(undefined, bpl.BidderName, languages, bpl.BidderPhoneNumber);
-
-      // Create Bidder via Service
-      const bidderId = await bidderService.createBidder(newBidder);
-
-      // Retrieve the created Bidder
-      bidder = await bidderService.getBidderById(bidderId);
-      if (!bidder) throw new Error(`Failed to create bidder: ${bpl.BidderName}`);
-
-      // Store in map for reuse
-      bidderMap.set(bpl.BidderName, bidder);
-    } else {
-      bidder = bidderMap.get(bpl.BidderName)!;
-    }
-
-    // Step 2: Create or Retrieve Lot
-    let lot: Lot;
-    if (!lotMap.has(bpl.LotNumber)) {
-      // Instantiate Lot model
-      const newLot = new Lot(undefined, parseInt(bpl.LotNumber), parseInt(bpl.LotName), auctionId.toString(), []);
-
-      // Create Lot via Service
-      lot = await lotService.createLot(newLot);
-      lotMap.set(bpl.LotNumber, lot);
-    } else {
-      lot = lotMap.get(bpl.LotNumber)!;
-    }
-
-    // Step 3: Create Assignment
-    const newAssignment = new Assignment(
-      undefined,      // ID will be assigned by the database
-      undefined,      // Caller is undefined initially
-      lot,            // Associated Lot
-      bidder,         // Associated Bidder
-      false           // isFinal flag
-    );
-
-    // Create Assignment via Service
-    const assignmentId = await assignmentService.createAssignment(newAssignment);
-
-    // Optionally, retrieve the created Assignment to confirm
-    const createdAssignment = await assignmentService.getAssignmentById(assignmentId);
-    if (!createdAssignment) {
-      throw new Error(`Failed to create assignment for Lot ${bpl.LotNumber} and Bidder ${bpl.BidderName}`);
-    }
-
-    // Note: The `createAssignment` method should handle associating the Assignment with the Lot
-    // via the `assignmentIds` array in the Lot. Ensure that this logic is implemented within the service.
-  }
-}
-
-
-
-
-export { db, clearDB, loadAuctionAndCallerDummyData, loadLotsBiddersAndAssignmentsDummyData };
+export const db = new MyDatabase();

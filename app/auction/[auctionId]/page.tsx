@@ -5,7 +5,7 @@ import LotAssignmentList from "@/components/workflow/lot-assignment-list/lot-ass
 import CreateAssignmentButton from "@/components/buttons/run-asssignment-button";
 import ResetAssignmentsButton from "@/components/buttons/reset-assignments-button";
 import LoadLotsDummyDataButton from "@/components/buttons/load-lots-dummy-data-button";
-import UploadExcelDataButton from "@/components/buttons/upload-excel-data-button";
+import UploadExcelDataButton from "@/components/buttons/upload-caller-data-button";
 import PrioBidderSelectionList from "@/components/workflow/prio-caller-assignment-list/prio-bidder-selection-list";
 import { useAuctionById } from "@/hooks/useAuctionById"; 
 import { useCallers } from "@/hooks/useCallers"; 

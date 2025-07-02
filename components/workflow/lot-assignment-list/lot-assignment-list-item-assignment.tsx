@@ -2,8 +2,8 @@
 import { Assignment } from "@/lib/models/assignment.model";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Caller } from "@/lib/models/caller.model";
-import { BidderService } from "@/lib/services/bidder.service";
-import { CallerService } from "@/lib/services/caller.service";
+import { BidderService } from "@/lib/actions/bidder.actions";
+import { CallerService } from "@/lib/actions/caller.actions";
 import { Box, Divider, Grid, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 

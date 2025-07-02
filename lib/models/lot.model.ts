@@ -1,26 +1,44 @@
-import { Assignment } from "@/lib/models/assignment.model";
+import { z } from "zod";
 
 export class Lot {
-  public id?: number;
-  public auctionId: number;
-  public number: number;
-  public description: string;
-  public assignmentIds: number[];
-  public assignments?: Assignment[];
+  id?: number;
+  auctionId: number;
+  number: number;
+  title: string;
 
-  constructor(
-    id: number | undefined,
-    auctionId: number,
-    number: number,
-    description: string,
-    assignmentIds: number[] = [],
-    assignments?: Assignment[]
-  ) {
-    this.id = id;
+  constructor(auctionId: number, number: number, title: string, id?: number) {
     this.auctionId = auctionId;
     this.number = number;
-    this.description = description;
-    this.assignmentIds = assignmentIds;
-    this.assignments = assignments;
+    this.title = title;
+    this.id = id;
+  }
+
+  static fromJSON(json: LotJSON): Lot {
+    const parsed = LotSchema.parse(json);
+    return new Lot(parsed.auctionId, parsed.number, parsed.title, parsed.id);
+  }
+
+  toJSON(): LotJSON {
+    return {
+      id: this.id,
+      auctionId: this.auctionId,
+      number: this.number,
+      title: this.title,
+    };
   }
 }
+
+export const LotSchema = z.object({
+  id: z.number().optional(),
+  auctionId: z.number(),
+  number: z.number(),
+  title: z.string(),
+});
+
+export interface LotJSON {
+  id?: number;
+  auctionId: number;
+  number: number;
+  title: string;
+}
+

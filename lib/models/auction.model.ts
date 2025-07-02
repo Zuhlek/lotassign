@@ -1,31 +1,50 @@
-import { Caller } from "@/lib/models/caller.model";
-import { Lot } from "@/lib/models/lot.model";
+import { z } from "zod";
+import { Lot, LotJSON, LotSchema } from "./lot.model";
 
 export class Auction {
-  public id?: number;
-  public name: string;
-  public date: Date;
-  public lots?: Lot[];
-  public callers?: Caller[];
+  id?: number;
+  name: string;
+  date: Date;
+  lots: Lot[] = [];
 
-  constructor(
-    id: number | undefined,
-    name: string,
-    date: Date,
-    lots?: Lot[],
-    callers?: Caller[]
-  ) {
-    this.id = id;
+  constructor(name: string, date: Date, lots: Lot[] = [], id?: number) {
     this.name = name;
     this.date = date;
     this.lots = lots;
-    this.callers = callers;
+    this.id = id;
   }
 
-  toDDMMYYYY(): string {
-    const day = this.date.getDate();
-    const month = this.date.getMonth() + 1;
-    const year = this.date.getFullYear();
-    return `${day}/${month}/${year}`;
+  static fromJSON(json: AuctionJSON): Auction {
+    const parsed = AuctionSchema.parse(json);
+    return new Auction(
+      parsed.name,
+      new Date(parsed.date),
+      parsed.lots ? parsed.lots.map(Lot.fromJSON) : [],
+      parsed.id
+    );
+  }
+
+  toJSON(): AuctionJSON {
+    return {
+      id: this.id,
+      name: this.name,
+      date: this.date.toISOString(),
+      lots: this.lots.map(l => l.toJSON()),
+    };
   }
 }
+
+export const AuctionSchema = z.object({
+  id: z.number().optional(),
+  name: z.string(),
+  date: z.string(),
+  lots: z.array(LotSchema).optional(),
+});
+
+export interface AuctionJSON {
+  id?: number;
+  name: string;
+  date: string;
+  lots?: LotJSON[];
+}
+

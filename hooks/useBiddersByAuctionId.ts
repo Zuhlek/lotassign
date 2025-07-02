@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
-import { lotService } from "@/lib/services/lot.service";
-import { bidderService } from "@/lib/services/bidder.service";
+import { lotService } from "@/lib/actions/lot.actions";
+import { bidderService } from "@/lib/actions/bidder.actions";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Assignment } from "@/lib/models/assignment.model";
 import { assignmentService } from "@/lib/services/assignment.service";

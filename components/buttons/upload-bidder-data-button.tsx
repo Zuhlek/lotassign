@@ -1,13 +1,9 @@
 "use client";
 import { Button } from "@mui/material";
 import ExcelJS from "exceljs";
-import { Language } from "@/lib/models/language.model";
-import { bidderService } from "@/lib/services/bidder.service";
+import { Language } from "@/lib/models/language.enum";
 import { Bidder } from "@/lib/models/bidder.model";
-import { lotService } from "@/lib/services/lot.service";
 import { Lot } from "@/lib/models/lot.model";
-import { assignmentService } from "@/lib/services/assignment.service";
-import { Assignment } from "@/lib/models/assignment.model";
 
 interface UploadBidderDataButtonProps {
   auctionId: number;

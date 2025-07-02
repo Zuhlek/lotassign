@@ -1,6 +1,6 @@
 import { db } from "@/lib/db/dexie.db";
 import { Lot } from "@/lib/models/lot.model";
-import { lotService } from "@/lib/services/lot.service";
+import { lotService } from "@/lib/actions/lot.actions";
 import { useEffect, useState } from "react";
 
 

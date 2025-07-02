@@ -1,5 +1,5 @@
 "use client"; 
-import { loadAuctionAndCallerDummyData } from "@/lib/db/dexie.db";
+import { loadAuctionAndCallerDummyData } from "@/lib/db/helpers";
 import { Button } from "@mui/material";
 
 export default function LoadAuctionDummyDataButton() {

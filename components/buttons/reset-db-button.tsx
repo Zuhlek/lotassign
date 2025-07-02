@@ -1,5 +1,5 @@
 "use client";
-import { clearDB } from "@/lib/db/dexie.db";
+import { clearDB } from "@/lib/db/helpers";
 import { Button } from "@mui/material";
 
 export default function ResetDbButton() {

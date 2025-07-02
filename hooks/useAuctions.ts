@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db/dexie.db";
-import { auctionService } from "@/lib/services/auction.service";
+import { auctionService } from "@/lib/actions/auction.actions";
 
 export function useAuctions() {
   const [searchText, setSearchText] = useState<string>("");

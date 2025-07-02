@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { auctionService } from "@/lib/services/auction.service";
+import { auctionService } from "@/lib/actions/auction.actions";
 import { Caller } from "@/lib/models/caller.model";
 
 export function useCallersForAuction(auctionId: number) {
