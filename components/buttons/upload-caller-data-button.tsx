@@ -11,14 +11,15 @@ import { LotBidder, LotBidderStatus } from "@/lib/models/lot-bidder.model";
 import { createBidder, getBidderById } from "@/lib/actions/bidder.actions";
 import { getLotByAuctionIdAndNumber, createLot } from "@/lib/actions/lot.actions";
 import { createLotBidder } from "@/lib/actions/lot-bidder.actions";
-import { createCaller } from "@/lib/actions/caller.actions";
+import { createCaller, getCallerById } from "@/lib/actions/caller.actions";
 
 interface UploadDataButtonProps {
+  uploadModel: "Caller" | "Bidder";
   auctionId?: number;
-  uploadModel: "Bidder" | "Caller";
+  onUploadComplete?: (createdCallers: Caller[]) => void;
 }
 
-export default function UploadExcelDataButton({ auctionId, uploadModel }: UploadDataButtonProps) {
+export default function UploadExcelDataButton({ auctionId, uploadModel, onUploadComplete }: UploadDataButtonProps) {
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files[0]) {
@@ -117,13 +118,21 @@ export default function UploadExcelDataButton({ auctionId, uploadModel }: Upload
       }
     });
 
+    const createdCallers: Caller[] = [];
+
     for (const row of rows) {
       const langs: Language[] = row.languages.map((lang: string) =>
         Object.values(Language).includes(lang as Language) ? lang : Language.Englisch
       );
 
       const caller = new Caller(row.name, row.abbreviation, langs);
-      await createCaller(caller);
+      const id = await createCaller(caller);
+      const created = await getCallerById(id);
+      if (created) createdCallers.push(created);
+    }
+
+    if (onUploadComplete) {
+      onUploadComplete(createdCallers);
     }
 
     alert("Caller data successfully uploaded.");

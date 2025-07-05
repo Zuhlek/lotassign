@@ -2,8 +2,6 @@
 import CallersSelectionList from "@/components/workflow/caller-selection/callers-selection-list";
 import { Box, Typography } from "@mui/material";
 import LotAssignmentList from "@/components/workflow/lot-assignment-list/lot-assignment-list";
-import CreateAssignmentButton from "@/components/buttons/run-asssignment-button";
-import ResetAssignmentsButton from "@/components/buttons/reset-assignments-button";
 import LoadLotsDummyDataButton from "@/components/buttons/load-lots-dummy-data-button";
 import UploadExcelDataButton from "@/components/buttons/upload-caller-data-button";
 import PrioBidderSelectionList from "@/components/workflow/prio-caller-assignment-list/prio-bidder-selection-list";

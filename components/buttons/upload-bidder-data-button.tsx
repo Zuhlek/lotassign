@@ -1,9 +1,15 @@
 "use client";
+
 import { Button } from "@mui/material";
 import ExcelJS from "exceljs";
 import { Language } from "@/lib/models/language.enum";
 import { Bidder } from "@/lib/models/bidder.model";
 import { Lot } from "@/lib/models/lot.model";
+import { LotBidder, LotBidderStatus } from "@/lib/models/lot-bidder.model";
+
+import { createBidder, getBidderById } from "@/lib/actions/bidder.actions";
+import { getLotByAuctionIdAndNumber, createLot } from "@/lib/actions/lot.actions";
+import { createLotBidder } from "@/lib/actions/lot-bidder.actions";
 
 interface UploadBidderDataButtonProps {
   auctionId: number;
@@ -22,14 +28,13 @@ export default function UploadBidderDataButton({ auctionId }: UploadBidderDataBu
         const rows: any[] = [];
         worksheet.eachRow((row, rowNumber) => {
           if (rowNumber > 1) {
-            // Skip header row
-            const rowValues = row.values as any;
+            const values = row.values as any;
             rows.push({
-              LotNumber: rowValues[1],
-              LotName: rowValues[2],
-              BidderName: rowValues[3],
-              BidderPhoneNumber: rowValues[4],
-              BidderLanguages: (rowValues[5] as string).split(",").map((lang) => lang.trim()), // Split and trim languages
+              LotNumber: values[1],
+              LotName: values[2],
+              BidderName: values[3],
+              BidderPhoneNumber: values[4],
+              BidderLanguages: (values[5] as string).split(",").map((lang) => lang.trim()),
             });
           }
         });
@@ -37,100 +42,58 @@ export default function UploadBidderDataButton({ auctionId }: UploadBidderDataBu
         const bidderMap = new Map<string, Bidder>();
         const lotMap = new Map<string, Lot>();
 
-        for (const bpl of rows) {
-          // Step 1: Create or Retrieve Bidder
-          let bidder: Bidder | undefined;
-          if (!bidderMap.has(bpl.BidderName)) {
-            // Map language strings to Language enums, defaulting to Englisch
-            const languages: Language[] = bpl.BidderLanguages
-              .map((lang: string) => {
-                const enumLang = Object.values(Language).find((val) => val === lang);
-                return enumLang ? enumLang : Language.Englisch;
-              });
+        for (const row of rows) {
+          let bidder = bidderMap.get(row.BidderName);
+          if (!bidder) {
+            const langs: Language[] = row.BidderLanguages.map((lang: string) =>
+              Object.values(Language).includes(lang as Language) ? lang : Language.Englisch
+            );
 
-            // Instantiate Bidder model
-            const newBidder = new Bidder(undefined, bpl.BidderName, languages, bpl.BidderPhoneNumber);
-
-            // Create Bidder via Service
-            const bidderId = await bidderService.createBidder(newBidder);
-
-            // Retrieve the created Bidder
-            bidder = await bidderService.getBidderById(bidderId);
-            if (!bidder) {
-              console.error(`Failed to create bidder: ${bpl.BidderName}`);
-              continue; // Skip to next row
-            }
-
-            // Store in map for reuse
-            bidderMap.set(bpl.BidderName, bidder);
-          } else {
-            bidder = bidderMap.get(bpl.BidderName)!;
+            const newBidder = new Bidder(row.BidderName, row.BidderPhoneNumber, langs);
+            const bidderId = await createBidder(newBidder);
+            bidder = await getBidderById(bidderId);
+            if (!bidder) continue;
+            bidderMap.set(row.BidderName, bidder);
           }
 
-          // Step 2: Create or Retrieve Lot
-          let lot: Lot | undefined;
-          const lotKey = `${auctionId}-${bpl.LotNumber}`;
-          if (!lotMap.has(lotKey)) {
-            // Check if Lot exists via LotService
-            lot = await lotService.getLotByAuctionIdAndNumber(auctionId, parseInt(bpl.LotNumber));
+          const lotKey = `${auctionId}-${row.LotNumber}`;
+          let lot = lotMap.get(lotKey);
+          if (!lot) {
+            lot = await getLotByAuctionIdAndNumber(auctionId, parseInt(row.LotNumber));
             if (!lot) {
-              // Instantiate Lot model
-              const newLot = new Lot(undefined, parseInt(bpl.LotNumber), bpl.LotName, auctionId.toString(), []);
-
-              // Create Lot via Service
-              const createdLot = await lotService.createLot(newLot);
-              lot = createdLot;
+              const newLot = new Lot(auctionId, parseInt(row.LotNumber), row.LotName);
+              const lotId = await createLot(newLot);
+              lot = new Lot(auctionId, newLot.number, newLot.title, lotId);
             }
-
-            // Store in map for reuse
             lotMap.set(lotKey, lot);
-          } else {
-            lot = lotMap.get(lotKey)!;
           }
 
-          // Step 3: Create Assignment
-          const newAssignment = new Assignment(
-            undefined,      // ID will be assigned by the service
-            undefined,      // Caller is undefined initially
-            lot,            // Associated Lot
-            bidder,         // Associated Bidder
-            false           // isFinal flag
-          );
-
-          // Create Assignment via Service
-          const assignmentId = await assignmentService.createAssignment(newAssignment);
-
-          if (assignmentId === -1) {
-            console.error(`Failed to create assignment for Lot ${bpl.LotNumber} and Bidder ${bpl.BidderName}`);
-            continue; // Skip to next row
-          }
-
-          // No need to manually update Lot's assignmentIds; service should handle it
+          const lotBidder = new LotBidder(auctionId, lot.id!, bidder.id!, "planned" as LotBidderStatus);
+          await createLotBidder(lotBidder);
         }
 
-        // Optionally, provide user feedback upon completion
         alert("Bidder and Lot data imported successfully.");
       } catch (error) {
         console.error("Error importing bidder and lot data:", error);
         alert("An error occurred while importing data. Please check the console for details.");
       }
-    };
+    }
+  };
 
-    return (
-      <div>
-        <input
-          type="file"
-          accept=".xlsx, .xls"
-          onChange={handleFileChange}
-          style={{ display: "none" }}
-          id="upload-button-file"
-        />
-        <label htmlFor="upload-button-file">
-          <Button variant="contained" component="span" sx={{ margin: 1 }}>
-            Import Bidder & Lot Data
-          </Button>
-        </label>
-      </div>
-    );
-  }
+  return (
+    <div>
+      <input
+        type="file"
+        accept=".xlsx, .xls"
+        onChange={handleFileChange}
+        style={{ display: "none" }}
+        id="upload-button-file"
+      />
+      <label htmlFor="upload-button-file">
+        <Button variant="contained" component="span" sx={{ margin: 1 }}>
+          Import Bidder & Lot Data
+        </Button>
+      </label>
+    </div>
+  );
 }

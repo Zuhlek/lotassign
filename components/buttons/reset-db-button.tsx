@@ -1,5 +1,5 @@
 "use client";
-import { clearDB } from "@/lib/db/helpers";
+import { clearDB } from "@/lib/utils/db-helpers";
 import { Button } from "@mui/material";
 
 export default function ResetDbButton() {

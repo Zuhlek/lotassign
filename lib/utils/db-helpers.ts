@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/dexie.db";
 
-import callersData from "@/dummy-data/callers.json";
-import bidderPerLotData from "@/dummy-data/biddersPerLots.json";
+import callersData from "@/supply/callers.json";
+import bidderPerLotData from "@/supply/biddersPerLots.json";
 
 import { createAuction } from "@/lib/actions/auction.actions";
 import { createLot } from "@/lib/actions/lot.actions";

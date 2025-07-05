@@ -22,7 +22,7 @@ export default function AuctionListItem({ auction, handleOpenDialog, handleDelet
     <Card key={auction.id} sx={{ minWidth: 200, margin: 1, padding: 1}}>
       <CardContent>
         <Typography variant="h5" align="center">{auction.name}</Typography>
-        <Typography variant="body1" align="center">{auction.toDDMMYYYY()}</Typography>
+        <Typography variant="body1" align="center">{auction.date.toISOString()}</Typography>
       </CardContent>
       <Divider sx={{marginTop: 2, marginBottom: 2}}></Divider>
       <Box display="flex" alignItems="center" justifyContent="space-between">

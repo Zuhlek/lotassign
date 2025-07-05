@@ -1,4 +1,5 @@
 "use client";
+
 import { Auction } from "@/lib/models/auction.model";
 import {
   Box,
@@ -7,7 +8,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Modal,
   TextField,
 } from "@mui/material";
 import { useEffect, useState } from "react";
@@ -29,62 +29,61 @@ export default function AuctionCreateUpdateDialog({
   handleCreate,
   handleUpdate,
 }: AuctionCreateUpdateDialogProps) {
-  const [name, setName] = useState(selectedAuction ? selectedAuction.name : "");
-  const [date, setDate] = useState(selectedAuction ? selectedAuction.date : new Date());
+  const [name, setName] = useState("");
+  const [date, setDate] = useState(new Date());
 
   useEffect(() => {
-    if (!isCreateMode && selectedAuction) {
+    if (isCreateMode) {
+      setName("");
+      setDate(new Date());
+    } else if (selectedAuction) {
       setName(selectedAuction.name);
       setDate(selectedAuction.date);
     }
-  }, [selectedAuction, isCreateMode]);
+  }, [isVisible, isCreateMode, selectedAuction]);
 
   const handleCreateClick = async () => {
-    const auction = new Auction(undefined, name, new Date());
-    const createdAuctionId = await handleCreate(auction);
-    if (createdAuctionId) {
-      handleCloseDialog();
-      setName("");
-    } else {
-      console.error("Unable to create new auction.");
-    }
+    const auction = new Auction(name, date);
+    const createdId = await handleCreate(auction);
+    if (createdId) handleCloseDialog();
+    else console.error("Unable to create new auction.");
   };
 
   const handleUpdateClick = async () => {
     if (!selectedAuction) return;
-    const auction = new Auction(selectedAuction.id, name, date);
-    const updateAuctionId = await handleUpdate(auction);
-    if (updateAuctionId) {
-      handleCloseDialog();
-      setName("");
-      setDate(new Date())
-    } else {
-      console.error("Unable to update auction.");
-    }
+    const updated = new Auction(name, date, selectedAuction.lots, selectedAuction.id);
+    const updatedId = await handleUpdate(updated);
+    if (updatedId) handleCloseDialog();
+    else console.error("Unable to update auction.");
   };
 
-  const formatDate = (date: Date) => {
-    return date.toISOString().split('T')[0];
-  };
 
-  if (isVisible) {
-    return (
-      <Dialog open={isVisible} onClose={handleCloseDialog}>
-        <DialogTitle>{isCreateMode ? "Create Auction" : "Edit Auction"}</DialogTitle>
-        <DialogContent>
-          <TextField label="name" value={name} onChange={(event) => setName(event.target.value)}></TextField>
-          {!isCreateMode && (
-            <TextField type="date" value={formatDate(date)} onChange={(event) => setDate(new Date(event.target.value))}></TextField>
-          )}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={isCreateMode ? handleCreateClick : handleUpdateClick}>
-            {isCreateMode ? "Create" : "Update"}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    );
-  } else {
-    <></>;
-  }
+  const formatDate = (date: Date) => date.toISOString().split("T")[0];
+
+  return (
+    <Dialog open={isVisible} onClose={handleCloseDialog}>
+      <DialogTitle>{isCreateMode ? "Create Auction" : "Edit Auction"}</DialogTitle>
+      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+        <TextField
+          label="Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        {!isCreateMode && (
+          <TextField
+            type="date"
+            value={formatDate(date)}
+            onChange={(e) => setDate(new Date(e.target.value))}
+            label="Date"
+          />
+        )}
+      </DialogContent>
+      <DialogActions>
+        <Button variant="contained" onClick={isCreateMode ? handleCreateClick : handleUpdateClick}>
+          {isCreateMode ? "Create" : "Update"}
+        </Button>
+        <Button onClick={handleCloseDialog}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
+  );
 }

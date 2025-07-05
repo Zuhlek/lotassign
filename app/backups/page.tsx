@@ -5,7 +5,7 @@ import { Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, D
 import { saveAs } from 'file-saver';
 import ResetDbButton from '@/components/buttons/reset-db-button';
 import DataIntegrityChecker from '@/components/DataIntegrityChecker';
-import { exportDatabase, importToDatabase } from '@/lib/db/helpers';
+import { exportDatabase, importToDatabase } from '@/lib/utils/db-helpers';
 
 export default function BackupsPage() {
     const [open, setOpen] = useState(false);

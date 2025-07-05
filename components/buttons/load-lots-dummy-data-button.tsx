@@ -1,5 +1,5 @@
 "use client";
-import { loadLotsBiddersAndAssignmentsDummyData } from "@/lib/db/helpers";
+import { loadLotsBiddersAndAssignmentsDummyData } from "@/lib/utils/db-helpers";
 import { Button } from "@mui/material";
 
 interface ResetDbButtonProps{

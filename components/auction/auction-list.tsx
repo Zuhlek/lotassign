@@ -1,76 +1,95 @@
 "use client";
-import { Auction } from "@/lib/models/auction.model";
-import { Box } from "@mui/material";
+
 import { useState } from "react";
+import { Box } from "@mui/material";
+
+import { Auction } from "@/lib/models/auction.model";
+import { getAllAuctions, createAuction, updateAuction, deleteAuction } from "@/lib/actions/auction.actions";
+
 import AuctionListItem from "./auction-list-item";
 import AuctionCreateUpdateDialog from "./auction-create-update-dialog";
 import AuctionListToolbar from "./auction-list-toolbar";
-import { auctionService } from "@/lib/actions/auction.actions";
 
 interface AuctionListProps {
-  auctions: Auction[] | undefined;
+  initialAuctions: Auction[];
   searchText: string;
   setSearchText: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export default function AuctionList({ auctions, searchText, setSearchText }: AuctionListProps) {
-  const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [isCreateMode, setIsCreateMode] = useState(false);
-  const [selectedAuction, setSelectedAuction] = useState<Auction>();
+export default function AuctionList({ initialAuctions, searchText, setSearchText }: AuctionListProps) {
+  const [auctions, setAuctions] = useState<Auction[]>(initialAuctions);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(true);
+  const [selectedAuction, setSelectedAuction] = useState<Auction | null>(null);
 
-
-  const handleCreateAuction = async (auction: Auction): Promise<number | undefined> => {
-    return await auctionService.createAuction(auction);
+  const refreshAuctions = async () => {
+    const fresh = await getAllAuctions();
+    setAuctions(fresh); // Already Auction[]
   };
 
-  const handleUpdateAuction = async (auction: Auction): Promise<number | undefined> => {
-      return await auctionService.updateAuction(auction);
-  };
-
-  const handleOpenDialog = (createMode: boolean) => {
+  const handleOpenDialog = (createMode: boolean, auction?: Auction) => {
     setIsCreateMode(createMode);
-    setIsDialogVisible(true);
+    setSelectedAuction(createMode ? null : auction ?? null);
+    setDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
-    setIsDialogVisible(false);
+    setDialogOpen(false);
+    setSelectedAuction(null);
   };
 
-  const handleDeleteClick = async (auctionId: number | undefined) => {
+  const handleCreateAuction = async (auction: Auction): Promise<number | undefined> => {
+    const id = await createAuction(auction);
+    await refreshAuctions();
+    return id;
+  };
+
+  const handleUpdateAuction = async (auction: Auction): Promise<number | undefined> => {
+    const id = await updateAuction(auction);
+    await refreshAuctions();
+    return id;
+  };
+
+  const handleDeleteAuction = async (auctionId?: number) => {
     if (!auctionId) return;
-    await auctionService.deleteAuction(auctionId);
+    await deleteAuction(auctionId);
+    await refreshAuctions();
   };
 
-  const handleSelection = (auction: Auction) => {
+  const handleSelect = (auction: Auction) => {
     setSelectedAuction(auction);
   };
+
+  const filtered = auctions.filter((a) =>
+    a.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
   return (
     <div>
       <AuctionListToolbar
         searchText={searchText}
         setSearchText={setSearchText}
-        handleOpen={handleOpenDialog}
-      ></AuctionListToolbar>
-      <Box display="flex">
-        {auctions && auctions.map((a) => (
+        handleOpen={() => handleOpenDialog(true)}
+      />
+      <Box display="flex" flexWrap="wrap" gap={2}>
+        {filtered.map((auction) => (
           <AuctionListItem
-            key={a.id}
-            auction={a}
-            handleOpenDialog={() => handleOpenDialog(false)}
-            handleDelete={handleDeleteClick}
-            handleSelection={handleSelection}
-          ></AuctionListItem>
+            key={auction.id}
+            auction={auction}
+            handleOpenDialog={() => handleOpenDialog(false, auction)}
+            handleDelete={handleDeleteAuction}
+            handleSelection={handleSelect}
+          />
         ))}
       </Box>
       <AuctionCreateUpdateDialog
-        selectedAuction={selectedAuction}
-        isVisible={isDialogVisible}
-        handleCloseDialog={handleCloseDialog}
+        selectedAuction={selectedAuction ?? undefined}
+        isVisible={dialogOpen}
         isCreateMode={isCreateMode}
+        handleCloseDialog={handleCloseDialog}
         handleCreate={handleCreateAuction}
         handleUpdate={handleUpdateAuction}
-      ></AuctionCreateUpdateDialog>
+      />
     </div>
   );
 }

@@ -1,20 +1,36 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import AuctionList from "@/components/auction/auction-list";
 import LoadAuctionDummyDataButton from "@/components/buttons/load-auction-dummy-data-button";
-import { useAuctions } from "@/hooks/useAuctions";
+import { getAllAuctions } from "@/lib/actions/auction.actions";
+import { Auction } from "@/lib/models/auction.model";
 
 export default function AuctionPage() {
-  const { auctions, searchText, setSearchText, isLoading, error } = useAuctions();
+  const [auctions, setAuctions] = useState<Auction[]>([]);
+  const [searchText, setSearchText] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        const data = await getAllAuctions();
+        setAuctions(data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load auctions.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  if (error) {
-    return <div>{error}</div>;
-  }
+    fetchAuctions();
+  }, []);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <Box>
@@ -24,9 +40,11 @@ export default function AuctionPage() {
         justifyContent="center"
         bgcolor="lightsteelblue"
       >
-        <LoadAuctionDummyDataButton></LoadAuctionDummyDataButton>
+        <LoadAuctionDummyDataButton onUploadComplete={(newAuction) => {
+          setAuctions(prev => [...prev, newAuction]);
+        }} />
       </Box>
-      <AuctionList auctions={auctions} searchText={searchText} setSearchText={setSearchText} />
+      <AuctionList initialAuctions={auctions} searchText={searchText} setSearchText={setSearchText} />
     </Box>
   );
 }

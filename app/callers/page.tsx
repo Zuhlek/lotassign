@@ -79,11 +79,11 @@ export default function CallersPage() {
     setCallerData((prev) =>
       prev
         ? new Caller(
-            e.target.name === "abbreviation" ? e.target.value : prev.abbreviation,
-            e.target.name === "name" ? e.target.value : prev.name,
-            prev.languages,
-            prev.id
-          )
+          e.target.name === "abbreviation" ? e.target.value : prev.abbreviation,
+          e.target.name === "name" ? e.target.value : prev.name,
+          prev.languages,
+          prev.id
+        )
         : null
     );
   };
@@ -101,7 +101,9 @@ export default function CallersPage() {
       <h1>Callers</h1>
       <TableContainer sx={{ maxWidth: 1000 }}>
         <Box display="flex" justifyContent="flex-end" marginBottom={2}>
-          <UploadExcelDataButton uploadModel="Caller" />
+          <UploadExcelDataButton uploadModel="Caller" onUploadComplete={(newCallers) => {
+            setCallers(prev => [...prev, ...newCallers]);
+          }} />
           <Button variant="contained" onClick={() => handleOpen()}><AddIcon /></Button>
         </Box>
         <Table size="small" stickyHeader>

@@ -1,6 +1,6 @@
 {
-  "name": "baulog",
-  "version": "0.1.0",
+  "name": "lotassign",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -33,8 +33,5 @@
     "eslint-config-next": "14.2.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
-  },
-  "prettier": {
-    "printWidth": 140
   }
 }
