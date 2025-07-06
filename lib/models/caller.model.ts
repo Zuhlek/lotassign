@@ -3,27 +3,28 @@ import { Language } from "./language.enum";
 
 export class Caller {
   id?: number;
-  abbreviation: string;
   name: string;
+  abbreviation: string;
   languages: Language[];
 
-  constructor(abbreviation: string, name: string, languages: Language[], id?: number) {
-    this.abbreviation = abbreviation;
+  constructor(name: string, abbreviation: string, languages: Language[], id?: number) {
     this.name = name;
+    this.abbreviation = abbreviation;
+
     this.languages = languages;
     this.id = id;
   }
 
   static fromJSON(json: CallerJSON): Caller {
     const parsed = CallerSchema.parse(json);
-    return new Caller(parsed.abbreviation, parsed.name, parsed.languages, parsed.id);
+    return new Caller(parsed.name, parsed.abbreviation, parsed.languages, parsed.id);
   }
 
   toJSON(): CallerJSON {
     return {
       id: this.id,
-      abbreviation: this.abbreviation,
       name: this.name,
+      abbreviation: this.abbreviation,
       languages: this.languages,
     };
   }
@@ -31,15 +32,15 @@ export class Caller {
 
 export const CallerSchema = z.object({
   id: z.number().optional(),
-  abbreviation: z.string(),
   name: z.string(),
+  abbreviation: z.string(),
   languages: z.array(z.nativeEnum(Language)),
 });
 
 export interface CallerJSON {
   id?: number;
-  abbreviation: string;
   name: string;
+  abbreviation: string;
   languages: Language[];
 }
 

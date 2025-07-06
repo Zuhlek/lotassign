@@ -24,12 +24,12 @@ export async function getLotById(id: number): Promise<Lot | undefined> {
   return raw ? Lot.fromJSON(raw) : undefined;
 }
 
-export async function getAllLots(): Promise<Lot[]> {
+export async function getLots(): Promise<Lot[]> {
   const rows = await db.lots.toArray();
   return rows.map(Lot.fromJSON);
 }
 
-export async function getAllLotsByAuctionId(auctionId: number): Promise<Lot[]> {
+export async function getLotsByAuctionId(auctionId: number): Promise<Lot[]> {
   const rows = await db.lots.where("auctionId").equals(auctionId).toArray();
   return rows.map(Lot.fromJSON);
 }
@@ -40,6 +40,12 @@ export async function getLotByAuctionIdAndNumber(
 ): Promise<Lot | undefined> {
   const raw = await db.lots.where("[number+auctionId]").equals([number, auctionId]).first();
   return raw ? Lot.fromJSON(raw) : undefined;
+}
+
+export async function deleteLotsByAuctionId(auctionId: number): Promise<void> {
+  const lotIds = await db.lots.where("auctionId").equals(auctionId).primaryKeys();
+  await db.lots.bulkDelete(lotIds as number[]);
+  await db.lotBidders.where("auctionId").equals(auctionId).delete();  
 }
 
 export async function getSurroundingLots(

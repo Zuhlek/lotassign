@@ -1,22 +1,14 @@
 import { db } from "@/lib/db/dexie.db";
 import { Auction } from "@/lib/models/auction.model";
-import { Lot } from "@/lib/models/lot.model";
 
 async function hydrateAuction(raw: any): Promise<Auction> {
   const auction = Auction.fromJSON(raw);
-  const lotRows = await db.lots.where("auctionId").equals(auction.id!).toArray();
-  auction.lots = lotRows.map(Lot.fromJSON);
   return auction;
 }
 
 export async function createAuction(auction: Auction): Promise<number> {
   const id = await db.auctions.add(auction.toJSON());
   auction.id = id;
-
-  for (const lot of auction.lots) {
-    lot.auctionId = id;
-    await db.lots.add(lot.toJSON());
-  }
 
   return id;
 }
@@ -27,16 +19,6 @@ export async function updateAuction(auction: Auction): Promise<number | undefine
   const id = auctionData.id as number;
   const { id: _id, ...data } = auctionData;
   const updated = await db.auctions.update(id, data);
-
-  for (const lot of auction.lots) {
-    if (lot.id) {
-      await db.lots.update(lot.id, lot.toJSON());
-    } else {
-      lot.auctionId = id;
-      await db.lots.add(lot.toJSON());
-    }
-  }
-
   return updated;
 }
 

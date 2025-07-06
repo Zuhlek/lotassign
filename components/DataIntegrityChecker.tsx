@@ -12,7 +12,8 @@ type TableCounts = {
   lotsCount: number;
   biddersCount: number;
   callersCount: number;
-  assignmentsCount: number;
+  auctionCallerCount: number;
+  lotBiddersCount: number;
 };
 
 // Direkt integrierte Funktion zur Datenbankintegritätsprüfung
@@ -21,27 +22,30 @@ async function getDatabaseCounts(): Promise<TableCounts> {
   const lotsCount = await db.lots.count();
   const biddersCount = await db.bidders.count();
   const callersCount = await db.callers.count();
-  const assignmentsCount = await db.assignments.count();
+  const auctionCallerCount = await db.auctionCallers.count();
+  const lotBiddersCount = await db.lotBidders.count();
 
   return {
     auctionsCount,
     lotsCount,
     biddersCount,
     callersCount,
-    assignmentsCount,
+    auctionCallerCount,
+    lotBiddersCount
   };
 }
 
 // Funktion zur Ermittlung des Status basierend auf den Tabelleninhalten
 function determineStatus(counts: TableCounts): StatusType {
-  const { auctionsCount, lotsCount, biddersCount, callersCount, assignmentsCount } = counts;
+  const { auctionsCount, lotsCount, biddersCount, callersCount, auctionCallerCount, lotBiddersCount } = counts;
   
   if (
     auctionsCount === 0 &&
     lotsCount === 0 &&
     biddersCount === 0 &&
     callersCount === 0 &&
-    assignmentsCount === 0
+    auctionCallerCount === 0 &&
+    lotBiddersCount === 0
   ) {
     return "error";
   } else if (
@@ -49,7 +53,8 @@ function determineStatus(counts: TableCounts): StatusType {
     lotsCount !== 0 &&
     biddersCount !== 0 &&
     callersCount !== 0 &&
-    assignmentsCount !== 0
+    auctionCallerCount !== 0 &&
+    lotBiddersCount !== 0
   ) {
     return "success";
   } else {
@@ -63,13 +68,13 @@ export default function DataIntegrityChecker() {
     lotsCount: 0,
     biddersCount: 0,
     callersCount: 0,
-    assignmentsCount: 0,
+    auctionCallerCount: 0,
+    lotBiddersCount: 0
   });
 
   const [status, setStatus] = useState<StatusType>('info');
 
   useEffect(() => {
-    // Verwende liveQuery, um auf Änderungen in der Datenbank zu reagieren
     const subscription = liveQuery(() => getDatabaseCounts()).subscribe({
       next: (newCounts) => {
         setCounts(newCounts);
@@ -80,12 +85,9 @@ export default function DataIntegrityChecker() {
         console.error("Error fetching database counts:", error);
       }
     });
-
-    // Cleanup der Subscription, wenn die Komponente unmountet wird
     return () => subscription.unsubscribe();
   }, []);
 
-  // Farbe basierend auf Status festlegen
   const getCardStyle = () => {
     switch (status) {
       case "success":
@@ -95,7 +97,7 @@ export default function DataIntegrityChecker() {
       case "error":
         return { backgroundColor: "#f8d7da", color: "#721c24" }; // Red
       default:
-        return { backgroundColor: "#cce5ff", color: "#004085" }; // Blue (info)
+        return { backgroundColor: "#cce5ff", color: "#004085" }; // Blue
     }
   };
 
@@ -119,7 +121,10 @@ export default function DataIntegrityChecker() {
             <strong>Bidders:</strong> {counts.biddersCount}
           </Typography>
           <Typography variant="body2">
-            <strong>Assignments:</strong> {counts.assignmentsCount}
+            <strong>Auction Callers:</strong> {counts.auctionCallerCount}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Lot Bidders:</strong> {counts.lotBiddersCount}
           </Typography>
         </CardContent>
       </Card>

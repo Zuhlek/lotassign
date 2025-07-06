@@ -30,6 +30,11 @@ export async function getLotBiddersByAuctionId(auctionId: number): Promise<LotBi
   return rows.map(LotBidder.fromJSON);
 }
 
+export async function deleteLotBiddersByAuctionId(auctionId: number): Promise<void> {
+  const ids = await db.lotBidders.where("auctionId").equals(auctionId).primaryKeys();
+  await db.lotBidders.bulkDelete(ids as number[]);
+}
+
 export async function deleteLotBiddersByLotId(lotId: number): Promise<void> {
   const ids = await db.lotBidders.where("lotId").equals(lotId).primaryKeys();
   await db.lotBidders.bulkDelete(ids as number[]);

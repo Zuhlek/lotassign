@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export type LotBidderStatus = "planned" | "assigned" | "final";
+export type LotBidderStatus = "created" | "planned" | "assigned" | "final";
 
 export class LotBidder {
   id?: number;
