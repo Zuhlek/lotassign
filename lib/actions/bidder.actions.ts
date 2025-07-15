@@ -1,8 +1,15 @@
 import { db } from "@/lib/db/dexie.db";
 import { Bidder } from "@/lib/models/bidder.model";
 
-export async function createBidder(bidder: Bidder): Promise<number> {
+export async function createBidder(bidder: Bidder): Promise<number | undefined> {
+  const existing = await getBidderByName(bidder.name);
+  if (existing) return existing.id;
   return await db.bidders.add(bidder.toJSON());
+}
+
+export async function getBidderByName(name: string): Promise<Bidder | undefined> {
+  const row = await db.bidders.where("name").equals(name).first();
+  return row ? Bidder.fromJSON(row) : undefined;
 }
 
 export async function getAllBidders(): Promise<Bidder[]> {
