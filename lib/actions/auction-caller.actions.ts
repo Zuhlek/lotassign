@@ -5,6 +5,15 @@ export async function createAuctionCaller(auctionCaller: AuctionCaller): Promise
   return db.auctionCallers.add(auctionCaller.toJSON());
 }
 
+export async function setAuctionCallers(auctionId: number, callerIds: number[]): Promise<void> {
+  await deleteAuctionCallersByAuctionId(auctionId);
+
+  if (callerIds.length === 0) return;
+
+  const newEntries = callerIds.map(callerId => new AuctionCaller(auctionId, callerId).toJSON());
+  await db.auctionCallers.bulkAdd(newEntries);
+}
+
 export async function deleteAuctionCaller(id: number): Promise<void> {
   await db.auctionCallers.delete(id);
 }
