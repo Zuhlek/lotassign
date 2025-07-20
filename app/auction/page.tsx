@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Grid } from "@mui/material"
 import { Auction } from "@/lib/models/auction.model"
 import { Lot } from "@/lib/models/lot.model"
@@ -15,6 +15,7 @@ import { getAuctionCallersByAuctionId, setAuctionCallers } from "@/lib/actions/a
 import { getAllBidders } from "@/lib/actions/bidder.actions"
 
 import AuctionCallers from "@/components/workflow/auction-callers-list"
+import { updateLotBidder } from "@/lib/actions/lot-bidder.actions"
 import AuctionList from "@/components/workflow/auctions-list"
 import LotsBidders from "@/components/workflow/lots-bidders-list"
 
@@ -26,6 +27,14 @@ export default function AuctionPage() {
   const [bidders, setBidders] = useState<Map<number, Bidder>>(new Map())
   const [callers, setCallers] = useState<Caller[]>([])
   const [selectedCallerIds, setSelectedCallerIds] = useState<number[]>([])
+  /* helper‑Map callerId → bidderId */
+  const preferredAssignments = useMemo(() => {
+    const map: Record<number, number | undefined> = {}
+    lotBidders.forEach(lb => {
+      if (lb.preferredCallerId !== undefined) map[lb.preferredCallerId] = lb.bidderId
+    })
+    return map
+  }, [lotBidders])
 
   useEffect(() => {
     getAllAuctions().then(setAuctions)
@@ -75,10 +84,38 @@ export default function AuctionPage() {
     await refreshLotsAndBidders(selectedAuction.id)
   }
 
-  const handleSaveCallers = async (ids: number[]) => {
+  const handleSaveCallers = async (
+    ids: number[],
+    assignments: Record<number, number | undefined>
+  ) => {
     if (!selectedAuction) return
+
     await setAuctionCallers(selectedAuction.id!, ids)
     setSelectedCallerIds(ids)
+
+    const bidderToCaller: Record<number, number | undefined> = {}
+    Object.entries(assignments).forEach(([cId, bId]) => {
+      if (bId !== undefined) bidderToCaller[bId] = Number(cId)
+    })
+
+    for (const lb of lotBidders) {
+      const desired = bidderToCaller[lb.bidderId]
+      if (lb.preferredCallerId !== desired) {
+        await updateLotBidder(
+          new LotBidder(
+            lb.auctionId,
+            lb.lotId,
+            lb.bidderId,
+            lb.status,
+            desired,
+            lb.callerId,
+            lb.id
+          )
+        )
+      }
+    }
+
+    setLotBidders(await getLotBiddersByAuctionId(selectedAuction.id!))
   }
 
   return (
@@ -110,7 +147,9 @@ export default function AuctionPage() {
           selectedAuction={selectedAuction}
           callers={callers}
           selectedCallerIds={selectedCallerIds}
-          onSaveCallers={handleSaveCallers}
+          bidders={Array.from(bidders.values())}
+          assignments={preferredAssignments}
+          onSave={handleSaveCallers}
         />
       </Grid>
     </Grid>
