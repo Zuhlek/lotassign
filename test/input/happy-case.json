@@ -1,0 +1,2203 @@
+{
+  "auctions": [
+    {
+      "name": "Testauction",
+      "date": "2025-07-23T00:00:00.000Z",
+      "id": 1
+    }
+  ],
+  "lots": [
+    {
+      "auctionId": 1,
+      "number": 3402,
+      "title": "SAM FRANCIS. Ohne Titel. 1991.",
+      "id": 1
+    },
+    {
+      "auctionId": 1,
+      "number": 3403,
+      "title": "PAUL JENKINS. Ohne Titel. Aqua",
+      "id": 2
+    },
+    {
+      "auctionId": 1,
+      "number": 3408,
+      "title": "MAURICE EST√àVE. A. 1047. 1972.",
+      "id": 3
+    },
+    {
+      "auctionId": 1,
+      "number": 3409,
+      "title": "SHIRLEY JAFFE. Ohne Titel. 196",
+      "id": 4
+    },
+    {
+      "auctionId": 1,
+      "number": 3415,
+      "title": "MAX BILL. Transcoloration. 196",
+      "id": 5
+    },
+    {
+      "auctionId": 1,
+      "number": 3416,
+      "title": "MAX BILL. Einheit aus drei gle",
+      "id": 6
+    },
+    {
+      "auctionId": 1,
+      "number": 3417,
+      "title": "MAX BILL. Blau und rot am gelb",
+      "id": 7
+    },
+    {
+      "auctionId": 1,
+      "number": 3420,
+      "title": "LUDWIG SANDER. PAWNEE IX. 1969",
+      "id": 8
+    },
+    {
+      "auctionId": 1,
+      "number": 3423,
+      "title": "VICTOR VASARELY. Kezdi-RSZ. 19",
+      "id": 9
+    },
+    {
+      "auctionId": 1,
+      "number": 3426,
+      "title": "ARMAN. Ohne Titel. Geschnitten",
+      "id": 10
+    },
+    {
+      "auctionId": 1,
+      "number": 3427,
+      "title": "HERBERT ZANGS. Ohne Titel. Um",
+      "id": 11
+    },
+    {
+      "auctionId": 1,
+      "number": 3428,
+      "title": "SYLVIE FLEURY. Color Lab - Stu",
+      "id": 12
+    },
+    {
+      "auctionId": 1,
+      "number": 3429,
+      "title": "PHILIPP KEEL. Bar Code I. 2002",
+      "id": 13
+    },
+    {
+      "auctionId": 1,
+      "number": 3432,
+      "title": "JOHN M. ARMLEDER. CYLINDER. 20",
+      "id": 14
+    },
+    {
+      "auctionId": 1,
+      "number": 3434,
+      "title": "ANTONIO CALDERARA. Ohne Titel.",
+      "id": 15
+    },
+    {
+      "auctionId": 1,
+      "number": 3441,
+      "title": "MARK TOBEY. Ohne Titel. 1957.",
+      "id": 16
+    },
+    {
+      "auctionId": 1,
+      "number": 3442,
+      "title": "MARK TOBEY. Ohne Titel. 1957.",
+      "id": 17
+    },
+    {
+      "auctionId": 1,
+      "number": 3443,
+      "title": "MANOLO VALD√âS. Dorothy IX. 200",
+      "id": 18
+    },
+    {
+      "auctionId": 1,
+      "number": 3444,
+      "title": "NIKI DE SAINT PHALLE. Bonne An",
+      "id": 19
+    },
+    {
+      "auctionId": 1,
+      "number": 3446,
+      "title": "NIKI DE SAINT PHALLE. L‚Äôoiseau",
+      "id": 20
+    },
+    {
+      "auctionId": 1,
+      "number": 3447,
+      "title": "NIKI DE SAINT PHALLE. Les pati",
+      "id": 21
+    },
+    {
+      "auctionId": 1,
+      "number": 3450,
+      "title": "FRANZ WEST & ALBERT OEHLEN. Oh",
+      "id": 22
+    },
+    {
+      "auctionId": 1,
+      "number": 3452,
+      "title": "SOL LEWITT. Irregular. 1997. G",
+      "id": 23
+    },
+    {
+      "auctionId": 1,
+      "number": 3454,
+      "title": "MEL RAMOS. Goldie. 2010. √ñl au",
+      "id": 24
+    },
+    {
+      "auctionId": 1,
+      "number": 3459,
+      "title": "C√âSAR (C√âSAR BALDACCINI). Ohne",
+      "id": 25
+    },
+    {
+      "auctionId": 1,
+      "number": 3461,
+      "title": "ARMAN. Macbeth II. 2004. Nagel",
+      "id": 26
+    },
+    {
+      "auctionId": 1,
+      "number": 3463,
+      "title": "JAMES LICINI. Stahlbau. VHP 10",
+      "id": 27
+    },
+    {
+      "auctionId": 1,
+      "number": 3465,
+      "title": "BERNAR VENET. 225.5¬∞ ARC x 5.",
+      "id": 28
+    },
+    {
+      "auctionId": 1,
+      "number": 3466,
+      "title": "HERBERT ZANGS. Ohne Titel. 197",
+      "id": 29
+    },
+    {
+      "auctionId": 1,
+      "number": 3467,
+      "title": "ANTONI T√ÄPIES. Cap de gos. 196",
+      "id": 30
+    },
+    {
+      "auctionId": 1,
+      "number": 3468,
+      "title": "LOUISE NEVELSON. Ohne Titel. 1",
+      "id": 31
+    },
+    {
+      "auctionId": 1,
+      "number": 3469,
+      "title": "LOUISE NEVELSON. Sky Gate VII.",
+      "id": 32
+    },
+    {
+      "auctionId": 1,
+      "number": 3470,
+      "title": "DAN FLAVIN. Entwurf einer Bele",
+      "id": 33
+    },
+    {
+      "auctionId": 1,
+      "number": 3472,
+      "title": "TADAAKI KUWAYAMA. Ohne Titel.",
+      "id": 34
+    },
+    {
+      "auctionId": 1,
+      "number": 3473,
+      "title": "LOS CARPINTEROS. Ca√≠da III. 20",
+      "id": 35
+    },
+    {
+      "auctionId": 1,
+      "number": 3475,
+      "title": "LOS CARPINTEROS. Sala de Lectu",
+      "id": 36
+    },
+    {
+      "auctionId": 1,
+      "number": 3477,
+      "title": "PHIL SIMS. Black Painting VI.",
+      "id": 37
+    },
+    {
+      "auctionId": 1,
+      "number": 3478,
+      "title": "HISAO DOMOTO. Ensembles Binair",
+      "id": 38
+    },
+    {
+      "auctionId": 1,
+      "number": 3481,
+      "title": "HANS JOSEPHSOHN. Ohne Titel. 1",
+      "id": 39
+    },
+    {
+      "auctionId": 1,
+      "number": 3483,
+      "title": "MARC-ANTOINE FEHR. Les Grelots",
+      "id": 40
+    },
+    {
+      "auctionId": 1,
+      "number": 3484,
+      "title": "ANDY DENZLER. Ohne Titel. 2008",
+      "id": 41
+    },
+    {
+      "auctionId": 1,
+      "number": 3486,
+      "title": "GIUSEPPE SANTOMASO. Separazion",
+      "id": 42
+    },
+    {
+      "auctionId": 1,
+      "number": 3487,
+      "title": "H.R. (HANS RUDOLF) GIGER. Pass",
+      "id": 43
+    },
+    {
+      "auctionId": 1,
+      "number": 3488,
+      "title": "SAMUEL BAK. ORACLE-TIME. 1974.",
+      "id": 44
+    },
+    {
+      "auctionId": 1,
+      "number": 3490,
+      "title": "BEN JOHNSON. The Forbidden Cit",
+      "id": 45
+    },
+    {
+      "auctionId": 1,
+      "number": 3492,
+      "title": "G√úNTER BRUS. Die St√ºmper. 1985",
+      "id": 46
+    },
+    {
+      "auctionId": 1,
+      "number": 3494,
+      "title": "ERNST FUCHS. B√§ume im Sturm. 1",
+      "id": 47
+    },
+    {
+      "auctionId": 1,
+      "number": 3496,
+      "title": "G√úNTHER UECKER. Ohne Titel. 19",
+      "id": 48
+    },
+    {
+      "auctionId": 1,
+      "number": 3497,
+      "title": "JEAN FAUTRIER. Ohne Titel. Gou",
+      "id": 49
+    },
+    {
+      "auctionId": 1,
+      "number": 3499,
+      "title": "PHILIPPE COGN√âE. Foule I. 1999",
+      "id": 50
+    },
+    {
+      "auctionId": 1,
+      "number": 3504,
+      "title": "MARIO SCHIFANO. Futuristi. Ema",
+      "id": 51
+    }
+  ],
+  "bidders": [
+    {
+      "name": "C. Hbler",
+      "phone": "41790815",
+      "languages": [],
+      "id": 1
+    },
+    {
+      "name": "H. Schoeffmann",
+      "phone": "[object Object]",
+      "languages": [],
+      "id": 2
+    },
+    {
+      "name": "S. ESPRIT XXe",
+      "phone": "41790815",
+      "languages": [],
+      "id": 3
+    },
+    {
+      "name": "C. Bailly",
+      "phone": "41790815",
+      "languages": [],
+      "id": 4
+    },
+    {
+      "name": "D. Perel",
+      "phone": "41790815",
+      "languages": [],
+      "id": 5
+    },
+    {
+      "name": "B. Dagron",
+      "phone": "41790815",
+      "languages": [],
+      "id": 6
+    },
+    {
+      "name": "A. Chaumet",
+      "phone": "41790815",
+      "languages": [],
+      "id": 7
+    },
+    {
+      "name": "E. Albert",
+      "phone": "41790815",
+      "languages": [],
+      "id": 8
+    },
+    {
+      "name": "C. Eggers",
+      "phone": "41790815",
+      "languages": [],
+      "id": 9
+    },
+    {
+      "name": "j. raynaud",
+      "phone": "41790815",
+      "languages": [],
+      "id": 10
+    },
+    {
+      "name": "C. Albli Research",
+      "phone": "41790815",
+      "languages": [],
+      "id": 11
+    },
+    {
+      "name": "Galerie Thalberg AG",
+      "phone": "41790815",
+      "languages": [],
+      "id": 12
+    },
+    {
+      "name": "D. Schrafl",
+      "phone": "41790815",
+      "languages": [],
+      "id": 13
+    },
+    {
+      "name": "L. LE Fine Art AG",
+      "phone": "41790815",
+      "languages": [],
+      "id": 14
+    },
+    {
+      "name": "A. Grieder",
+      "phone": "41790815",
+      "languages": [],
+      "id": 15
+    },
+    {
+      "name": "J. Lepes",
+      "phone": "41790815",
+      "languages": [],
+      "id": 16
+    },
+    {
+      "name": "J. Cunniffe",
+      "phone": "41790815",
+      "languages": [],
+      "id": 17
+    },
+    {
+      "name": "S. Arte Moderna e Contemporanea di Malinverno Stefano",
+      "phone": "41790815",
+      "languages": [],
+      "id": 18
+    },
+    {
+      "name": "C. Bouriez",
+      "phone": "41790815",
+      "languages": [],
+      "id": 19
+    },
+    {
+      "name": "Arkas Holding SA",
+      "phone": "41790815",
+      "languages": [],
+      "id": 20
+    },
+    {
+      "name": "V. Vitart Fine Arts S.A.",
+      "phone": "41790815",
+      "languages": [],
+      "id": 21
+    },
+    {
+      "name": "F. Glanzmann",
+      "phone": "41790815",
+      "languages": [],
+      "id": 22
+    },
+    {
+      "name": "H. Galerie Maulberger GmbH",
+      "phone": "41790815",
+      "languages": [],
+      "id": 23
+    },
+    {
+      "name": "L. Banque Pictet & Cie SA",
+      "phone": "41790815",
+      "languages": [],
+      "id": 24
+    },
+    {
+      "name": "D. Suter",
+      "phone": "41790815",
+      "languages": [],
+      "id": 25
+    },
+    {
+      "name": "L. Gerard",
+      "phone": "41790815",
+      "languages": [],
+      "id": 26
+    },
+    {
+      "name": "F. De Goldschmidt",
+      "phone": "41790815",
+      "languages": [],
+      "id": 27
+    },
+    {
+      "name": "F. Nocera",
+      "phone": "41790815",
+      "languages": [],
+      "id": 28
+    },
+    {
+      "name": "C. Moser",
+      "phone": "41790815",
+      "languages": [],
+      "id": 29
+    },
+    {
+      "name": "M. Bernasconi",
+      "phone": "41790815",
+      "languages": [],
+      "id": 30
+    },
+    {
+      "name": "C. Bischoff",
+      "phone": "41790815",
+      "languages": [],
+      "id": 31
+    },
+    {
+      "name": "Galerie Ber√®s",
+      "phone": "41790815",
+      "languages": [],
+      "id": 32
+    },
+    {
+      "name": "B. Mueller",
+      "phone": "41790815",
+      "languages": [],
+      "id": 33
+    },
+    {
+      "name": "R. Roagu-2 S.L.",
+      "phone": "41790815",
+      "languages": [],
+      "id": 34
+    },
+    {
+      "name": "U. Holy",
+      "phone": "41790815",
+      "languages": [],
+      "id": 35
+    },
+    {
+      "name": "H. Sander",
+      "phone": "41790815",
+      "languages": [],
+      "id": 36
+    },
+    {
+      "name": "J. Lahmi",
+      "phone": "41790815",
+      "languages": [],
+      "id": 37
+    },
+    {
+      "name": "A. Lendi",
+      "phone": "41790815",
+      "languages": [],
+      "id": 38
+    },
+    {
+      "name": "S. Simon Studer Art SA",
+      "phone": "41790815",
+      "languages": [],
+      "id": 39
+    },
+    {
+      "name": "B. Nicod",
+      "phone": "41790815",
+      "languages": [],
+      "id": 40
+    },
+    {
+      "name": "R. Akhavan",
+      "phone": "41790815",
+      "languages": [],
+      "id": 41
+    },
+    {
+      "name": "G. Lang",
+      "phone": "41790815",
+      "languages": [],
+      "id": 42
+    },
+    {
+      "name": "Spirit Fine Art SPRL",
+      "phone": "41790815",
+      "languages": [],
+      "id": 43
+    },
+    {
+      "name": "T. Schneider",
+      "phone": "41790815",
+      "languages": [],
+      "id": 44
+    },
+    {
+      "name": "W. Gnther",
+      "phone": "41790815",
+      "languages": [],
+      "id": 45
+    },
+    {
+      "name": "D. Galerie David Pluskwa",
+      "phone": "41790815",
+      "languages": [],
+      "id": 46
+    },
+    {
+      "name": "O. Wick",
+      "phone": "41790815",
+      "languages": [],
+      "id": 47
+    },
+    {
+      "name": "Di Lenardo  & Co. B√∂rse 4",
+      "phone": "41790815",
+      "languages": [],
+      "id": 48
+    },
+    {
+      "name": "V. Steinbildhauer & Atelier",
+      "phone": "41790815",
+      "languages": [],
+      "id": 49
+    },
+    {
+      "name": "O. Catusse",
+      "phone": "41790815",
+      "languages": [],
+      "id": 50
+    },
+    {
+      "name": "Standart Advisory",
+      "phone": "41790815",
+      "languages": [],
+      "id": 51
+    },
+    {
+      "name": "S. Duclos",
+      "phone": "41790815",
+      "languages": [],
+      "id": 52
+    },
+    {
+      "name": "C. Fern√°ndez",
+      "phone": "41790815",
+      "languages": [],
+      "id": 53
+    },
+    {
+      "name": "C. Pictet",
+      "phone": "41790815",
+      "languages": [],
+      "id": 54
+    },
+    {
+      "name": "E. Edouard Simoens Gallery",
+      "phone": "41790815",
+      "languages": [],
+      "id": 55
+    },
+    {
+      "name": "S. De Primi Fine Art SA",
+      "phone": "41790815",
+      "languages": [],
+      "id": 56
+    },
+    {
+      "name": "I. MARARTE S.L.",
+      "phone": "41790815",
+      "languages": [],
+      "id": 57
+    },
+    {
+      "name": "G. CarrerasMugica y asociados 2020 S.L",
+      "phone": "41790815",
+      "languages": [],
+      "id": 58
+    },
+    {
+      "name": "C. Lapeyre",
+      "phone": "41790815",
+      "languages": [],
+      "id": 59
+    },
+    {
+      "name": "H. Sarofim",
+      "phone": "41790815",
+      "languages": [],
+      "id": 60
+    },
+    {
+      "name": "L. Mller",
+      "phone": "41790815",
+      "languages": [],
+      "id": 61
+    },
+    {
+      "name": "C. Alberto",
+      "phone": "41790815",
+      "languages": [],
+      "id": 62
+    },
+    {
+      "name": "T. Kopp",
+      "phone": "41790815",
+      "languages": [],
+      "id": 63
+    },
+    {
+      "name": "R. Arenas & Degroote Beaux Arts, S.L.",
+      "phone": "41790815",
+      "languages": [],
+      "id": 64
+    },
+    {
+      "name": "H. Hofmann",
+      "phone": "41790815",
+      "languages": [],
+      "id": 65
+    },
+    {
+      "name": "P. Molinas",
+      "phone": "41790815",
+      "languages": [],
+      "id": 66
+    },
+    {
+      "name": "Galerie Louis & Sack",
+      "phone": "41790815",
+      "languages": [],
+      "id": 67
+    },
+    {
+      "name": "F. Dames",
+      "phone": "41790815",
+      "languages": [],
+      "id": 68
+    },
+    {
+      "name": "K. Suter",
+      "phone": "41790815",
+      "languages": [],
+      "id": 69
+    },
+    {
+      "name": "C. Cu√©noud",
+      "phone": "41790815",
+      "languages": [],
+      "id": 70
+    },
+    {
+      "name": "J. Schwarze",
+      "phone": "41790815",
+      "languages": [],
+      "id": 71
+    },
+    {
+      "name": "F. Galleria Giraldi",
+      "phone": "41790815",
+      "languages": [],
+      "id": 72
+    },
+    {
+      "name": "A. Odello",
+      "phone": "41790815",
+      "languages": [],
+      "id": 73
+    },
+    {
+      "name": "F. Forster",
+      "phone": "41790815",
+      "languages": [],
+      "id": 74
+    },
+    {
+      "name": "R. Iazychian",
+      "phone": "41790815",
+      "languages": [],
+      "id": 75
+    },
+    {
+      "name": "M. Witzig",
+      "phone": "41790815",
+      "languages": [],
+      "id": 76
+    },
+    {
+      "name": "R. Dorotheum",
+      "phone": "41790815",
+      "languages": [],
+      "id": 77
+    },
+    {
+      "name": "A. Sonde",
+      "phone": "41790815",
+      "languages": [],
+      "id": 78
+    },
+    {
+      "name": "T. Feucht",
+      "phone": "41790815",
+      "languages": [],
+      "id": 79
+    },
+    {
+      "name": "M. Ghatan",
+      "phone": "41790815",
+      "languages": [],
+      "id": 80
+    },
+    {
+      "name": "I. Heubi-Mishiev",
+      "phone": "41790815",
+      "languages": [],
+      "id": 81
+    },
+    {
+      "name": "C. Kullak",
+      "phone": "41790815",
+      "languages": [],
+      "id": 82
+    },
+    {
+      "name": "A. Licata di Baucina",
+      "phone": "41790815",
+      "languages": [],
+      "id": 83
+    }
+  ],
+  "callers": [
+    {
+      "name": "Lapo Bacarelli K_Italien",
+      "abbreviation": "LBA",
+      "languages": [
+        "I",
+        "E"
+      ],
+      "id": 1
+    },
+    {
+      "name": "Corinne Koller",
+      "abbreviation": "CKO",
+      "languages": [
+        "D",
+        "E",
+        "S",
+        "I",
+        "F"
+      ],
+      "id": 2
+    },
+    {
+      "name": "Jean Pierre Dalla Vedova",
+      "abbreviation": "JPD",
+      "languages": [
+        "D",
+        "E",
+        "F",
+        "I"
+      ],
+      "id": 3
+    },
+    {
+      "name": "Franz Diegelmann",
+      "abbreviation": "FDI",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 4
+    },
+    {
+      "name": "Stephanie Egli",
+      "abbreviation": "SEG",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 5
+    },
+    {
+      "name": "Ulrike Gruben",
+      "abbreviation": "UGR",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 6
+    },
+    {
+      "name": "Cyril Himmer",
+      "abbreviation": "CHI",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 7
+    },
+    {
+      "name": "Laura Koller",
+      "abbreviation": "LKO",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 8
+    },
+    {
+      "name": "Stefan Koller",
+      "abbreviation": "SKO",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 9
+    },
+    {
+      "name": "Virginie Messina",
+      "abbreviation": "VME",
+      "languages": [
+        "F",
+        "E"
+      ],
+      "id": 10
+    },
+    {
+      "name": "Sabine Neumaier",
+      "abbreviation": "SNE",
+      "languages": [
+        "D",
+        "E",
+        "E"
+      ],
+      "id": 11
+    },
+    {
+      "name": "Els Oswald",
+      "abbreviation": "EOS",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 12
+    },
+    {
+      "name": "Regula Preiswerk",
+      "abbreviation": "RPR",
+      "languages": [
+        "D",
+        "E",
+        "F",
+        "E"
+      ],
+      "id": 13
+    },
+    {
+      "name": "Andreas Terwey",
+      "abbreviation": "ATE",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 14
+    },
+    {
+      "name": "Ferruccio Usai",
+      "abbreviation": "FUS",
+      "languages": [
+        "D",
+        "I"
+      ],
+      "id": 15
+    },
+    {
+      "name": "Karoline Weser",
+      "abbreviation": "KWE",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 16
+    },
+    {
+      "name": "Uwe Vischer",
+      "abbreviation": "UVI",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 17
+    },
+    {
+      "name": "Karl Green",
+      "abbreviation": "KGR",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 18
+    },
+    {
+      "name": "Back Office",
+      "abbreviation": "KOLJ",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 19
+    },
+    {
+      "name": "Brigitte Huber",
+      "abbreviation": "BHU",
+      "languages": [
+        "D",
+        "E",
+        "F",
+        "E"
+      ],
+      "id": 20
+    },
+    {
+      "name": "Jara Koller",
+      "abbreviation": "JKO",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 21
+    },
+    {
+      "name": "Jing Li",
+      "abbreviation": "JLI",
+      "languages": [
+        "D",
+        "E",
+        "E"
+      ],
+      "id": 22
+    },
+    {
+      "name": "Carmen Abderhalden-Liou",
+      "abbreviation": "CAB",
+      "languages": [
+        "D",
+        "E",
+        "I"
+      ],
+      "id": 23
+    },
+    {
+      "name": "Daniela Maier",
+      "abbreviation": "DMA",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 24
+    },
+    {
+      "name": "Fiona Seidler",
+      "abbreviation": "FSE",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 25
+    },
+    {
+      "name": "Clarisse Doge",
+      "abbreviation": "CDO",
+      "languages": [
+        "D",
+        "F",
+        "E"
+      ],
+      "id": 26
+    },
+    {
+      "name": "Flavio De Corso",
+      "abbreviation": "FDC",
+      "languages": [
+        "D",
+        "E",
+        "F",
+        "I"
+      ],
+      "id": 27
+    },
+    {
+      "name": "Damian Fürer",
+      "abbreviation": "DFU",
+      "languages": [
+        "D",
+        "E",
+        "F",
+        "I",
+        "S"
+      ],
+      "id": 28
+    },
+    {
+      "name": "Laura Järmann",
+      "abbreviation": "LJA",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 29
+    },
+    {
+      "name": "Dominique Hoeltschi K_Genf",
+      "abbreviation": "DHO",
+      "languages": [
+        "F",
+        "E"
+      ],
+      "id": 30
+    },
+    {
+      "name": "Anastasia Belyaeva K_Genf",
+      "abbreviation": "ABE",
+      "languages": [
+        "F",
+        "E",
+        "E"
+      ],
+      "id": 31
+    },
+    {
+      "name": "Christian D. Link",
+      "abbreviation": "CDL",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 32
+    },
+    {
+      "name": "Reto Schmidlin",
+      "abbreviation": "RSC",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 33
+    },
+    {
+      "name": "Isabel Signer",
+      "abbreviation": "ISI",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 34
+    },
+    {
+      "name": "Marianne Sicher Bucher",
+      "abbreviation": "MSI",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 35
+    },
+    {
+      "name": "Hagen Garhöfer",
+      "abbreviation": "HGA",
+      "languages": [
+        "D",
+        "E",
+        "I"
+      ],
+      "id": 36
+    },
+    {
+      "name": "Michelle Rymann",
+      "abbreviation": "MRY",
+      "languages": [
+        "D",
+        "E",
+        "E"
+      ],
+      "id": 37
+    },
+    {
+      "name": "Claudia Bachmann",
+      "abbreviation": "BAC",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 38
+    },
+    {
+      "name": "Anna Haesen",
+      "abbreviation": "AHA",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 39
+    },
+    {
+      "name": "Sonja Portuondo",
+      "abbreviation": "SPO",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 40
+    },
+    {
+      "name": "Isabelle Koller",
+      "abbreviation": "IKO",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 41
+    },
+    {
+      "name": "Lisa Braun",
+      "abbreviation": "LBR",
+      "languages": [
+        "D",
+        "E",
+        "I"
+      ],
+      "id": 42
+    },
+    {
+      "name": "Dominic Neuwirth",
+      "abbreviation": "DNE",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 43
+    },
+    {
+      "name": "Lara Halter",
+      "abbreviation": "LHA",
+      "languages": [
+        "D",
+        "E",
+        "F"
+      ],
+      "id": 44
+    },
+    {
+      "name": "Olivia Schaffner",
+      "abbreviation": "OSC",
+      "languages": [
+        "D",
+        "E"
+      ],
+      "id": 45
+    }
+  ],
+  "auctionCallers": [
+    {
+      "auctionId": 1,
+      "callerId": 1,
+      "id": 1
+    },
+    {
+      "auctionId": 1,
+      "callerId": 2,
+      "id": 2
+    },
+    {
+      "auctionId": 1,
+      "callerId": 3,
+      "id": 3
+    },
+    {
+      "auctionId": 1,
+      "callerId": 4,
+      "id": 4
+    },
+    {
+      "auctionId": 1,
+      "callerId": 5,
+      "id": 5
+    },
+    {
+      "auctionId": 1,
+      "callerId": 6,
+      "id": 6
+    },
+    {
+      "auctionId": 1,
+      "callerId": 7,
+      "id": 7
+    },
+    {
+      "auctionId": 1,
+      "callerId": 8,
+      "id": 8
+    },
+    {
+      "auctionId": 1,
+      "callerId": 9,
+      "id": 9
+    },
+    {
+      "auctionId": 1,
+      "callerId": 10,
+      "id": 10
+    },
+    {
+      "auctionId": 1,
+      "callerId": 11,
+      "id": 11
+    },
+    {
+      "auctionId": 1,
+      "callerId": 12,
+      "id": 12
+    },
+    {
+      "auctionId": 1,
+      "callerId": 13,
+      "id": 13
+    },
+    {
+      "auctionId": 1,
+      "callerId": 14,
+      "id": 14
+    },
+    {
+      "auctionId": 1,
+      "callerId": 15,
+      "id": 15
+    },
+    {
+      "auctionId": 1,
+      "callerId": 16,
+      "id": 16
+    },
+    {
+      "auctionId": 1,
+      "callerId": 17,
+      "id": 17
+    },
+    {
+      "auctionId": 1,
+      "callerId": 18,
+      "id": 18
+    },
+    {
+      "auctionId": 1,
+      "callerId": 19,
+      "id": 19
+    },
+    {
+      "auctionId": 1,
+      "callerId": 20,
+      "id": 20
+    },
+    {
+      "auctionId": 1,
+      "callerId": 21,
+      "id": 21
+    },
+    {
+      "auctionId": 1,
+      "callerId": 22,
+      "id": 22
+    },
+    {
+      "auctionId": 1,
+      "callerId": 23,
+      "id": 23
+    },
+    {
+      "auctionId": 1,
+      "callerId": 24,
+      "id": 24
+    },
+    {
+      "auctionId": 1,
+      "callerId": 25,
+      "id": 25
+    },
+    {
+      "auctionId": 1,
+      "callerId": 26,
+      "id": 26
+    },
+    {
+      "auctionId": 1,
+      "callerId": 27,
+      "id": 27
+    },
+    {
+      "auctionId": 1,
+      "callerId": 28,
+      "id": 28
+    },
+    {
+      "auctionId": 1,
+      "callerId": 29,
+      "id": 29
+    },
+    {
+      "auctionId": 1,
+      "callerId": 30,
+      "id": 30
+    },
+    {
+      "auctionId": 1,
+      "callerId": 31,
+      "id": 31
+    },
+    {
+      "auctionId": 1,
+      "callerId": 32,
+      "id": 32
+    },
+    {
+      "auctionId": 1,
+      "callerId": 33,
+      "id": 33
+    },
+    {
+      "auctionId": 1,
+      "callerId": 34,
+      "id": 34
+    },
+    {
+      "auctionId": 1,
+      "callerId": 35,
+      "id": 35
+    },
+    {
+      "auctionId": 1,
+      "callerId": 36,
+      "id": 36
+    },
+    {
+      "auctionId": 1,
+      "callerId": 37,
+      "id": 37
+    },
+    {
+      "auctionId": 1,
+      "callerId": 38,
+      "id": 38
+    },
+    {
+      "auctionId": 1,
+      "callerId": 39,
+      "id": 39
+    },
+    {
+      "auctionId": 1,
+      "callerId": 40,
+      "id": 40
+    },
+    {
+      "auctionId": 1,
+      "callerId": 41,
+      "id": 41
+    },
+    {
+      "auctionId": 1,
+      "callerId": 42,
+      "id": 42
+    },
+    {
+      "auctionId": 1,
+      "callerId": 43,
+      "id": 43
+    },
+    {
+      "auctionId": 1,
+      "callerId": 44,
+      "id": 44
+    },
+    {
+      "auctionId": 1,
+      "callerId": 45,
+      "id": 45
+    }
+  ],
+  "lotBidders": [
+    {
+      "auctionId": 1,
+      "lotId": 1,
+      "bidderId": 1,
+      "status": "planned",
+      "id": 1
+    },
+    {
+      "auctionId": 1,
+      "lotId": 2,
+      "bidderId": 2,
+      "status": "planned",
+      "id": 2
+    },
+    {
+      "auctionId": 1,
+      "lotId": 3,
+      "bidderId": 3,
+      "status": "planned",
+      "id": 3
+    },
+    {
+      "auctionId": 1,
+      "lotId": 3,
+      "bidderId": 4,
+      "status": "planned",
+      "id": 4
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 5,
+      "status": "planned",
+      "id": 5
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 6,
+      "status": "planned",
+      "id": 6
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 7,
+      "status": "planned",
+      "id": 7
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 8,
+      "status": "planned",
+      "id": 8
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 9,
+      "status": "planned",
+      "id": 9
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 10,
+      "status": "planned",
+      "id": 10
+    },
+    {
+      "auctionId": 1,
+      "lotId": 4,
+      "bidderId": 11,
+      "status": "planned",
+      "id": 11
+    },
+    {
+      "auctionId": 1,
+      "lotId": 5,
+      "bidderId": 12,
+      "status": "planned",
+      "id": 12
+    },
+    {
+      "auctionId": 1,
+      "lotId": 6,
+      "bidderId": 13,
+      "status": "planned",
+      "id": 13
+    },
+    {
+      "auctionId": 1,
+      "lotId": 6,
+      "bidderId": 12,
+      "status": "planned",
+      "id": 14
+    },
+    {
+      "auctionId": 1,
+      "lotId": 7,
+      "bidderId": 14,
+      "status": "planned",
+      "id": 15
+    },
+    {
+      "auctionId": 1,
+      "lotId": 7,
+      "bidderId": 15,
+      "status": "planned",
+      "id": 16
+    },
+    {
+      "auctionId": 1,
+      "lotId": 7,
+      "bidderId": 12,
+      "status": "planned",
+      "id": 17
+    },
+    {
+      "auctionId": 1,
+      "lotId": 8,
+      "bidderId": 16,
+      "status": "planned",
+      "id": 18
+    },
+    {
+      "auctionId": 1,
+      "lotId": 8,
+      "bidderId": 17,
+      "status": "planned",
+      "id": 19
+    },
+    {
+      "auctionId": 1,
+      "lotId": 8,
+      "bidderId": 18,
+      "status": "planned",
+      "id": 20
+    },
+    {
+      "auctionId": 1,
+      "lotId": 9,
+      "bidderId": 19,
+      "status": "planned",
+      "id": 21
+    },
+    {
+      "auctionId": 1,
+      "lotId": 9,
+      "bidderId": 20,
+      "status": "planned",
+      "id": 22
+    },
+    {
+      "auctionId": 1,
+      "lotId": 9,
+      "bidderId": 21,
+      "status": "planned",
+      "id": 23
+    },
+    {
+      "auctionId": 1,
+      "lotId": 10,
+      "bidderId": 22,
+      "status": "planned",
+      "id": 24
+    },
+    {
+      "auctionId": 1,
+      "lotId": 11,
+      "bidderId": 23,
+      "status": "planned",
+      "id": 25
+    },
+    {
+      "auctionId": 1,
+      "lotId": 12,
+      "bidderId": 24,
+      "status": "planned",
+      "id": 26
+    },
+    {
+      "auctionId": 1,
+      "lotId": 13,
+      "bidderId": 25,
+      "status": "planned",
+      "id": 27
+    },
+    {
+      "auctionId": 1,
+      "lotId": 14,
+      "bidderId": 26,
+      "status": "planned",
+      "id": 28
+    },
+    {
+      "auctionId": 1,
+      "lotId": 15,
+      "bidderId": 27,
+      "status": "planned",
+      "id": 29
+    },
+    {
+      "auctionId": 1,
+      "lotId": 16,
+      "bidderId": 28,
+      "status": "planned",
+      "id": 30
+    },
+    {
+      "auctionId": 1,
+      "lotId": 16,
+      "bidderId": 29,
+      "status": "planned",
+      "id": 31
+    },
+    {
+      "auctionId": 1,
+      "lotId": 16,
+      "bidderId": 30,
+      "status": "planned",
+      "id": 32
+    },
+    {
+      "auctionId": 1,
+      "lotId": 16,
+      "bidderId": 31,
+      "status": "planned",
+      "id": 33
+    },
+    {
+      "auctionId": 1,
+      "lotId": 17,
+      "bidderId": 32,
+      "status": "planned",
+      "id": 34
+    },
+    {
+      "auctionId": 1,
+      "lotId": 17,
+      "bidderId": 33,
+      "status": "planned",
+      "id": 35
+    },
+    {
+      "auctionId": 1,
+      "lotId": 18,
+      "bidderId": 34,
+      "status": "planned",
+      "id": 36
+    },
+    {
+      "auctionId": 1,
+      "lotId": 18,
+      "bidderId": 35,
+      "status": "planned",
+      "id": 37
+    },
+    {
+      "auctionId": 1,
+      "lotId": 18,
+      "bidderId": 36,
+      "status": "planned",
+      "id": 38
+    },
+    {
+      "auctionId": 1,
+      "lotId": 18,
+      "bidderId": 37,
+      "status": "planned",
+      "id": 39
+    },
+    {
+      "auctionId": 1,
+      "lotId": 19,
+      "bidderId": 38,
+      "status": "planned",
+      "id": 40
+    },
+    {
+      "auctionId": 1,
+      "lotId": 20,
+      "bidderId": 37,
+      "status": "planned",
+      "id": 41
+    },
+    {
+      "auctionId": 1,
+      "lotId": 20,
+      "bidderId": 39,
+      "status": "planned",
+      "id": 42
+    },
+    {
+      "auctionId": 1,
+      "lotId": 21,
+      "bidderId": 37,
+      "status": "planned",
+      "id": 43
+    },
+    {
+      "auctionId": 1,
+      "lotId": 21,
+      "bidderId": 39,
+      "status": "planned",
+      "id": 44
+    },
+    {
+      "auctionId": 1,
+      "lotId": 21,
+      "bidderId": 40,
+      "status": "planned",
+      "id": 45
+    },
+    {
+      "auctionId": 1,
+      "lotId": 22,
+      "bidderId": 41,
+      "status": "planned",
+      "id": 46
+    },
+    {
+      "auctionId": 1,
+      "lotId": 22,
+      "bidderId": 42,
+      "status": "planned",
+      "id": 47
+    },
+    {
+      "auctionId": 1,
+      "lotId": 22,
+      "bidderId": 43,
+      "status": "planned",
+      "id": 48
+    },
+    {
+      "auctionId": 1,
+      "lotId": 23,
+      "bidderId": 44,
+      "status": "planned",
+      "id": 49
+    },
+    {
+      "auctionId": 1,
+      "lotId": 24,
+      "bidderId": 45,
+      "status": "planned",
+      "id": 50
+    },
+    {
+      "auctionId": 1,
+      "lotId": 25,
+      "bidderId": 46,
+      "status": "planned",
+      "id": 51
+    },
+    {
+      "auctionId": 1,
+      "lotId": 26,
+      "bidderId": 47,
+      "status": "planned",
+      "id": 52
+    },
+    {
+      "auctionId": 1,
+      "lotId": 27,
+      "bidderId": 48,
+      "status": "planned",
+      "id": 53
+    },
+    {
+      "auctionId": 1,
+      "lotId": 27,
+      "bidderId": 49,
+      "status": "planned",
+      "id": 54
+    },
+    {
+      "auctionId": 1,
+      "lotId": 28,
+      "bidderId": 50,
+      "status": "planned",
+      "id": 55
+    },
+    {
+      "auctionId": 1,
+      "lotId": 28,
+      "bidderId": 12,
+      "status": "planned",
+      "id": 56
+    },
+    {
+      "auctionId": 1,
+      "lotId": 28,
+      "bidderId": 51,
+      "status": "planned",
+      "id": 57
+    },
+    {
+      "auctionId": 1,
+      "lotId": 29,
+      "bidderId": 27,
+      "status": "planned",
+      "id": 58
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 52,
+      "status": "planned",
+      "id": 59
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 53,
+      "status": "planned",
+      "id": 60
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 54,
+      "status": "planned",
+      "id": 61
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 34,
+      "status": "planned",
+      "id": 62
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 55,
+      "status": "planned",
+      "id": 63
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 43,
+      "status": "planned",
+      "id": 64
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 56,
+      "status": "planned",
+      "id": 65
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 57,
+      "status": "planned",
+      "id": 66
+    },
+    {
+      "auctionId": 1,
+      "lotId": 30,
+      "bidderId": 58,
+      "status": "planned",
+      "id": 67
+    },
+    {
+      "auctionId": 1,
+      "lotId": 31,
+      "bidderId": 43,
+      "status": "planned",
+      "id": 68
+    },
+    {
+      "auctionId": 1,
+      "lotId": 31,
+      "bidderId": 59,
+      "status": "planned",
+      "id": 69
+    },
+    {
+      "auctionId": 1,
+      "lotId": 31,
+      "bidderId": 60,
+      "status": "planned",
+      "id": 70
+    },
+    {
+      "auctionId": 1,
+      "lotId": 32,
+      "bidderId": 60,
+      "status": "planned",
+      "id": 71
+    },
+    {
+      "auctionId": 1,
+      "lotId": 33,
+      "bidderId": 61,
+      "status": "planned",
+      "id": 72
+    },
+    {
+      "auctionId": 1,
+      "lotId": 34,
+      "bidderId": 39,
+      "status": "planned",
+      "id": 73
+    },
+    {
+      "auctionId": 1,
+      "lotId": 35,
+      "bidderId": 62,
+      "status": "planned",
+      "id": 74
+    },
+    {
+      "auctionId": 1,
+      "lotId": 35,
+      "bidderId": 63,
+      "status": "planned",
+      "id": 75
+    },
+    {
+      "auctionId": 1,
+      "lotId": 35,
+      "bidderId": 60,
+      "status": "planned",
+      "id": 76
+    },
+    {
+      "auctionId": 1,
+      "lotId": 36,
+      "bidderId": 62,
+      "status": "planned",
+      "id": 77
+    },
+    {
+      "auctionId": 1,
+      "lotId": 36,
+      "bidderId": 64,
+      "status": "planned",
+      "id": 78
+    },
+    {
+      "auctionId": 1,
+      "lotId": 37,
+      "bidderId": 65,
+      "status": "planned",
+      "id": 79
+    },
+    {
+      "auctionId": 1,
+      "lotId": 37,
+      "bidderId": 66,
+      "status": "planned",
+      "id": 80
+    },
+    {
+      "auctionId": 1,
+      "lotId": 38,
+      "bidderId": 67,
+      "status": "planned",
+      "id": 81
+    },
+    {
+      "auctionId": 1,
+      "lotId": 39,
+      "bidderId": 68,
+      "status": "planned",
+      "id": 82
+    },
+    {
+      "auctionId": 1,
+      "lotId": 39,
+      "bidderId": 69,
+      "status": "planned",
+      "id": 83
+    },
+    {
+      "auctionId": 1,
+      "lotId": 39,
+      "bidderId": 60,
+      "status": "planned",
+      "id": 84
+    },
+    {
+      "auctionId": 1,
+      "lotId": 40,
+      "bidderId": 70,
+      "status": "planned",
+      "id": 85
+    },
+    {
+      "auctionId": 1,
+      "lotId": 41,
+      "bidderId": 71,
+      "status": "planned",
+      "id": 86
+    },
+    {
+      "auctionId": 1,
+      "lotId": 42,
+      "bidderId": 72,
+      "status": "planned",
+      "id": 87
+    },
+    {
+      "auctionId": 1,
+      "lotId": 42,
+      "bidderId": 73,
+      "status": "planned",
+      "id": 88
+    },
+    {
+      "auctionId": 1,
+      "lotId": 43,
+      "bidderId": 74,
+      "status": "planned",
+      "id": 89
+    },
+    {
+      "auctionId": 1,
+      "lotId": 43,
+      "bidderId": 75,
+      "status": "planned",
+      "id": 90
+    },
+    {
+      "auctionId": 1,
+      "lotId": 43,
+      "bidderId": 76,
+      "status": "planned",
+      "id": 91
+    },
+    {
+      "auctionId": 1,
+      "lotId": 44,
+      "bidderId": 77,
+      "status": "planned",
+      "id": 92
+    },
+    {
+      "auctionId": 1,
+      "lotId": 45,
+      "bidderId": 78,
+      "status": "planned",
+      "id": 93
+    },
+    {
+      "auctionId": 1,
+      "lotId": 46,
+      "bidderId": 42,
+      "status": "planned",
+      "id": 94
+    },
+    {
+      "auctionId": 1,
+      "lotId": 47,
+      "bidderId": 79,
+      "status": "planned",
+      "id": 95
+    },
+    {
+      "auctionId": 1,
+      "lotId": 48,
+      "bidderId": 80,
+      "status": "planned",
+      "id": 96
+    },
+    {
+      "auctionId": 1,
+      "lotId": 49,
+      "bidderId": 81,
+      "status": "planned",
+      "id": 97
+    },
+    {
+      "auctionId": 1,
+      "lotId": 49,
+      "bidderId": 82,
+      "status": "planned",
+      "id": 98
+    },
+    {
+      "auctionId": 1,
+      "lotId": 49,
+      "bidderId": 43,
+      "status": "planned",
+      "id": 99
+    },
+    {
+      "auctionId": 1,
+      "lotId": 50,
+      "bidderId": 26,
+      "status": "planned",
+      "id": 100
+    },
+    {
+      "auctionId": 1,
+      "lotId": 51,
+      "bidderId": 83,
+      "status": "planned",
+      "id": 101
+    },
+    {
+      "auctionId": 1,
+      "lotId": 51,
+      "bidderId": 56,
+      "status": "planned",
+      "id": 102
+    }
+  ]
+}

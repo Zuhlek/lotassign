@@ -18,7 +18,8 @@ import AuctionCallers from "@/components/workflow/auction-callers-list"
 import { updateLotBidder } from "@/lib/actions/lot-bidder.actions"
 import AuctionList from "@/components/workflow/auctions-list"
 import LotsBidders from "@/components/workflow/lots-bidders-list"
-import { AssignmentService } from "@/lib/assignment.service"
+import { computeAssignments } from "@/lib/assignment.service"
+import { getPlanningSnapshot, persistCallerAssignments } from "@/lib/actions/assignment-logic.actions"
 
 export default function AuctionPage() {
   const [auctions, setAuctions] = useState<Auction[]>([])
@@ -118,17 +119,16 @@ export default function AuctionPage() {
     setLotBidders(await getLotBiddersByAuctionId(selectedAuction.id!))
   }
 
-const handleAutoAssign = async () => {
-  if (!selectedAuction?.id) return;
-
-  const { unscheduled } = await AssignmentService.run(selectedAuction.id);
-
-  await refreshLotsAndBidders(selectedAuction.id);
-
-  if (unscheduled.length) {
-    console.warn("Nicht zugewiesen:", unscheduled);
-  }
-};
+  const handleAutoAssign = async () => {
+    if (!selectedAuction?.id) return;
+    const snapshot = await getPlanningSnapshot(selectedAuction.id);
+    const assignment = computeAssignments(snapshot, 5);
+    await persistCallerAssignments(selectedAuction.id, assignment.map);
+    await refreshLotsAndBidders(selectedAuction.id);
+    if (assignment.unscheduled.length) {
+      console.warn("Nicht zugewiesen:", assignment.unscheduled);
+    }
+  };
 
   return (
     <Grid container columnSpacing={4} rowSpacing={2}>

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest --runInBand"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -26,10 +27,13 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.7",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.10",
     "@types/react": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.5",
+    "jest": "^30.0.5",
+    "ts-jest": "^29.4.0",
     "typescript": "^5.8.3"
   }
 }
