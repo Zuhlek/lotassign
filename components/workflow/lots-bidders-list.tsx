@@ -1,33 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { Box, Button, Paper, Typography, Table, TableHead, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, Backdrop, } from "@mui/material"
 import ExcelJS from "exceljs"
 import { Auction } from "@/lib/models/auction.model"
 import { Lot } from "@/lib/models/lot.model"
 import { LotBidder } from "@/lib/models/lot-bidder.model"
 import { Bidder } from "@/lib/models/bidder.model"
-import {
-  createLot,
-  getLotsByAuctionId,
-  deleteLotsByAuctionId
-} from "@/lib/actions/lot.actions"
-import {
-  createLotBidder,
-  getLotBiddersByAuctionId,
-  deleteLotBiddersByAuctionId
-} from "@/lib/actions/lot-bidder.actions"
+import { createLot, getLotsByAuctionId, deleteLotsByAuctionId } from "@/lib/actions/lot.actions"
+import { createLotBidder, getLotBiddersByAuctionId, deleteLotBiddersByAuctionId } from "@/lib/actions/lot-bidder.actions"
 import { languagesToLanguageArray } from "@/lib/models/language.enum"
 import { createBidder } from "@/lib/actions/bidder.actions"
+import { Caller } from "@/lib/models/caller.model"
 
 interface LotsBiddersProps {
   selectedAuction: Auction | null
   lots: Lot[]
   lotBidders: LotBidder[]
   bidders: Map<number, Bidder>
+  callers: Caller[]
   onLotsUpdate: (lots: Lot[]) => void
   onLotBiddersUpdate: (lotBidders: LotBidder[]) => void
   onDeleteLots: () => Promise<void>
+  onAutoAssign: () => Promise<void>
 }
 
 export default function LotsBidders({
@@ -35,13 +30,20 @@ export default function LotsBidders({
   lots,
   lotBidders,
   bidders,
+  callers,
   onLotsUpdate,
   onLotBiddersUpdate,
-  onDeleteLots
+  onDeleteLots,
+  onAutoAssign,
 }: LotsBiddersProps) {
   const [confirmUploadOpen, setConfirmUploadOpen] = useState(false)
   const [pendingFile, setPendingFile] = useState<File | null>(null)
   const [uploadMessage, setUploadMessage] = useState<string | null>(null)
+
+  const callerMap = useMemo(
+    () => new Map(callers.map(c => [c.id!, c])),
+    [callers],
+  );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -121,6 +123,14 @@ export default function LotsBidders({
       <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
         <Typography variant="h4">Auction Details</Typography>
         <Box>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={onAutoAssign}
+            disabled={!selectedAuction}
+          >
+            Assign Callers
+          </Button>
           <input
             type="file"
             accept=".xlsx,.xls"
@@ -161,17 +171,29 @@ export default function LotsBidders({
                   <TableRow>
                     <TableCell>Bidder Name</TableCell>
                     <TableCell>Status</TableCell>
+                    <TableCell>Caller</TableCell>  
                   </TableRow>
                 </TableHead>
+
                 <TableBody>
                   {lotBidders
                     .filter(lb => lb.lotId === lot.id)
-                    .map(lb => (
-                      <TableRow key={lb.id}>
-                        <TableCell>{bidders.get(lb.bidderId)?.name || `#${lb.bidderId}`}</TableCell>
-                        <TableCell>{lb.status}</TableCell>
-                      </TableRow>
-                    ))}
+                    .map(lb => {
+                      const caller =
+                        lb.callerId !== undefined
+                          ? callerMap.get(lb.callerId)?.abbreviation ??
+                          callerMap.get(lb.callerId)?.name ??
+                          `#${lb.callerId}`
+                          : "—";
+
+                      return (
+                        <TableRow key={lb.id}>
+                          <TableCell>{bidders.get(lb.bidderId)?.name || `#${lb.bidderId}`}</TableCell>
+                          <TableCell>{lb.status}</TableCell>
+                          <TableCell>{caller}</TableCell>        
+                        </TableRow>
+                      );
+                    })}
                 </TableBody>
               </Table>
             </Box>

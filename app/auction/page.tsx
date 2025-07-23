@@ -18,6 +18,7 @@ import AuctionCallers from "@/components/workflow/auction-callers-list"
 import { updateLotBidder } from "@/lib/actions/lot-bidder.actions"
 import AuctionList from "@/components/workflow/auctions-list"
 import LotsBidders from "@/components/workflow/lots-bidders-list"
+import { AssignmentService } from "@/lib/assignment.service"
 
 export default function AuctionPage() {
   const [auctions, setAuctions] = useState<Auction[]>([])
@@ -27,7 +28,6 @@ export default function AuctionPage() {
   const [bidders, setBidders] = useState<Map<number, Bidder>>(new Map())
   const [callers, setCallers] = useState<Caller[]>([])
   const [selectedCallerIds, setSelectedCallerIds] = useState<number[]>([])
-  /* helper‑Map callerId → bidderId */
   const preferredAssignments = useMemo(() => {
     const map: Record<number, number | undefined> = {}
     lotBidders.forEach(lb => {
@@ -118,6 +118,18 @@ export default function AuctionPage() {
     setLotBidders(await getLotBiddersByAuctionId(selectedAuction.id!))
   }
 
+const handleAutoAssign = async () => {
+  if (!selectedAuction?.id) return;
+
+  const { unscheduled } = await AssignmentService.run(selectedAuction.id);
+
+  await refreshLotsAndBidders(selectedAuction.id);
+
+  if (unscheduled.length) {
+    console.warn("Nicht zugewiesen:", unscheduled);
+  }
+};
+
   return (
     <Grid container columnSpacing={4} rowSpacing={2}>
       <Grid size={{ xs: 12, md: 3 }}>
@@ -136,9 +148,11 @@ export default function AuctionPage() {
           lots={lots}
           lotBidders={lotBidders}
           bidders={bidders}
+          callers={callers}
           onLotsUpdate={setLots}
           onLotBiddersUpdate={setLotBidders}
           onDeleteLots={handleDeleteLotsBidders}
+          onAutoAssign={handleAutoAssign}
         />
       </Grid>
 
