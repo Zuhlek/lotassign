@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest --runInBand"
+    "test": "jest --runInBand",
+    "export": "next build && touch out/.nojekyll"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",

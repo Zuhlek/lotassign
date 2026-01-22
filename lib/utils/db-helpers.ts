@@ -115,8 +115,10 @@ export async function loadAuctionAndCallerDummyData(): Promise<number> {
     const caller = new Caller(name, abbreviation, languages);
     const callerId = await createCaller(caller);
 
-    const auctionCaller = new AuctionCaller(auctionId, callerId);
-    await createAuctionCaller(auctionCaller);
+    if (callerId !== null) {
+      const auctionCaller = new AuctionCaller(auctionId, callerId);
+      await createAuctionCaller(auctionCaller);
+    }
   }
 
   return auctionId;
@@ -128,24 +130,28 @@ export async function loadLotsBiddersAndAssignmentsDummyData(auctionId: number) 
 
   for (const row of bidderPerLotData) {
     let bidderId = bidderIds.get(row.BidderName);
-    if (!bidderId) {
+    if (bidderId === undefined) {
       const bidder = new Bidder(
         row.BidderName ?? "Unnamed Bidder",
         row.BidderPhoneNumber ?? "",
         row.BidderLanguages as Language[]
       );
-      bidderId = await createBidder(bidder);
+      const newBidderId = await createBidder(bidder);
+      if (newBidderId === undefined) continue;
+      bidderId = newBidderId;
       bidderIds.set(row.BidderName, bidderId);
     }
 
     let lotId = lotIds.get(row.LotNumber);
-    if (!lotId) {
+    if (lotId === undefined) {
       const lot = new Lot(
         auctionId,
         parseInt(row.LotNumber, 10),
         row.LotName ?? "Untitled Lot"
       );
-      lotId = await createLot(lot);
+      const newLotId = await createLot(lot);
+      if (newLotId === undefined) continue;
+      lotId = newLotId;
       lotIds.set(row.LotNumber, lotId);
     }
 
