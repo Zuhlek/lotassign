@@ -19,7 +19,7 @@ function TopBar() {
   const pathname = usePathname();
 
   return (
-    <AppBar position="fixed" color="primary" elevation={0} sx={{ zIndex: 1201 }}>
+    <AppBar position="fixed" elevation={0} sx={{ zIndex: 1201 }}>
       <Toolbar>
         <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
@@ -27,7 +27,7 @@ function TopBar() {
           </Typography>
         </Link>
 
-        <Box sx={{ flexGrow: 1, display: "flex", ml: 4, gap: 1 }}>
+        <Box sx={{ flexGrow: 1, display: "flex", ml: 4, gap: 0.5 }}>
           {navItems.map((item) => {
             const isActive = pathname.startsWith(item.href);
             return (
@@ -36,10 +36,14 @@ function TopBar() {
                   color="inherit"
                   startIcon={item.icon}
                   sx={{
-                    opacity: isActive ? 1 : 0.7,
-                    borderBottom: isActive ? "2px solid white" : "2px solid transparent",
-                    borderRadius: 0,
-                    "&:hover": { opacity: 1 },
+                    opacity: isActive ? 1 : 0.8,
+                    backgroundColor: isActive ? 'rgba(255,255,255,0.12)' : 'transparent',
+                    borderRadius: 1,
+                    px: 2,
+                    "&:hover": {
+                      opacity: 1,
+                      backgroundColor: 'rgba(255,255,255,0.08)',
+                    },
                   }}
                 >
                   {item.label}

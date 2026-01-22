@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card, CardContent, Typography, Button } from '@mui/material';
+import { Card, CardContent, Typography } from '@mui/material';
 import { db } from "@/lib/db/dexie.db";
 import { liveQuery } from 'dexie';
 
@@ -16,7 +16,6 @@ type TableCounts = {
   lotBiddersCount: number;
 };
 
-// Direkt integrierte Funktion zur Datenbankintegritätsprüfung
 async function getDatabaseCounts(): Promise<TableCounts> {
   const auctionsCount = await db.auctions.count();
   const lotsCount = await db.lots.count();
@@ -35,10 +34,9 @@ async function getDatabaseCounts(): Promise<TableCounts> {
   };
 }
 
-// Funktion zur Ermittlung des Status basierend auf den Tabelleninhalten
 function determineStatus(counts: TableCounts): StatusType {
   const { auctionsCount, lotsCount, biddersCount, callersCount, auctionCallerCount, lotBiddersCount } = counts;
-  
+
   if (
     auctionsCount === 0 &&
     lotsCount === 0 &&
@@ -61,6 +59,16 @@ function determineStatus(counts: TableCounts): StatusType {
     return "warning";
   }
 }
+
+const getStatusStyles = (status: StatusType) => {
+  const colorMap = {
+    success: { bgcolor: 'success.light', color: 'success.dark' },
+    warning: { bgcolor: 'warning.light', color: 'warning.dark' },
+    error: { bgcolor: 'error.light', color: 'error.dark' },
+    info: { bgcolor: 'info.light', color: 'info.dark' },
+  };
+  return colorMap[status] || colorMap.info;
+};
 
 export default function DataIntegrityChecker() {
   const [counts, setCounts] = useState<TableCounts>({
@@ -88,46 +96,31 @@ export default function DataIntegrityChecker() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const getCardStyle = () => {
-    switch (status) {
-      case "success":
-        return { backgroundColor: "#d4edda", color: "#155724" }; // Green
-      case "warning":
-        return { backgroundColor: "#fff3cd", color: "#856404" }; // Yellow
-      case "error":
-        return { backgroundColor: "#f8d7da", color: "#721c24" }; // Red
-      default:
-        return { backgroundColor: "#cce5ff", color: "#004085" }; // Blue
-    }
-  };
-
   return (
-    <div>
-      <Card style={getCardStyle()} sx={{width:200}}>
-        <CardContent>
-          <Typography variant="h6" gutterBottom>
-            Database Content
-          </Typography>
-          <Typography variant="body2">
-            <strong>Callers:</strong> {counts.callersCount}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Auctions:</strong> {counts.auctionsCount}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Lots:</strong> {counts.lotsCount}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Bidders:</strong> {counts.biddersCount}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Auction Callers:</strong> {counts.auctionCallerCount}
-          </Typography>
-          <Typography variant="body2">
-            <strong>Lot Bidders:</strong> {counts.lotBiddersCount}
-          </Typography>
-        </CardContent>
-      </Card>
-    </div>
+    <Card sx={{ width: 240, ...getStatusStyles(status) }}>
+      <CardContent>
+        <Typography variant="h6" gutterBottom sx={{ color: 'inherit' }}>
+          Database Content
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Callers:</strong> {counts.callersCount}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Auctions:</strong> {counts.auctionsCount}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Lots:</strong> {counts.lotsCount}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Bidders:</strong> {counts.biddersCount}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Auction Callers:</strong> {counts.auctionCallerCount}
+        </Typography>
+        <Typography variant="body2" sx={{ color: 'inherit' }}>
+          <strong>Lot Bidders:</strong> {counts.lotBiddersCount}
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }

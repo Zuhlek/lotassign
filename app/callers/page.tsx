@@ -1,6 +1,27 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Chip, Snackbar, Alert, Backdrop, Paper, Typography, Container, Divider } from "@mui/material";
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Chip,
+  Alert,
+  Backdrop,
+  Paper,
+  Typography,
+  Divider,
+} from "@mui/material";
 import { Edit as EditIcon, Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 import ExcelJS from "exceljs";
 import { Language } from "@/lib/models/language.enum";
@@ -142,88 +163,86 @@ export default function CallersPage() {
   };
 
   return (
-    <>
-
-      <Container>
-        <TableContainer sx={{ maxWidth: 1000 }}>
-          <Box display="flex" justifyContent="space-between" alignContent="center" sx={{ my: 4 }}>
-            <Typography variant="h4" >Callers</Typography>
-            <Box>
-              <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} style={{ display: "none" }} id="upload-caller-button-file" />
-              <label htmlFor="upload-caller-button-file">
-                <Button variant="contained" component="span" sx={{ marginRight: 1 }}>Import Callers</Button>
-              </label>
-              <Button variant="contained" onClick={() => handleOpen()}><AddIcon /></Button>
-            </Box>
+    <Box sx={{ maxWidth: 900, mx: "auto" }}>
+      <TableContainer component={Paper}>
+        <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ p: 2 }}>
+          <Typography variant="h4">Callers</Typography>
+          <Box sx={{ display: "flex", gap: 1 }}>
+            <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} style={{ display: "none" }} id="upload-caller-button-file" />
+            <label htmlFor="upload-caller-button-file">
+              <Button variant="outlined" component="span">Import Callers</Button>
+            </label>
+            <Button variant="contained" onClick={() => handleOpen()} startIcon={<AddIcon />}>Add</Button>
           </Box>
-          <Divider />
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <Typography variant="h6">Name</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Abbreviation</Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="h6">Languages</Typography>
-                </TableCell>
+        </Box>
+        <Divider />
+        <Table size="small" stickyHeader>
+          <TableHead>
+            <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Abbreviation</TableCell>
+              <TableCell>Languages</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {callers.map((caller) => (
+              <TableRow key={caller.id}>
+                <TableCell>{caller.name}</TableCell>
+                <TableCell>{caller.abbreviation}</TableCell>
+                <TableCell>{caller.languages.join(", ")}</TableCell>
                 <TableCell align="right">
-                  <Typography variant="h6">Actions</Typography>
+                  <IconButton size="small" onClick={() => handleOpen(caller)}><EditIcon fontSize="small" /></IconButton>
+                  <IconButton size="small" onClick={() => handleDelete(caller.id!)}><DeleteIcon fontSize="small" /></IconButton>
                 </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {callers.map((caller) => (
-                <TableRow key={caller.id}>
-                  <TableCell>{caller.name}</TableCell>
-                  <TableCell>{caller.abbreviation}</TableCell>
-                  <TableCell>{caller.languages.join(", ")}</TableCell>
-                  <TableCell align="right">
-                    <IconButton size="small" sx={{ p: 0, mx: 2 }} onClick={() => handleOpen(caller)}><EditIcon /></IconButton>
-                    <IconButton size="small" sx={{ p: 0, mx: 2 }} onClick={() => handleDelete(caller.id!)}><DeleteIcon /></IconButton>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Container>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <DialogTitle>{isEdit ? "Edit Caller" : "Add Caller"}</DialogTitle>
         <DialogContent>
           <TextField label="Name" name="name" value={callerData?.name || ""} onChange={handleChange} fullWidth margin="normal" />
           <TextField label="Abbreviation" name="abbreviation" value={callerData?.abbreviation || ""} onChange={handleChange} fullWidth margin="normal" />
-          <Box marginTop={2}>
-            {Object.values(Language).map((language) => (
-              <Chip key={language} label={language} onClick={() => toggleLanguageSelection(language)} color={selectedLanguages.includes(language) ? "primary" : "default"} sx={{ margin: 0.5 }} />
-            ))}
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>Languages</Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+              {Object.values(Language).map((language) => (
+                <Chip
+                  key={language}
+                  label={language}
+                  onClick={() => toggleLanguageSelection(language)}
+                  color={selectedLanguages.includes(language) ? "primary" : "default"}
+                  variant={selectedLanguages.includes(language) ? "filled" : "outlined"}
+                />
+              ))}
+            </Box>
           </Box>
-        </DialogContent>
-        <Box minHeight={50} display="flex" justifyContent="center" alignItems="center">
           {dialogError && (
-            <Alert severity="error">
+            <Alert severity="error" sx={{ mt: 2 }}>
               {dialogError}
             </Alert>
           )}
-        </Box>
+        </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleSave} variant="contained">{isEdit ? "Update" : "Create"}</Button>
         </DialogActions>
-
       </Dialog>
 
-      <Backdrop open={Boolean(uploadMessage)} sx={{ zIndex: 1300, color: "#fff", backdropFilter: "blur(2px)" }} onClick={() => setUploadMessage(null)}>
-        <Paper elevation={4} sx={{ padding: 4, maxWidth: 600, textAlign: "center" }}>
-          <Typography variant="h6" gutterBottom>Duplicate entries were not imported.</Typography>
-          <Typography variant="caption" gutterBottom>{uploadMessage}<br></br><br></br></Typography>
+      <Backdrop
+        open={Boolean(uploadMessage)}
+        sx={{ zIndex: 1300, backdropFilter: "blur(2px)" }}
+        onClick={() => setUploadMessage(null)}
+      >
+        <Paper sx={{ p: 4, maxWidth: 500, textAlign: "center" }}>
+          <Typography variant="h6" gutterBottom>Import Results</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>{uploadMessage}</Typography>
           <Button onClick={() => setUploadMessage(null)} variant="contained">Close</Button>
         </Paper>
       </Backdrop>
-
-    </>
+    </Box>
   );
 }

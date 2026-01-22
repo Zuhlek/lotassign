@@ -78,16 +78,14 @@ export default function HomePage() {
     }
   };
 
-  const getStatusColor = () => {
-    if (!dbStatus) return "default";
-    switch (dbStatus.status) {
-      case "success":
-        return "success";
-      case "warning":
-        return "warning";
-      case "error":
-        return "error";
-    }
+  const getStatusStyles = () => {
+    if (!dbStatus) return {};
+    const colorMap = {
+      success: { bgcolor: 'success.light', borderColor: 'success.main' },
+      warning: { bgcolor: 'warning.light', borderColor: 'warning.main' },
+      error: { bgcolor: 'error.light', borderColor: 'error.main' },
+    };
+    return colorMap[dbStatus.status];
   };
 
   return (
@@ -110,9 +108,8 @@ export default function HomePage() {
             display: "flex",
             alignItems: "center",
             gap: 2,
-            bgcolor: `${getStatusColor()}.50`,
             border: 1,
-            borderColor: `${getStatusColor()}.200`,
+            ...getStatusStyles(),
           }}
         >
           {getStatusIcon()}
@@ -143,8 +140,8 @@ export default function HomePage() {
                   cursor: "pointer",
                   transition: "all 0.2s",
                   "&:hover": {
-                    transform: "translateY(-4px)",
-                    boxShadow: 4,
+                    transform: "translateY(-2px)",
+                    boxShadow: 2,
                   },
                 }}
               >
@@ -156,7 +153,7 @@ export default function HomePage() {
                       color="primary"
                       sx={{ mr: 1, fontWeight: 600 }}
                     />
-                    <Box sx={{ color: "primary.main" }}>{step.icon}</Box>
+                    <Box sx={{ color: "grey.600" }}>{step.icon}</Box>
                   </Box>
                   <Typography variant="h6" gutterBottom>
                     {step.title}

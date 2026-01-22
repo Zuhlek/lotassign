@@ -130,7 +130,7 @@ export default function BackupsPage() {
   };
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto' }}>
+    <Box sx={{ maxWidth: 900, mx: 'auto' }}>
       <Typography variant="h4" gutterBottom>
         Data Management
       </Typography>
@@ -180,7 +180,7 @@ export default function BackupsPage() {
         </CardContent>
       </Card>
 
-      <Card sx={{ mb: 3, border: '2px solid', borderColor: 'primary.main' }}>
+      <Card sx={{ mb: 3, borderColor: 'primary.main' }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
             <Science color="primary" />
@@ -197,7 +197,6 @@ export default function BackupsPage() {
           </Typography>
           <Button
             variant="contained"
-            color="primary"
             startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <Refresh />}
             onClick={() => setDialogOpen('demo')}
             disabled={loading}
@@ -207,9 +206,9 @@ export default function BackupsPage() {
         </CardContent>
       </Card>
 
-      <Card sx={{ borderColor: 'error.main' }}>
+      <Card sx={{ mb: 3, borderColor: 'error.light' }}>
         <CardContent>
-          <Typography variant="h6" color="error" gutterBottom>
+          <Typography variant="h6" color="error.dark" gutterBottom>
             Danger Zone
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
@@ -242,7 +241,7 @@ export default function BackupsPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleConfirmImport} color="primary" variant="contained">
+          <Button onClick={handleConfirmImport} variant="contained">
             Import
           </Button>
         </DialogActions>
@@ -284,7 +283,7 @@ export default function BackupsPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleLoadDemo} color="primary" variant="contained">
+          <Button onClick={handleLoadDemo} variant="contained">
             Load Demo
           </Button>
         </DialogActions>

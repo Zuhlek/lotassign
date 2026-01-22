@@ -1,7 +1,22 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Box, Button, Paper, Typography, Table, TableHead, TableRow, TableCell, TableBody, Dialog, DialogTitle, DialogContent, DialogActions, Backdrop, } from "@mui/material"
+import {
+  Box,
+  Button,
+  Paper,
+  Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Backdrop,
+} from "@mui/material"
 import ExcelJS from "exceljs"
 import { Auction } from "@/lib/models/auction.model"
 import { Lot } from "@/lib/models/lot.model"
@@ -125,17 +140,9 @@ export default function LotsBidders({
 
   return (
     <>
-      <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Typography variant="h4">Auction Details</Typography>
-        <Box>
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={onAutoAssign}
-            disabled={!selectedAuction}
-          >
-            Assign Callers
-          </Button>
+        <Box sx={{ display: "flex", gap: 1 }}>
           <input
             type="file"
             accept=".xlsx,.xls"
@@ -145,69 +152,82 @@ export default function LotsBidders({
           />
           <label htmlFor="upload-auction-excel">
             <Button
-              variant="contained"
+              variant="outlined"
               component="span"
-              sx={{ mr: 1 }}
               disabled={!selectedAuction}
             >
-              Upload Lots & Bidders
+              Upload Lots
             </Button>
           </label>
+          <Button
+            variant="contained"
+            onClick={onAutoAssign}
+            disabled={!selectedAuction}
+          >
+            Assign Callers
+          </Button>
           <Button
             variant="outlined"
             color="error"
             onClick={onDeleteLots}
             disabled={!selectedAuction}
           >
-            Delete Lots & Bidders
+            Delete All
           </Button>
         </Box>
       </Box>
 
       {selectedAuction ? (
         <Paper sx={{ p: 2 }}>
-          {lots.map(lot => (
-            <Box key={lot.id} mb={2}>
-              <Typography variant="subtitle1">
-                Lot {lot.number}: {lot.title}
-              </Typography>
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Bidder Name</TableCell>
-                    <TableCell>Status</TableCell>
-                    <TableCell>Caller</TableCell>  
-                  </TableRow>
-                </TableHead>
+          {lots.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
+              No lots yet. Upload an Excel file to add lots and bidders.
+            </Typography>
+          ) : (
+            lots.map(lot => (
+              <Box key={lot.id} sx={{ mb: 3, "&:last-child": { mb: 0 } }}>
+                <Typography variant="subtitle2" sx={{ mb: 1 }}>
+                  Lot {lot.number}: {lot.title}
+                </Typography>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Bidder</TableCell>
+                      <TableCell>Status</TableCell>
+                      <TableCell>Caller</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {lotBidders
+                      .filter(lb => lb.lotId === lot.id)
+                      .map(lb => {
+                        const caller =
+                          lb.callerId !== undefined
+                            ? callerMap.get(lb.callerId)?.abbreviation ??
+                              callerMap.get(lb.callerId)?.name ??
+                              `#${lb.callerId}`
+                            : "—";
 
-                <TableBody>
-                  {lotBidders
-                    .filter(lb => lb.lotId === lot.id)
-                    .map(lb => {
-                      const caller =
-                        lb.callerId !== undefined
-                          ? callerMap.get(lb.callerId)?.abbreviation ??
-                          callerMap.get(lb.callerId)?.name ??
-                          `#${lb.callerId}`
-                          : "—";
-
-                      return (
-                        <TableRow key={lb.id}>
-                          <TableCell>{bidders.get(lb.bidderId)?.name || `#${lb.bidderId}`}</TableCell>
-                          <TableCell>{lb.status}</TableCell>
-                          <TableCell>{caller}</TableCell>        
-                        </TableRow>
-                      );
-                    })}
-                </TableBody>
-              </Table>
-            </Box>
-          ))}
+                        return (
+                          <TableRow key={lb.id}>
+                            <TableCell>{bidders.get(lb.bidderId)?.name || `#${lb.bidderId}`}</TableCell>
+                            <TableCell>{lb.status}</TableCell>
+                            <TableCell>{caller}</TableCell>
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </Box>
+            ))
+          )}
         </Paper>
       ) : (
-        <Typography variant="body2" mt={2}>
-          Select an auction to view details.
-        </Typography>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            Select an auction to view details.
+          </Typography>
+        </Paper>
       )}
 
       <Dialog open={confirmUploadOpen} onClose={() => setConfirmUploadOpen(false)}>
@@ -228,7 +248,7 @@ export default function LotsBidders({
         sx={{ zIndex: 1300, backdropFilter: "blur(2px)" }}
         onClick={() => setUploadMessage(null)}
       >
-        <Paper elevation={4} sx={{ p: 4, maxWidth: 500, textAlign: "center" }}>
+        <Paper sx={{ p: 4, maxWidth: 500, textAlign: "center" }}>
           <Typography variant="h6" gutterBottom>
             {uploadMessage}
           </Typography>

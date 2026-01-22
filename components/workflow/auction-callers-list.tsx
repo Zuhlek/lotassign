@@ -1,7 +1,25 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, List, ListItem, ListItemButton, ListItemText, MenuItem, Paper, Select, Typography } from "@mui/material"
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  MenuItem,
+  Paper,
+  Select,
+  Typography,
+} from "@mui/material"
 import { Caller } from "@/lib/models/caller.model"
 import { Bidder } from "@/lib/models/bidder.model"
 import { Auction } from "@/lib/models/auction.model"
@@ -60,6 +78,7 @@ export default function AuctionCallers({
     await onSave(localIds, localAssign)
     setOpen(false)
   }
+
   const callersInAuction = useMemo(
     () => callers.filter(c => selectedCallerIds.includes(c.id!)),
     [callers, selectedCallerIds]
@@ -67,8 +86,8 @@ export default function AuctionCallers({
 
   return (
     <>
-      <Box mt={4} display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h4">Auction Callers</Typography>
+      <Box sx={{ mb: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Typography variant="h4">Callers</Typography>
         <Button
           variant="contained"
           disabled={!selectedAuction}
@@ -83,28 +102,35 @@ export default function AuctionCallers({
       </Box>
 
       {selectedAuction ? (
-        <Paper>
-          <List dense>
-            {callersInAuction.map(c => {
-              const bid = bidders.find(
-                b => assignments[c.id!] !== undefined && b.id === assignments[c.id!]
-              )
-              return (
-                <ListItem key={c.id}>
-                  <ListItemText
-                    primary={
-                      bid ? `${c.name} → ${bid.name}` : c.name
-                    }
-                  />
-                </ListItem>
-              )
-            })}
-          </List>
+        <Paper sx={{ p: 2 }}>
+          {callersInAuction.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", py: 2 }}>
+              No callers assigned. Click Manage to add callers.
+            </Typography>
+          ) : (
+            <List dense disablePadding>
+              {callersInAuction.map(c => {
+                const bid = bidders.find(
+                  b => assignments[c.id!] !== undefined && b.id === assignments[c.id!]
+                )
+                return (
+                  <ListItem key={c.id} disablePadding>
+                    <ListItemText
+                      primary={c.name}
+                      secondary={bid ? `Preferred: ${bid.name}` : undefined}
+                    />
+                  </ListItem>
+                )
+              })}
+            </List>
+          )}
         </Paper>
       ) : (
-        <Typography variant="body2" mt={2}>
-          Select an auction to view details.
-        </Typography>
+        <Paper sx={{ p: 4, textAlign: "center" }}>
+          <Typography variant="body2" color="text.secondary">
+            Select an auction to manage callers.
+          </Typography>
+        </Paper>
       )}
 
       <Dialog
@@ -113,12 +139,12 @@ export default function AuctionCallers({
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>Manage Auction Callers / Preferences</DialogTitle>
+        <DialogTitle>Manage Auction Callers</DialogTitle>
 
         <DialogContent dividers>
           <List>
             {callers.map(c => (
-              <ListItem key={c.id} disablePadding>
+              <ListItem key={c.id} disablePadding sx={{ py: 0.5 }}>
                 <ListItemButton onClick={() => toggleCaller(c.id!)}>
                   <Checkbox edge="start" checked={localIds.includes(c.id!)} />
                   <ListItemText primary={`${c.abbreviation || ""} ${c.name}`.trim()} />
@@ -133,7 +159,7 @@ export default function AuctionCallers({
                       onChange={e => handleBidderSelect(c.id!, e.target.value)}
                     >
                       <MenuItem value="">
-                        <em>No preference selected</em>
+                        <em>No preference</em>
                       </MenuItem>
                       {bidders
                         .filter(b => bidderAvailable(b.id!, c.id!))
@@ -143,7 +169,6 @@ export default function AuctionCallers({
                           </MenuItem>
                         ))}
                     </Select>
-
                   </FormControl>
                 )}
               </ListItem>

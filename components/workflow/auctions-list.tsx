@@ -1,9 +1,26 @@
 "use client"
 
 import { useState } from "react"
-import { Box, Button, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Typography, Divider, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, IconButton, Alert } from "@mui/material"
-import { Add as AddIcon, Edit as EditIcon } from "@mui/icons-material"
-import DeleteIcon from "@mui/icons-material/Delete"
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Typography,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Alert,
+} from "@mui/material"
+import { Add as AddIcon, Edit as EditIcon, Delete as DeleteIcon } from "@mui/icons-material"
 import { Auction } from "@/lib/models/auction.model"
 
 interface AuctionListProps {
@@ -55,20 +72,20 @@ export default function AuctionList({
 
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ my: 4 }}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h4">Auctions</Typography>
-        <Button variant="contained" onClick={() => openDialog()}>
-          <AddIcon />
+        <Button variant="contained" onClick={() => openDialog()} startIcon={<AddIcon />}>
+          Add
         </Button>
       </Box>
-      <Divider />
+
       <TableContainer component={Paper}>
         <Table size="small" stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell><Typography variant="h6">Name</Typography></TableCell>
-              <TableCell><Typography variant="h6">Date</Typography></TableCell>
-              <TableCell align="right"><Typography variant="h6">Actions</Typography></TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Date</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -77,33 +94,29 @@ export default function AuctionList({
                 key={a.id}
                 hover
                 onClick={() => onSelectAuction(a)}
-                sx={{
-                  cursor: "pointer",
-                  backgroundColor: selectedAuction?.id === a.id ? "action.selected" : undefined
-                }}
+                selected={selectedAuction?.id === a.id}
+                sx={{ cursor: "pointer" }}
               >
                 <TableCell>{a.name}</TableCell>
                 <TableCell>{new Date(a.date).toLocaleDateString()}</TableCell>
                 <TableCell align="right">
                   <IconButton
                     size="small"
-                    sx={{ p: 0, ml: 1 }}
                     onClick={e => {
                       e.stopPropagation()
                       openDialog(a)
                     }}
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </IconButton>
                   <IconButton
                     size="small"
-                    sx={{ p: 0, ml: 1 }}
                     onClick={e => {
                       e.stopPropagation()
                       onDeleteAuction(a)
                     }}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </TableCell>
               </TableRow>
@@ -112,7 +125,7 @@ export default function AuctionList({
         </Table>
       </TableContainer>
 
-      <Dialog open={open} onClose={() => setOpen(false)}>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
         <DialogTitle>{form.id ? "Edit Auction" : "Add Auction"}</DialogTitle>
         <DialogContent>
           <TextField
@@ -124,17 +137,19 @@ export default function AuctionList({
           />
           <TextField
             type="date"
+            label="Date"
             fullWidth
             margin="normal"
             value={form.date}
             onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
+            slotProps={{ inputLabel: { shrink: true } }}
           />
+          {dialogError && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {dialogError}
+            </Alert>
+          )}
         </DialogContent>
-        {dialogError && (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight={50}>
-            <Alert severity="error">{dialogError}</Alert>
-          </Box>
-        )}
         <DialogActions>
           <Button onClick={() => setOpen(false)}>Cancel</Button>
           <Button onClick={handleSave} variant="contained">
