@@ -1,21 +1,53 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import TopBarTitle from "./top-bar-title";
-import { Box } from "@mui/material";
-import TopBarProfileIcon from "./top-bar-profile-icon";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import { Gavel, People, Storage } from "@mui/icons-material";
+
+const navItems = [
+  { label: "Auction", href: "/auction", icon: <Gavel fontSize="small" /> },
+  { label: "Callers", href: "/callers", icon: <People fontSize="small" /> },
+  { label: "Data", href: "/backups", icon: <Storage fontSize="small" /> },
+];
 
 function TopBar() {
+  const pathname = usePathname();
+
   return (
     <AppBar position="fixed" color="primary" elevation={0} sx={{ zIndex: 1201 }}>
-      {/* 
-      zIndex of drawer = 1200, https://mui.com/material-ui/customization/z-index/
-      better find another solution which does not require use client for this component as well
-      */}
       <Toolbar>
-        <Box sx={{flexGrow: 1}}>
-          <TopBarTitle title="LotAssign"/>
+        <Link href="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+            LotAssign
+          </Typography>
+        </Link>
+
+        <Box sx={{ flexGrow: 1, display: "flex", ml: 4, gap: 1 }}>
+          {navItems.map((item) => {
+            const isActive = pathname.startsWith(item.href);
+            return (
+              <Link key={item.href} href={item.href} style={{ textDecoration: "none" }}>
+                <Button
+                  color="inherit"
+                  startIcon={item.icon}
+                  sx={{
+                    opacity: isActive ? 1 : 0.7,
+                    borderBottom: isActive ? "2px solid white" : "2px solid transparent",
+                    borderRadius: 0,
+                    "&:hover": { opacity: 1 },
+                  }}
+                >
+                  {item.label}
+                </Button>
+              </Link>
+            );
+          })}
         </Box>
-        <TopBarProfileIcon />
       </Toolbar>
     </AppBar>
   );
