@@ -2,10 +2,32 @@ import { getPlanningSnapshot, persistCallerAssignments, PlanningSnapshot, } from
 import { BidderJSON } from "@/lib/models/bidder.model";
 import { CallerJSON } from "@/lib/models/caller.model";
 import { Language } from "./models/language.enum";
+import { CSPSolver, CSPInput } from "./algorithm/csp-solver";
+import { CallerInfo, LotBidderPair, SoftConstraintWeights } from "./algorithm/constraints";
+import { AuctionConfig } from "./models/auction-config.model";
 
+// Legacy result format (backwards compatible)
 export interface AssignmentResult {
   map: Map<number, number>;
   unscheduled: number[];
+  // New detailed format (optional, for enhanced UI)
+  detailed?: {
+    assignments: Map<string, number>; // "lotId:bidderId" -> callerId
+    unassigned: Array<{ lotId: number; bidderId: number }>;
+    score: number;
+    scoreBreakdown: {
+      preferences: number;
+      continuity: number;
+      balance: number;
+    };
+  };
+}
+
+export interface AssignmentOptions {
+  lotGap?: number;
+  weights?: Partial<SoftConstraintWeights>;
+  allowLanguageFallback?: boolean;
+  useCSPSolver?: boolean; // Use new CSP solver vs legacy algorithm
 }
 
 export interface BidderInfo {
@@ -175,5 +197,106 @@ function assignCallerToBidder(
   callerState.nextFreeLot = bidderInfo.lastLotNumber + lotGap;
   callerState.assignedLotCount += bidderInfo.lastLotNumber - bidderInfo.firstLotNumber + 1;
   result.map.set(bidderInfo.bidder.id!, callerState.caller.id!);
+}
+
+// ============================================
+// CSP-BASED SOLVER (NEW IMPLEMENTATION)
+// ============================================
+
+/**
+ * Computes assignments using the new CSP-based solver.
+ * Provides more detailed results and better optimization.
+ */
+export function computeAssignmentsCSP(
+  snapshot: PlanningSnapshot,
+  options: AssignmentOptions = {}
+): AssignmentResult {
+  const lotGap = options.lotGap ?? 5;
+
+  // Build lot number lookup
+  const lotNumberByLotId = new Map(
+    snapshot.lots.map(lot => [lot.id!, lot.number])
+  );
+
+  // Build bidder lookup
+  const bidderById = new Map(
+    snapshot.bidders.map(bidder => [bidder.id!, bidder])
+  );
+
+  // Build caller info (only active callers)
+  const activeCallerIds = new Set(
+    snapshot.auctionCallers.map(ac => ac.callerId)
+  );
+  const callers: CallerInfo[] = snapshot.callers
+    .filter(c => activeCallerIds.has(c.id!))
+    .map(c => ({
+      id: c.id!,
+      languages: new Set(c.languages as Language[]),
+    }));
+
+  // Build lot-bidder pairs
+  const lotBidders: LotBidderPair[] = snapshot.lotBidders.map(lb => ({
+    lotId: lb.lotId,
+    lotNumber: lotNumberByLotId.get(lb.lotId) ?? 0,
+    bidderId: lb.bidderId,
+    bidderLanguages: (bidderById.get(lb.bidderId)?.languages ?? []) as Language[],
+    preferredCallerId: lb.preferredCallerId,
+  }));
+
+  // Create solver input
+  const input: CSPInput = {
+    lotBidders,
+    callers,
+    lotGap,
+    allowLanguageFallback: options.allowLanguageFallback ?? true,
+  };
+
+  // Solve
+  const solver = new CSPSolver(input);
+  const solution = solver.solve();
+
+  // Convert to legacy format for backwards compatibility
+  const legacyMap = new Map<number, number>();
+  for (const [key, callerId] of solution.assignments) {
+    const parts = key.split(":");
+    const bidderIdStr = parts[1];
+    if (bidderIdStr === undefined) continue;
+    const bidderId = parseInt(bidderIdStr, 10);
+    // Only set if not already set (first assignment wins for legacy format)
+    if (!legacyMap.has(bidderId)) {
+      legacyMap.set(bidderId, callerId);
+    }
+  }
+
+  const unscheduledBidders = [...new Set(
+    solution.unassigned.map(lb => lb.bidderId)
+  )];
+
+  return {
+    map: legacyMap,
+    unscheduled: unscheduledBidders,
+    detailed: {
+      assignments: solution.assignments,
+      unassigned: solution.unassigned.map(lb => ({
+        lotId: lb.lotId,
+        bidderId: lb.bidderId,
+      })),
+      score: solution.score,
+      scoreBreakdown: solution.scoreBreakdown,
+    },
+  };
+}
+
+/**
+ * Computes assignments using AuctionConfig settings.
+ */
+export function computeAssignmentsWithConfig(
+  snapshot: PlanningSnapshot,
+  config: AuctionConfig
+): AssignmentResult {
+  return computeAssignmentsCSP(snapshot, {
+    lotGap: config.lotGap,
+    allowLanguageFallback: config.allowLanguageFallback,
+  });
 }
 
