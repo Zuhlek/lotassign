@@ -153,7 +153,7 @@ export default function HomePage() {
                       color="primary"
                       sx={{ mr: 1, fontWeight: 600 }}
                     />
-                    <Box sx={{ color: "grey.600" }}>{step.icon}</Box>
+                    <Box sx={{ color: "text.secondary" }}>{step.icon}</Box>
                   </Box>
                   <Typography variant="h6" gutterBottom>
                     {step.title}
