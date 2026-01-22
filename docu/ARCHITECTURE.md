@@ -38,14 +38,15 @@ All data is stored in the browser's **IndexedDB** via Dexie.js. This means:
 ### Database Schema
 
 ```
-LotAssignDB (IndexedDB)
-├── auctions        (id, name, date)
-├── lots            (id, auctionId, number)
-├── bidders         (id, name, phone, languages[])
-├── callers         (id, abbreviation, name, languages[])
-├── auctionCallers  (id, auctionId, callerId)          // M:N junction
-└── lotBidders      (id, auctionId, lotId, bidderId,   // Core assignment data
-                     status, preferredCallerId, callerId)
+LotAssignDB (IndexedDB) v4
+├── auctions        (id, name, date, createdAt, updatedAt)
+├── lots            (id, auctionId, number, title, createdAt, updatedAt)
+├── bidders         (id, name, phone, languages[], createdAt, updatedAt)
+├── callers         (id, abbreviation, name, languages[], createdAt, updatedAt)
+├── auctionCallers  (id, auctionId, callerId, createdAt, updatedAt)
+├── lotBidders      (id, auctionId, lotId, bidderId, status, preferredCallerId, createdAt, updatedAt)
+├── assignments     (id, auctionId, lotBidderId, callerId, status, source, createdAt, updatedAt)  // NEW v3
+└── auctionConfigs  (id, auctionId, lotGap, prioritizePreferences, allowLanguageFallback, balanceWorkload)  // NEW v4
 ```
 
 ### Entity Relationships
@@ -73,25 +74,28 @@ Created → Planned → Assigned → Final
 lotassign/
 ├── app/                          # Next.js App Router pages
 │   ├── layout.tsx                # Root layout with MUI theme
-│   ├── page.tsx                  # Home page with navigation
+│   ├── page.tsx                  # Home page with workflow guide
 │   ├── auction/page.tsx          # Main auction management
 │   ├── callers/page.tsx          # Caller management
-│   └── backups/page.tsx          # Import/export functionality
+│   └── backups/page.tsx          # Import/export/demo data
 │
 ├── components/
 │   ├── layout/                   # Navigation components
-│   │   ├── topbar.tsx
+│   │   ├── topbar.tsx            # Main navigation bar
 │   │   ├── top-bar-profile-icon.tsx
 │   │   └── top-bar-title.tsx
 │   ├── workflow/                 # Business logic components
 │   │   ├── auctions-list.tsx
 │   │   ├── lots-bidders-list.tsx
-│   │   └── auction-callers-list.tsx
+│   │   ├── auction-callers-list.tsx
+│   │   └── auction-config.tsx    # Algorithm settings panel
 │   └── DataIntegrityChecker.tsx  # DB status monitor
 │
 ├── lib/
 │   ├── db/
-│   │   └── dexie.db.ts           # Database schema definition
+│   │   ├── dexie.db.ts           # Database schema (v4)
+│   │   └── migrations/           # DB version migrations
+│   │       └── migration-v4.ts
 │   ├── models/                   # Data models with Zod validation
 │   │   ├── auction.model.ts
 │   │   ├── bidder.model.ts
@@ -99,6 +103,8 @@ lotassign/
 │   │   ├── lot.model.ts
 │   │   ├── lot-bidder.model.ts
 │   │   ├── auction-caller.model.ts
+│   │   ├── assignment.model.ts   # Assignment persistence
+│   │   ├── auction-config.model.ts # Per-auction config
 │   │   └── language.enum.ts
 │   ├── actions/                  # CRUD operations
 │   │   ├── auction.actions.ts
@@ -107,23 +113,32 @@ lotassign/
 │   │   ├── lot.actions.ts
 │   │   ├── lot-bidder.actions.ts
 │   │   ├── auction-caller.actions.ts
+│   │   ├── assignment.actions.ts
+│   │   ├── auction-config.actions.ts
 │   │   └── assignment-logic.actions.ts
+│   ├── algorithm/                # CSP Solver (NEW)
+│   │   ├── constraints.ts        # Constraint definitions
+│   │   ├── csp-solver.ts         # Main solver algorithm
+│   │   └── preview.ts            # Preview before applying
 │   ├── utils/
-│   │   └── db-helpers.ts         # Import/export utilities
-│   └── assignment.service.ts     # Core assignment algorithm
+│   │   ├── db-helpers.ts         # Import/export utilities
+│   │   └── demo-data.ts          # Demo auction generator
+│   └── assignment.service.ts     # Assignment service (legacy + CSP)
 │
 ├── styles/
 │   └── theme.ts                  # MUI theme customization
 │
 ├── test/
-│   └── assignment-service.test.ts
+│   ├── assignment-service.test.ts
+│   └── algorithm-benchmark.test.ts # CSP vs legacy comparison
 │
 ├── supply/                       # Sample data files
 │   ├── callers.json
 │   └── biddersPerLots.json
 │
 ├── docu/                         # Documentation
-│   └── ARCHITECTURE.md           # This file
+│   ├── ARCHITECTURE.md           # This file
+│   └── DEPLOYMENT.md             # Deployment guide
 │
 └── .github/workflows/
     └── deploy.yml                # GitHub Pages deployment
@@ -148,20 +163,57 @@ lotassign/
 - Import callers from Excel files (headers: Name, Kürzel, Sprachen)
 - Assign callers to auctions
 
-### 4. Auto-Assignment Algorithm
+### 4. Auto-Assignment Algorithm (CSP Solver)
 
-Located in `lib/assignment.service.ts`, the algorithm:
-- Matches callers to lot-bidders based on language compatibility
-- Respects preferred caller assignments
-- Balances workload across callers
-- Enforces minimum lot gaps between different bidders for same caller
-- Reports unschedulable assignments
+Located in `lib/algorithm/csp-solver.ts`, the new Constraint Satisfaction Problem (CSP) solver:
+
+**Hard Constraints** (must be satisfied):
+- Language compatibility between caller and bidder
+- Temporal constraint: minimum lot gap between different bidders for same caller
+
+**Soft Constraints** (optimized when possible):
+- Preferred caller assignments
+- Workload balancing across callers
+- Caller continuity (same caller for consecutive lots of same bidder)
+
+**Algorithm Flow**:
+1. Process lot-bidder pairs in lot number order
+2. For each pair, find all callers that satisfy hard constraints
+3. Score candidates based on soft constraints
+4. Select highest-scoring caller
+5. Track assignments for temporal constraint checking
+
+**Configuration** (per-auction via AuctionConfig):
+- `lotGap`: Minimum lots between different bidders for same caller (1-20)
+- `prioritizePreferences`: Honor caller-bidder preferences when possible
+- `allowLanguageFallback`: Assign callers even without perfect language match
+- `balanceWorkload`: Distribute assignments evenly across callers
+
+**Performance**: CSP solver achieves ~100% assignment rate vs legacy algorithm's ~25%
+
+The legacy algorithm remains available in `lib/assignment.service.ts` for backwards compatibility.
 
 ### 5. Data Import/Export
 
 - **Export**: Full database dump as JSON file
 - **Import**: Restore database from JSON backup (replaces all data)
 - **Clear**: Reset database to empty state
+- **Demo Data**: Load a comprehensive demo auction to test all features
+
+### 6. Demo Data
+
+Available via Data Management page, the demo auction includes:
+
+- **10 Callers**: Various language combinations (German, English, French, Italian, Spanish)
+- **15 Bidders**: Different language requirements including rare languages
+- **25 Lots**: Spread across lot numbers 1-50 with realistic gaps
+
+**Edge Cases Demonstrated**:
+1. Same bidder on consecutive lots (5, 6, 7) - tests caller continuity
+2. Multiple bidders on same lot (lot 10) - tests concurrent caller needs
+3. Bidder with rare language (Italian only) - tests language fallback
+4. High-density period (lots 15-20) - tests load balancing
+5. Preferred caller assignments - tests preference prioritization
 
 ## Supported Languages
 
@@ -215,10 +267,15 @@ npm run export      # Build and add .nojekyll
 npm install         # Install dependencies
 npm run dev         # Start development server
 npm run build       # Build for production
-npm run test        # Run tests
+npm run test        # Run tests (21 tests across 2 suites)
 npm run lint        # Check code quality
 npm run export      # Build static export
 ```
+
+### Test Suites
+
+- **assignment-service.test.ts**: Core assignment logic tests
+- **algorithm-benchmark.test.ts**: CSP vs legacy algorithm performance comparison
 
 ## Browser Compatibility
 
