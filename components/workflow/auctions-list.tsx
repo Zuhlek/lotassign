@@ -22,18 +22,23 @@ export default function AuctionList({
   onDeleteAuction
 }: AuctionListProps) {
   const [open, setOpen] = useState(false)
+
+  const toDateString = (date: Date): string => {
+    return date.toISOString().split("T")[0] ?? ""
+  }
+
   const [form, setForm] = useState<{ id?: number; name: string; date: string }>({
     id: undefined,
     name: "",
-    date: new Date().toISOString().split("T")[0]
+    date: toDateString(new Date())
   })
   const [dialogError, setDialogError] = useState<string | null>(null)
 
   const openDialog = (auction?: Auction) => {
     setForm(
       auction
-        ? { id: auction.id, name: auction.name, date: auction.date.toISOString().split("T")[0] }
-        : { id: undefined, name: "", date: new Date().toISOString().split("T")[0] }
+        ? { id: auction.id, name: auction.name, date: toDateString(auction.date) }
+        : { id: undefined, name: "", date: toDateString(new Date()) }
     )
     setDialogError(null)
     setOpen(true)

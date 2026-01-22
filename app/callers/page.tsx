@@ -19,7 +19,7 @@ export default function CallersPage() {
   useEffect(() => {
     const loadCallers = async () => {
       const result = await getAllCallers();
-      setCallers(result.map(Caller.fromJSON));
+      setCallers(result);
     };
     loadCallers();
   }, []);
@@ -95,10 +95,14 @@ export default function CallersPage() {
         const data = await files[0].arrayBuffer();
         await workbook.xlsx.load(data);
         const worksheet = workbook.worksheets[0];
+        if (!worksheet) {
+          setUploadMessage("No worksheet found in Excel file.");
+          return;
+        }
         const nameHeader = worksheet.getCell("A1").value;
         const abbreviationHeader = worksheet.getCell("B1").value;
         const languagesHeader = worksheet.getCell("C1").value;
-        if (nameHeader !== "Name" || abbreviationHeader !== "Kürzel" || languagesHeader !== "Sprachen") {
+        if (nameHeader !== "Name" || (abbreviationHeader !== "Abbreviation" && abbreviationHeader !== "Kürzel") || (languagesHeader !== "Languages" && languagesHeader !== "Sprachen")) {
           setUploadMessage("Invalid Excel headers.");
           return;
         }
@@ -214,9 +218,9 @@ export default function CallersPage() {
 
       <Backdrop open={Boolean(uploadMessage)} sx={{ zIndex: 1300, color: "#fff", backdropFilter: "blur(2px)" }} onClick={() => setUploadMessage(null)}>
         <Paper elevation={4} sx={{ padding: 4, maxWidth: 600, textAlign: "center" }}>
-          <Typography variant="h6" gutterBottom>Doppelte Einträge wurden nicht hochgeladen.</Typography>
+          <Typography variant="h6" gutterBottom>Duplicate entries were not imported.</Typography>
           <Typography variant="caption" gutterBottom>{uploadMessage}<br></br><br></br></Typography>
-          <Button onClick={() => setUploadMessage(null)} variant="contained">Schliessen</Button>
+          <Button onClick={() => setUploadMessage(null)} variant="contained">Close</Button>
         </Paper>
       </Backdrop>
 

@@ -89,16 +89,16 @@ export default function BackupsPage() {
       <DataIntegrityChecker />
 
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Bestätigung des Imports</DialogTitle>
+        <DialogTitle>Confirm Import</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Das Importieren einer Backup-Datei setzt die aktuelle Datenbank zurück. Alle vorhandenen Daten werden gelöscht und durch die Daten des Backups ersetzt. Möchten Sie fortfahren?
+            Importing a backup file will reset the current database. All existing data will be deleted and replaced with the backup data. Do you want to continue?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Abbrechen</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={handleConfirmImport} color="primary" variant="contained">
-            Einverstanden
+            Confirm
           </Button>
         </DialogActions>
       </Dialog>

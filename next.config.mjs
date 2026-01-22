@@ -5,8 +5,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Uncomment and set basePath if deploying to a subpath (e.g., /lotassign)
-  // basePath: '/lotassign',
+  // basePath for GitHub Pages (repo name: lotassign)
+  basePath: '/lotassign',
   // Trailing slash helps with GitHub Pages routing
   trailingSlash: true,
 };

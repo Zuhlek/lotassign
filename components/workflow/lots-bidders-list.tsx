@@ -62,6 +62,11 @@ export default function LotsBidders({
       await workbook.xlsx.load(await pendingFile.arrayBuffer())
       const sheet = workbook.worksheets[0]
 
+      if (!sheet) {
+        setUploadMessage("No worksheet found in Excel file.")
+        return
+      }
+
       const expectedHeaders = ["LotNumber", "LotName", "BidderName", "BidderPhoneNumber", "BidderLanguages"]
       const actualHeaders = ["A1", "B1", "C1", "D1", "E1"].map(cell => {
         const val = sheet.getCell(cell).value

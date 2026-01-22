@@ -22,36 +22,78 @@ import { LotBidderStatus } from "@/lib/models/lot-bidder.model";
 export async function importToDatabase(jsonData: string): Promise<void> {
   const backup = JSON.parse(jsonData);
 
-  await db.auctions.clear();
-  await db.lots.clear();
-  await db.bidders.clear();
-  await db.callers.clear();
-  await db.auctionCallers.clear();
-  await db.lotBidders.clear();
+  await db.transaction(
+    "rw",
+    [db.auctions, db.lots, db.bidders, db.callers, db.auctionCallers, db.lotBidders, db.assignments, db.auctionConfigs],
+    async () => {
+      // Clear all tables
+      await Promise.all([
+        db.auctions.clear(),
+        db.lots.clear(),
+        db.bidders.clear(),
+        db.callers.clear(),
+        db.auctionCallers.clear(),
+        db.lotBidders.clear(),
+        db.assignments.clear(),
+        db.auctionConfigs.clear(),
+      ]);
 
-  await db.auctions.bulkPut(backup.auctions);
-  await db.lots.bulkPut(backup.lots);
-  await db.bidders.bulkPut(backup.bidders);
-  await db.callers.bulkPut(backup.callers);
-  await db.auctionCallers.bulkPut(backup.auctionCallers);
-  await db.lotBidders.bulkPut(backup.lotBidders);
+      // Import core data
+      await db.auctions.bulkPut(backup.auctions);
+      await db.lots.bulkPut(backup.lots);
+      await db.bidders.bulkPut(backup.bidders);
+      await db.callers.bulkPut(backup.callers);
+      await db.auctionCallers.bulkPut(backup.auctionCallers);
+      await db.lotBidders.bulkPut(backup.lotBidders);
+
+      // Handle optional new tables (backwards compatibility with older backups)
+      if (backup.assignments && Array.isArray(backup.assignments)) {
+        await db.assignments.bulkPut(backup.assignments);
+      }
+      if (backup.auctionConfigs && Array.isArray(backup.auctionConfigs)) {
+        await db.auctionConfigs.bulkPut(backup.auctionConfigs);
+      }
+    }
+  );
 }
 
-export async function exportDatabase(): Promise<any> {
-  const auctions = await db.auctions.toArray();
-  const lots = await db.lots.toArray();
-  const bidders = await db.bidders.toArray();
-  const callers = await db.callers.toArray();
-  const auctionCallers = await db.auctionCallers.toArray();
-  const lotBidders = await db.lotBidders.toArray();
+export interface DatabaseBackup {
+  version: number;
+  exportedAt: string;
+  auctions: unknown[];
+  lots: unknown[];
+  bidders: unknown[];
+  callers: unknown[];
+  auctionCallers: unknown[];
+  lotBidders: unknown[];
+  assignments?: unknown[];
+  auctionConfigs?: unknown[];
+}
+
+export async function exportDatabase(): Promise<DatabaseBackup> {
+  const [auctions, lots, bidders, callers, auctionCallers, lotBidders, assignments, auctionConfigs] =
+    await Promise.all([
+      db.auctions.toArray(),
+      db.lots.toArray(),
+      db.bidders.toArray(),
+      db.callers.toArray(),
+      db.auctionCallers.toArray(),
+      db.lotBidders.toArray(),
+      db.assignments.toArray(),
+      db.auctionConfigs.toArray(),
+    ]);
 
   return {
+    version: 4,
+    exportedAt: new Date().toISOString(),
     auctions,
     lots,
     bidders,
     callers,
     auctionCallers,
     lotBidders,
+    assignments,
+    auctionConfigs,
   };
 }
 

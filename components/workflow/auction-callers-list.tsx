@@ -113,7 +113,7 @@ export default function AuctionCallers({
         fullWidth
         maxWidth="md"
       >
-        <DialogTitle>Manage Auction Callers / Priorisierung</DialogTitle>
+        <DialogTitle>Manage Auction Callers / Preferences</DialogTitle>
 
         <DialogContent dividers>
           <List>
@@ -126,14 +126,14 @@ export default function AuctionCallers({
 
                 {localIds.includes(c.id!) && (
                   <FormControl size="small" sx={{ ml: 2, minWidth: 220 }}>
-                    <InputLabel>Priorisierter Bieter</InputLabel>
+                    <InputLabel>Preferred Bidder</InputLabel>
                     <Select
-                      label="Priorisierter Bieter"
+                      label="Preferred Bidder"
                       value={localAssign[c.id!] !== undefined ? String(localAssign[c.id!]) : ""}
                       onChange={e => handleBidderSelect(c.id!, e.target.value)}
                     >
                       <MenuItem value="">
-                        <em>Keine Priorisierung ausgewählt</em>
+                        <em>No preference selected</em>
                       </MenuItem>
                       {bidders
                         .filter(b => bidderAvailable(b.id!, c.id!))

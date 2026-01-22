@@ -1,15 +1,16 @@
 import { z } from "zod";
 
-export type LotBidderStatus = "created" | "planned" | "assigned" | "final";
+export type AssignmentStatus = "pending" | "active" | "completed";
+export type AssignmentSource = "auto" | "manual";
 
-export class LotBidder {
+export class Assignment {
   id?: number;
   auctionId: number;
   lotId: number;
   bidderId: number;
-  preferredCallerId?: number;
-  callerId?: number;
-  status: LotBidderStatus;
+  callerId: number;
+  status: AssignmentStatus;
+  source: AssignmentSource;
   createdAt: Date;
   updatedAt: Date;
 
@@ -17,9 +18,9 @@ export class LotBidder {
     auctionId: number,
     lotId: number,
     bidderId: number,
-    status: LotBidderStatus,
-    preferredCallerId?: number,
-    callerId?: number,
+    callerId: number,
+    status: AssignmentStatus = "pending",
+    source: AssignmentSource = "auto",
     id?: number,
     createdAt?: Date,
     updatedAt?: Date
@@ -27,64 +28,64 @@ export class LotBidder {
     this.auctionId = auctionId;
     this.lotId = lotId;
     this.bidderId = bidderId;
-    this.preferredCallerId = preferredCallerId;
     this.callerId = callerId;
     this.status = status;
+    this.source = source;
     this.id = id;
     this.createdAt = createdAt ?? new Date();
     this.updatedAt = updatedAt ?? new Date();
   }
 
-  static fromJSON(json: LotBidderJSON): LotBidder {
-    const parsed = LotBidderSchema.parse(json);
-    return new LotBidder(
+  static fromJSON(json: AssignmentJSON): Assignment {
+    const parsed = AssignmentSchema.parse(json);
+    return new Assignment(
       parsed.auctionId,
       parsed.lotId,
       parsed.bidderId,
-      parsed.status,
-      parsed.preferredCallerId,
       parsed.callerId,
+      parsed.status,
+      parsed.source,
       parsed.id,
       parsed.createdAt ? new Date(parsed.createdAt) : undefined,
       parsed.updatedAt ? new Date(parsed.updatedAt) : undefined
     );
   }
 
-  toJSON(): LotBidderJSON {
+  toJSON(): AssignmentJSON {
     return {
       id: this.id,
       auctionId: this.auctionId,
       lotId: this.lotId,
       bidderId: this.bidderId,
-      preferredCallerId: this.preferredCallerId,
       callerId: this.callerId,
       status: this.status,
+      source: this.source,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
     };
   }
 }
 
-export const LotBidderSchema = z.object({
+export const AssignmentSchema = z.object({
   id: z.number().optional(),
   auctionId: z.number(),
   lotId: z.number(),
   bidderId: z.number(),
-  preferredCallerId: z.number().optional(),
-  callerId: z.number().optional(),
-  status: z.enum(["created", "planned", "assigned", "final"]),
+  callerId: z.number(),
+  status: z.enum(["pending", "active", "completed"]),
+  source: z.enum(["auto", "manual"]),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
 
-export interface LotBidderJSON {
+export interface AssignmentJSON {
   id?: number;
   auctionId: number;
   lotId: number;
   bidderId: number;
-  preferredCallerId?: number;
-  callerId?: number;
-  status: LotBidderStatus;
+  callerId: number;
+  status: AssignmentStatus;
+  source: AssignmentSource;
   createdAt?: string;
   updatedAt?: string;
 }

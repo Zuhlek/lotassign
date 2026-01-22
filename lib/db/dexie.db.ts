@@ -6,6 +6,8 @@ import { BidderJSON }         from "@/lib/models/bidder.model";
 import { CallerJSON }         from "@/lib/models/caller.model";
 import { AuctionCallerJSON }  from "@/lib/models/auction-caller.model";
 import { LotBidderJSON }      from "@/lib/models/lot-bidder.model";
+import { AssignmentJSON }     from "@/lib/models/assignment.model";
+import { AuctionConfigJSON }  from "@/lib/models/auction-config.model";
 
 export class MyDatabase extends Dexie {
   auctions!:        Table<AuctionJSON,       number>;
@@ -14,10 +16,13 @@ export class MyDatabase extends Dexie {
   callers!:         Table<CallerJSON,        number>;
   auctionCallers!:  Table<AuctionCallerJSON, number>;
   lotBidders!:      Table<LotBidderJSON,     number>;
+  assignments!:     Table<AssignmentJSON,    number>;
+  auctionConfigs!:  Table<AuctionConfigJSON, number>;
 
   constructor() {
     super("LotAssignDB");
 
+    // Version 1: Original schema
     this.version(1).stores({
       auctions:       "++id, name, date",
       lots:           "++id, auctionId, number, [auctionId+number]",
@@ -27,6 +32,47 @@ export class MyDatabase extends Dexie {
       lotBidders:     "++id, auctionId, lotId, bidderId,"
                     + "preferredCallerId, callerId, status,"
                     + "[lotId+bidderId], [auctionId+status], [callerId+lotId]",
+    });
+
+    // Version 2: Add timestamp indexes
+    this.version(2).stores({
+      auctions:       "++id, name, date, createdAt, updatedAt",
+      lots:           "++id, auctionId, number, [auctionId+number], createdAt",
+      bidders:        "++id, name, phone, *languages, createdAt",
+      callers:        "++id, abbreviation, name, *languages, createdAt",
+      auctionCallers: "++id, auctionId, callerId, [auctionId+callerId], createdAt",
+      lotBidders:     "++id, auctionId, lotId, bidderId,"
+                    + "preferredCallerId, callerId, status,"
+                    + "[lotId+bidderId], [auctionId+status], [callerId+lotId], createdAt",
+    });
+
+    // Version 3: Add assignments table
+    this.version(3).stores({
+      auctions:       "++id, name, date, createdAt, updatedAt",
+      lots:           "++id, auctionId, number, [auctionId+number], createdAt",
+      bidders:        "++id, name, phone, *languages, createdAt",
+      callers:        "++id, abbreviation, name, *languages, createdAt",
+      auctionCallers: "++id, auctionId, callerId, [auctionId+callerId], createdAt",
+      lotBidders:     "++id, auctionId, lotId, bidderId,"
+                    + "preferredCallerId, callerId, status,"
+                    + "[lotId+bidderId], [auctionId+status], [callerId+lotId], createdAt",
+      assignments:    "++id, auctionId, lotId, bidderId, callerId, status, source,"
+                    + "[lotId+bidderId], [auctionId+callerId], createdAt",
+    });
+
+    // Version 4: Add auction config table
+    this.version(4).stores({
+      auctions:       "++id, name, date, createdAt, updatedAt",
+      lots:           "++id, auctionId, number, [auctionId+number], createdAt",
+      bidders:        "++id, name, phone, *languages, createdAt",
+      callers:        "++id, abbreviation, name, *languages, createdAt",
+      auctionCallers: "++id, auctionId, callerId, [auctionId+callerId], createdAt",
+      lotBidders:     "++id, auctionId, lotId, bidderId,"
+                    + "preferredCallerId, callerId, status,"
+                    + "[lotId+bidderId], [auctionId+status], [callerId+lotId], createdAt",
+      assignments:    "++id, auctionId, lotId, bidderId, callerId, status, source,"
+                    + "[lotId+bidderId], [auctionId+callerId], createdAt",
+      auctionConfigs: "++id, auctionId, createdAt",
     });
   }
 }
