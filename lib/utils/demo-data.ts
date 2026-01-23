@@ -232,5 +232,6 @@ export function getDemoDataDescription(): string {
 • 10 Callers (various language skills)
 • 15 Bidders (DE, EN, FR, IT, ES)
 • 25 Lots (numbers 1-50)
-• Test scenarios: consecutive lots, language constraints, preferences`;
+• No pre-assignments - click "Auto-Assign" to run the algorithm
+• Test scenarios: consecutive lots, language constraints, caller preferences`;
 }

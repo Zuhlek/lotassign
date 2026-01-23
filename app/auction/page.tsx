@@ -401,9 +401,13 @@ function AuctionPageContent() {
               <label htmlFor="upload-excel">
                 <Button variant="outlined" component="span" startIcon={<UploadIcon />}>Upload</Button>
               </label>
-              <Button variant="contained" startIcon={<AssignIcon />} onClick={handleAutoAssign} disabled={lots.length === 0 || selectedCallerIds.length === 0}>
-                Assign
-              </Button>
+              <Tooltip title="Run the algorithm to automatically assign callers to bidders based on language, availability, and priorities">
+                <span>
+                  <Button variant="contained" startIcon={<AssignIcon />} onClick={handleAutoAssign} disabled={lots.length === 0 || selectedCallerIds.length === 0}>
+                    Auto-Assign
+                  </Button>
+                </span>
+              </Tooltip>
               <Button variant="outlined" startIcon={<SettingsIcon />} onClick={() => setCallerDialogOpen(true)}>
                 Callers ({selectedCallerIds.length})
               </Button>
@@ -417,7 +421,16 @@ function AuctionPageContent() {
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 8 }}>
             <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" sx={{ mb: 2 }}>Lots</Typography>
+              <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 2 }}>
+                <Typography variant="h6">Lots</Typography>
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5, fontSize: "0.75rem" }}>
+                  <Tooltip title="User-locked assignment - algorithm will not change this"><Chip size="small" label="Locked" sx={{ bgcolor: "info.light", fontSize: "0.7rem" }} icon={<LockIcon sx={{ fontSize: 14 }} />} /></Tooltip>
+                  <Tooltip title="Manually changed by user - may differ from algorithm suggestion"><Chip size="small" label="Manual" sx={{ bgcolor: "warning.light", fontSize: "0.7rem" }} /></Tooltip>
+                  <Tooltip title="No caller could be assigned - check language or availability"><Chip size="small" label="Failed" sx={{ bgcolor: "error.light", fontSize: "0.7rem" }} /></Tooltip>
+                  <Tooltip title="Optimal assignment - preferred caller or priority match"><Chip size="small" icon={<CheckIcon sx={{ fontSize: 14, color: "success.main" }} />} sx={{ fontSize: "0.7rem" }} /></Tooltip>
+                  <Tooltip title="Suboptimal - assigned but preferred caller was unavailable"><Chip size="small" icon={<WarningIcon sx={{ fontSize: 14, color: "warning.main" }} />} sx={{ fontSize: "0.7rem" }} /></Tooltip>
+                </Box>
+              </Box>
               {lots.length === 0 ? (
                 <Typography color="text.secondary" sx={{ textAlign: "center", py: 4 }}>
                   No lots yet. Upload an Excel file to add lots and bidders.
