@@ -10,6 +10,8 @@ export class LotBidder {
   preferredCallerId?: number;
   callerId?: number;
   status: LotBidderStatus;
+  isManual: boolean;           // true if user manually set the caller assignment
+  constraintNote?: string;     // explains why algorithm made a decision
   createdAt: Date;
   updatedAt: Date;
 
@@ -22,7 +24,9 @@ export class LotBidder {
     callerId?: number,
     id?: number,
     createdAt?: Date,
-    updatedAt?: Date
+    updatedAt?: Date,
+    isManual: boolean = false,
+    constraintNote?: string
   ) {
     this.auctionId = auctionId;
     this.lotId = lotId;
@@ -30,6 +34,8 @@ export class LotBidder {
     this.preferredCallerId = preferredCallerId;
     this.callerId = callerId;
     this.status = status;
+    this.isManual = isManual;
+    this.constraintNote = constraintNote;
     this.id = id;
     this.createdAt = createdAt ?? new Date();
     this.updatedAt = updatedAt ?? new Date();
@@ -46,7 +52,9 @@ export class LotBidder {
       parsed.callerId,
       parsed.id,
       parsed.createdAt ? new Date(parsed.createdAt) : undefined,
-      parsed.updatedAt ? new Date(parsed.updatedAt) : undefined
+      parsed.updatedAt ? new Date(parsed.updatedAt) : undefined,
+      parsed.isManual ?? false,
+      parsed.constraintNote
     );
   }
 
@@ -59,6 +67,8 @@ export class LotBidder {
       preferredCallerId: this.preferredCallerId,
       callerId: this.callerId,
       status: this.status,
+      isManual: this.isManual,
+      constraintNote: this.constraintNote,
       createdAt: this.createdAt.toISOString(),
       updatedAt: this.updatedAt.toISOString(),
     };
@@ -73,6 +83,8 @@ export const LotBidderSchema = z.object({
   preferredCallerId: z.number().optional(),
   callerId: z.number().optional(),
   status: z.enum(["created", "planned", "assigned", "final"]),
+  isManual: z.boolean().optional(),
+  constraintNote: z.string().optional(),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
@@ -85,6 +97,8 @@ export interface LotBidderJSON {
   preferredCallerId?: number;
   callerId?: number;
   status: LotBidderStatus;
+  isManual?: boolean;
+  constraintNote?: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -20,6 +20,7 @@ export interface AssignmentResult {
       continuity: number;
       balance: number;
     };
+    constraintNotes: Map<string, string>; // "lotId:bidderId" -> explanation
   };
 }
 
@@ -234,14 +235,32 @@ export function computeAssignmentsCSP(
       languages: new Set(c.languages as Language[]),
     }));
 
-  // Build lot-bidder pairs
-  const lotBidders: LotBidderPair[] = snapshot.lotBidders.map(lb => ({
-    lotId: lb.lotId,
-    lotNumber: lotNumberByLotId.get(lb.lotId) ?? 0,
-    bidderId: lb.bidderId,
-    bidderLanguages: (bidderById.get(lb.bidderId)?.languages ?? []) as Language[],
-    preferredCallerId: lb.preferredCallerId,
-  }));
+  // Build lot-bidder pairs (exclude final assignments - they're pre-fixed)
+  const lotBidders: LotBidderPair[] = snapshot.lotBidders
+    .filter(lb => lb.status !== "final")
+    .map(lb => ({
+      lotId: lb.lotId,
+      lotNumber: lotNumberByLotId.get(lb.lotId) ?? 0,
+      bidderId: lb.bidderId,
+      bidderLanguages: (bidderById.get(lb.bidderId)?.languages ?? []) as Language[],
+      preferredCallerId: lb.preferredCallerId,
+    }));
+
+  // Build final assignments (user-locked entries the algorithm must respect)
+  const finalAssignments = snapshot.lotBidders
+    .filter(lb => lb.status === "final" && lb.callerId !== undefined)
+    .map(lb => ({
+      lotId: lb.lotId,
+      lotNumber: lotNumberByLotId.get(lb.lotId) ?? 0,
+      bidderId: lb.bidderId,
+      callerId: lb.callerId!,
+    }));
+
+  // Build caller priorities from snapshot
+  const callerPriorities = snapshot.callerPriorities?.map(cp => ({
+    callerId: cp.callerId,
+    bidderIds: cp.bidderIds,
+  })) ?? [];
 
   // Create solver input
   const input: CSPInput = {
@@ -249,6 +268,8 @@ export function computeAssignmentsCSP(
     callers,
     lotGap,
     allowLanguageFallback: options.allowLanguageFallback ?? true,
+    callerPriorities,
+    finalAssignments,
   };
 
   // Solve
@@ -283,6 +304,7 @@ export function computeAssignmentsCSP(
       })),
       score: solution.score,
       scoreBreakdown: solution.scoreBreakdown,
+      constraintNotes: solution.constraintNotes,
     },
   };
 }
