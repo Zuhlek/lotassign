@@ -45,16 +45,16 @@ export async function loadDemoData(): Promise<void> {
 
       // ========== CALLERS ==========
       const callers = [
-        { id: 1, name: "Anna Schmidt", abbreviation: "AS", languages: [Language.Deutsch, Language.Englisch] },
-        { id: 2, name: "John Miller", abbreviation: "JM", languages: [Language.Englisch] },
-        { id: 3, name: "Marie Dupont", abbreviation: "MD", languages: [Language.Französisch, Language.Englisch] },
-        { id: 4, name: "Marco Rossi", abbreviation: "MR", languages: [Language.Italienisch, Language.Deutsch] },
-        { id: 5, name: "Hans Weber", abbreviation: "HW", languages: [Language.Deutsch] },
-        { id: 6, name: "Sophie Laurent", abbreviation: "SL", languages: [Language.Französisch, Language.Deutsch, Language.Englisch] },
-        { id: 7, name: "Carlos Garcia", abbreviation: "CG", languages: [Language.Spanisch, Language.Englisch] },
-        { id: 8, name: "Elena Müller", abbreviation: "EM", languages: [Language.Deutsch, Language.Italienisch] },
-        { id: 9, name: "James Wilson", abbreviation: "JW", languages: [Language.Englisch] },
-        { id: 10, name: "Lisa Brown", abbreviation: "LB", languages: [Language.Englisch, Language.Deutsch] },
+        { id: 1, name: "Laura Berger", abbreviation: "LB", languages: [Language.Deutsch, Language.Englisch] },
+        { id: 2, name: "Thomas Reed", abbreviation: "TR", languages: [Language.Englisch] },
+        { id: 3, name: "Claire Moreau", abbreviation: "CM", languages: [Language.Französisch, Language.Englisch] },
+        { id: 4, name: "Luca Fontana", abbreviation: "LF", languages: [Language.Italienisch, Language.Deutsch] },
+        { id: 5, name: "Felix Braun", abbreviation: "FB", languages: [Language.Deutsch] },
+        { id: 6, name: "Nina Favre", abbreviation: "NF", languages: [Language.Französisch, Language.Deutsch, Language.Englisch] },
+        { id: 7, name: "Diego Torres", abbreviation: "DT", languages: [Language.Spanisch, Language.Englisch] },
+        { id: 8, name: "Sabine Keller", abbreviation: "SK", languages: [Language.Deutsch, Language.Italienisch] },
+        { id: 9, name: "Oliver Grant", abbreviation: "OG", languages: [Language.Englisch] },
+        { id: 10, name: "Emma Fischer", abbreviation: "EF", languages: [Language.Englisch, Language.Deutsch] },
       ];
 
       await db.callers.bulkAdd(callers.map(c => ({
@@ -65,21 +65,21 @@ export async function loadDemoData(): Promise<void> {
 
       // ========== BIDDERS ==========
       const bidders = [
-        { id: 1, name: "Kunstsammler AG", phone: "+41 44 111 1111", languages: [Language.Deutsch] },
-        { id: 2, name: "Art Collector Ltd", phone: "+44 20 2222 2222", languages: [Language.Englisch] },
-        { id: 3, name: "Galerie Moderne", phone: "+33 1 33 33 33 33", languages: [Language.Französisch] },
-        { id: 4, name: "Collezione Milano", phone: "+39 02 444 4444", languages: [Language.Italienisch] }, // Edge: rare language
-        { id: 5, name: "Swiss Investment", phone: "+41 44 555 5555", languages: [Language.Deutsch, Language.Englisch] },
-        { id: 6, name: "London Fine Arts", phone: "+44 20 6666 6666", languages: [Language.Englisch] },
-        { id: 7, name: "Paris Antiquités", phone: "+33 1 77 77 77 77", languages: [Language.Französisch, Language.Englisch] },
-        { id: 8, name: "Global Collector", phone: "+1 212 888 8888", languages: [] }, // Edge: any language OK
-        { id: 9, name: "München Kunst", phone: "+49 89 999 9999", languages: [Language.Deutsch] },
-        { id: 10, name: "Barcelona Arts", phone: "+34 93 101 0101", languages: [Language.Spanisch] },
-        { id: 11, name: "Vienna Collection", phone: "+43 1 111 1111", languages: [Language.Deutsch] },
-        { id: 12, name: "NYC Gallery", phone: "+1 212 121 2121", languages: [Language.Englisch] },
-        { id: 13, name: "Zürich Private", phone: "+41 44 131 3131", languages: [Language.Deutsch, Language.Französisch] },
-        { id: 14, name: "Lyon Beaux-Arts", phone: "+33 4 141 4141", languages: [Language.Französisch] },
-        { id: 15, name: "Berlin Moderne", phone: "+49 30 151 5151", languages: [Language.Deutsch, Language.Englisch] },
+        { id: 1, name: "Galerie Alpstein", phone: "+41 44 234 5678", languages: [Language.Deutsch] },
+        { id: 2, name: "Brighton Collectors", phone: "+44 20 7946 0958", languages: [Language.Englisch] },
+        { id: 3, name: "Maison Beaumont", phone: "+33 1 42 68 53 00", languages: [Language.Französisch] },
+        { id: 4, name: "Studio Venezia", phone: "+39 041 522 4567", languages: [Language.Italienisch] }, // Edge: rare language
+        { id: 5, name: "Helvetia Trust", phone: "+41 44 567 8901", languages: [Language.Deutsch, Language.Englisch] },
+        { id: 6, name: "Kensington Arts", phone: "+44 20 7123 4567", languages: [Language.Englisch] },
+        { id: 7, name: "Atelier Rivière", phone: "+33 1 45 67 89 01", languages: [Language.Französisch, Language.Englisch] },
+        { id: 8, name: "Pacific Holdings", phone: "+1 415 555 0123", languages: [] }, // Edge: any language OK
+        { id: 9, name: "Rothenburg Antiquitäten", phone: "+49 89 123 4567", languages: [Language.Deutsch] },
+        { id: 10, name: "Fundación Castilla", phone: "+34 91 234 5678", languages: [Language.Spanisch] },
+        { id: 11, name: "Donau Privatstiftung", phone: "+43 1 234 5678", languages: [Language.Deutsch] },
+        { id: 12, name: "Manhattan Fine Art", phone: "+1 212 555 0456", languages: [Language.Englisch] },
+        { id: 13, name: "Léman Investments", phone: "+41 22 345 6789", languages: [Language.Deutsch, Language.Französisch] },
+        { id: 14, name: "Provence Collection", phone: "+33 4 91 23 45 67", languages: [Language.Französisch] },
+        { id: 15, name: "Nordlicht Stiftung", phone: "+49 40 234 5678", languages: [Language.Deutsch, Language.Englisch] },
       ];
 
       await db.bidders.bulkAdd(bidders.map(b => ({
@@ -90,8 +90,8 @@ export async function loadDemoData(): Promise<void> {
 
       // ========== AUCTION ==========
       const auctionId = await db.auctions.add({
-        name: "Spring Art Auction 2025",
-        date: new Date("2025-04-15").toISOString(),
+        name: "Evening Sale - Modern & Contemporary",
+        date: new Date("2025-06-15").toISOString(),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       });
@@ -109,31 +109,31 @@ export async function loadDemoData(): Promise<void> {
 
       // ========== LOTS ==========
       const lots = [
-        { number: 1, title: "Impressionist Painting - Monet" },
-        { number: 3, title: "Modern Sculpture - Giacometti" },
-        { number: 5, title: "Contemporary Art - Richter" },
-        { number: 6, title: "Contemporary Art - Kiefer" },
-        { number: 7, title: "Contemporary Art - Baselitz" },
-        { number: 10, title: "Old Masters - Rembrandt" },
-        { number: 12, title: "Post-Impressionist - Van Gogh" },
-        { number: 15, title: "Abstract Expressionism - Rothko" },
-        { number: 16, title: "Pop Art - Warhol" },
-        { number: 17, title: "Pop Art - Lichtenstein" },
-        { number: 18, title: "Minimalism - Judd" },
-        { number: 19, title: "Minimalism - Andre" },
-        { number: 20, title: "Neo-Expressionism - Basquiat" },
-        { number: 25, title: "Photography - Gursky" },
-        { number: 28, title: "Video Art - Viola" },
-        { number: 30, title: "Installation - Eliasson" },
-        { number: 35, title: "Street Art - Banksy" },
-        { number: 38, title: "Digital Art - Beeple" },
-        { number: 40, title: "Classical Sculpture - Rodin" },
-        { number: 42, title: "Art Nouveau - Klimt" },
-        { number: 45, title: "Surrealism - Dalí" },
-        { number: 47, title: "Cubism - Picasso" },
-        { number: 48, title: "Fauvism - Matisse" },
-        { number: 49, title: "Bauhaus - Kandinsky" },
-        { number: 50, title: "Renaissance - da Vinci Study" },
+        { number: 1, title: "Oil on Canvas, Landscape" },
+        { number: 3, title: "Bronze Sculpture, Abstract" },
+        { number: 5, title: "Mixed Media on Paper" },
+        { number: 6, title: "Acrylic on Canvas" },
+        { number: 7, title: "Watercolor Study" },
+        { number: 10, title: "Portrait, 19th Century" },
+        { number: 12, title: "Still Life with Flowers" },
+        { number: 15, title: "Large Format Photography" },
+        { number: 16, title: "Silkscreen Print, Edition" },
+        { number: 17, title: "Lithograph, Signed" },
+        { number: 18, title: "Steel Installation" },
+        { number: 19, title: "Marble Relief" },
+        { number: 20, title: "Contemporary Collage" },
+        { number: 25, title: "Vintage Silver Print" },
+        { number: 28, title: "Video Installation" },
+        { number: 30, title: "Light Sculpture" },
+        { number: 35, title: "Spray Paint on Canvas" },
+        { number: 38, title: "Digital Print, 1/1" },
+        { number: 40, title: "Terracotta Figure" },
+        { number: 42, title: "Decorative Panel" },
+        { number: 45, title: "Surrealist Drawing" },
+        { number: 47, title: "Geometric Composition" },
+        { number: 48, title: "Color Study" },
+        { number: 49, title: "Architectural Model" },
+        { number: 50, title: "Rare Manuscript Page" },
       ];
 
       const lotIds: number[] = [];
@@ -228,9 +228,9 @@ export async function loadDemoData(): Promise<void> {
  * Returns a description of what the demo data contains.
  */
 export function getDemoDataDescription(): string {
-  return `Demo auction with:
+  return `Evening Sale auction with:
 • 10 Callers (various language skills)
-• 15 Bidders (German, English, French, Italian, Spanish)
+• 15 Bidders (DE, EN, FR, IT, ES)
 • 25 Lots (numbers 1-50)
-• Edge cases: consecutive lots, rare languages, preferences`;
+• Test scenarios: consecutive lots, language constraints, preferences`;
 }
