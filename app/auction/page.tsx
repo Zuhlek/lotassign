@@ -76,6 +76,7 @@ import { languagesToLanguageArray, Language } from "@/lib/models/language.enum"
 import { computeAssignments } from "@/lib/assignment.service"
 import { getPlanningSnapshot, persistCallerAssignments } from "@/lib/actions/assignment-logic.actions"
 import CallerPriorities from "@/components/workflow/caller-priorities"
+import { parseConstraintNote, IndicatorSeverity } from "@/lib/algorithm/assignment-status"
 
 interface AuctionStats {
   totalLots: number
@@ -458,8 +459,10 @@ function AuctionPageContent() {
                                   const bidder = bidders.get(lb.bidderId)
                                   const isFinal = lb.status === "final"
                                   const isManual = lb.isManual
+                                  const isUnassigned = !lb.callerId && lb.status !== "planned"
+                                  const rowBgColor = isUnassigned ? "error.light" : isManual ? "warning.light" : isFinal ? "info.light" : "transparent"
                                   return (
-                                    <TableRow key={lb.id} sx={{ bgcolor: isManual ? "warning.light" : "transparent" }}>
+                                    <TableRow key={lb.id} sx={{ bgcolor: rowBgColor, opacity: isUnassigned ? 0.8 : 1 }}>
                                       <TableCell><Typography variant="body2">{bidder?.name || `#${lb.bidderId}`}</Typography></TableCell>
                                       <TableCell><Typography variant="body2" color="text.secondary">{formatLanguages(bidder?.languages || [])}</Typography></TableCell>
                                       <TableCell>
@@ -479,13 +482,21 @@ function AuctionPageContent() {
                                               </IconButton>
                                             </span>
                                           </Tooltip>
-                                          {lb.constraintNote && (
-                                            <Tooltip title="Info">
-                                              <IconButton size="small" onClick={() => setInfoDialog({ bidderName: bidder?.name || `#${lb.bidderId}`, note: lb.constraintNote! })}>
-                                                <InfoIcon fontSize="small" color="info" />
-                                              </IconButton>
-                                            </Tooltip>
-                                          )}
+                                          {lb.constraintNote && (() => {
+                                            const indicators = parseConstraintNote(lb.constraintNote)
+                                            const severity = indicators[0]?.severity || "info"
+                                            const iconColor = severity === "success" ? "success" : severity === "warning" ? "warning" : severity === "error" ? "error" : "info"
+                                            return (
+                                              <Tooltip title={lb.constraintNote}>
+                                                <IconButton size="small" onClick={() => setInfoDialog({ bidderName: bidder?.name || `#${lb.bidderId}`, note: lb.constraintNote! })}>
+                                                  {severity === "success" ? <CheckIcon fontSize="small" color="success" /> :
+                                                   severity === "warning" ? <WarningIcon fontSize="small" color="warning" /> :
+                                                   severity === "error" ? <WarningIcon fontSize="small" color="error" /> :
+                                                   <InfoIcon fontSize="small" color={iconColor} />}
+                                                </IconButton>
+                                              </Tooltip>
+                                            )
+                                          })()}
                                         </Box>
                                       </TableCell>
                                     </TableRow>
@@ -546,8 +557,23 @@ function AuctionPageContent() {
         <Dialog open={!!infoDialog} onClose={() => setInfoDialog(null)}>
           <DialogTitle>Assignment Info</DialogTitle>
           <DialogContent>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{infoDialog?.bidderName}</Typography>
-            <Typography>{infoDialog?.note}</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>{infoDialog?.bidderName}</Typography>
+            {infoDialog?.note && (() => {
+              const indicators = parseConstraintNote(infoDialog.note)
+              if (indicators.length === 0) {
+                return <Typography>{infoDialog.note}</Typography>
+              }
+              return (
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                  {indicators.map((ind, idx) => (
+                    <Alert key={idx} severity={ind.severity} sx={{ py: 0.5 }}>
+                      {ind.message}
+                      {ind.details && <Typography variant="caption" display="block">{ind.details}</Typography>}
+                    </Alert>
+                  ))}
+                </Box>
+              )
+            })()}
           </DialogContent>
           <DialogActions><Button onClick={() => setInfoDialog(null)}>Close</Button></DialogActions>
         </Dialog>
